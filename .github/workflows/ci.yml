@@ -1,12 +1,14 @@
 name: Android CI
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  [push, pull_request]
 
 jobs:
+  fastlane-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: ashutoshgngwr/validate-fastlane-supply-metadata@v1
   build:
 
     runs-on: ubuntu-latest
