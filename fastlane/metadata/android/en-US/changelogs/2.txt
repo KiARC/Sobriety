@@ -1,0 +1,5 @@
+Minor Patches
+- Now based on JDK-17 (which is an LTS)
+- Set up Fastlane as well as CI
+- Rounded corners of square icons
+- Set up new .gitignore
