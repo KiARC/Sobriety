@@ -1,3 +1,4 @@
+<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="20%"/>
 # Sobriety
 A simple and minimal app to track how long you've been sober from anything you want.
 
