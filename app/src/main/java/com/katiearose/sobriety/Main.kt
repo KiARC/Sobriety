@@ -40,8 +40,9 @@ class Main : AppCompatActivity() {
         )
         params.setMargins(16, 16, 16, 16)
         try {
-            val cache = this.openFileInput("Sobriety.cache")
-            readCache(cache)
+            this.openFileInput("Sobriety.cache").use {
+                readCache(it)
+            }
         } catch (e: FileNotFoundException) {
         }
     }
@@ -105,22 +106,41 @@ class Main : AppCompatActivity() {
         }, 1000L)
     }
 
-    private fun readCache(fis: FileInputStream) {
-        val ois = ObjectInputStream(fis)
-        addictions.putAll(ois.readObject() as HashMap<String, Instant>)
-        ois.close()
-        fis.close()
+    private fun readCache(input: InputStream) {
+        val cache = input.readBytes()
+        try {
+            InflaterInputStream(cache.inputStream()).use { iis ->
+                ObjectInputStream(iis).use {
+                    addictions.putAll(it.readObject() as HashMap<String, Instant>)
+                }
+            }
+        } catch (e: ZipException) {
+            readLegacyCache(cache.inputStream())
+        }
         for (addiction in addictions) {
             createNewCard(Pair(addiction.key, addiction.value))
         }
     }
 
+    @Deprecated(
+        "For old uncompressed caches.",
+        ReplaceWith("readCache(FileInputStream)"),
+        DeprecationLevel.WARNING
+    )
+    private fun readLegacyCache(input: InputStream) {
+        ObjectInputStream(input).use {
+            addictions.putAll(it.readObject() as HashMap<String, Instant>)
+        }
+    }
+
     private fun writeCache() {
-        val fos: FileOutputStream = this.openFileOutput("Sobriety.cache", MODE_PRIVATE)
-        val oos = ObjectOutputStream(fos)
-        oos.writeObject(addictions)
-        oos.close()
-        fos.close()
+        this.openFileOutput("Sobriety.cache", MODE_PRIVATE).use { fos ->
+            DeflaterOutputStream(fos, true).use { dos ->
+                ObjectOutputStream(dos).use {
+                    it.writeObject(addictions)
+                }
+            }
+        }
     }
 
     private fun timeSinceInstant(given: Instant): String {
