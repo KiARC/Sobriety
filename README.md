@@ -13,11 +13,11 @@ I mostly designed this out of spite for "I Am Sober", which monetizes addiction 
 ![GitHub code size](https://img.shields.io/github/languages/code-size/KiARC/Sobriety?style=for-the-badge)
 ![GitHub repo size](https://img.shields.io/github/repo-size/KiARC/Sobriety?style=for-the-badge)
 ## Release Info
-![GitHub all releases](https://img.shields.io/github/downloads/KiARC/Sobriety/total?label=Downloads%20%28All%20releases%29&style=for-the-badge)
-![GitHub downloads by release (latest by date)](https://img.shields.io/github/downloads/KiARC/Sobriety/latest/total?style=for-the-badge)
+![GitHub all releases](https://img.shields.io/github/downloads/KiARC/Sobriety/total?style=for-the-badge&label=Downloads%20%28All%20Releases%29)
+![GitHub downloads by release (latest by date)](https://img.shields.io/github/downloads/KiARC/Sobriety/latest/total?style=for-the-badge&label=Downloads%20%28Latest%20Release%29)
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/KiARC/Sobriety?label=latest%20release&style=for-the-badge)
-![GitHub Release Date](https://img.shields.io/github/release-date/KiARC/Sobriety?label=latest%20release%20date&style=for-the-badge)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/KiARC/Sobriety?label=Latest%20Release&sort=semver&style=for-the-badge)
+![GitHub Release Date](https://img.shields.io/github/release-date/KiARC/Sobriety?label=Latest%20Release%20Date&style=for-the-badge&sort=semver)
 ![IzzyOnDroid](https://img.shields.io/endpoint?url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.katiearose.sobriety&label=IzzyOnDroid&style=for-the-badge)
 ## Issue Counts
 ![GitHub open issues](https://img.shields.io/github/issues-raw/KiARC/Sobriety?style=for-the-badge)
