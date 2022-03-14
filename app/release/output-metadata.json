@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 2,
-      "versionName": "v1.0.1",
-      "outputFile": "Sobriety v1.0.1-release.apk"
+      "versionCode": 3,
+      "versionName": "v1.1.0",
+      "outputFile": "Sobriety v1.1.0-release.apk"
     }
   ],
   "elementType": "File"
