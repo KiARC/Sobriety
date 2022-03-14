@@ -28,20 +28,23 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            versionNameSuffix 'debug'
+            jniDebuggable true
+            renderscriptDebuggable true
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_15
-        targetCompatibility JavaVersion.VERSION_15
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '15'
+        jvmTarget = '17'
     }
     buildFeatures {
         viewBinding true
     }
     compileSdkVersion 30
-    buildToolsVersion '30.0.2'
 }
 
 dependencies {
