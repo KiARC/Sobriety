@@ -13,15 +13,21 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.io.*
+import java.io.FileNotFoundException
+import java.io.InputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 import java.time.Instant
+import java.util.zip.DeflaterOutputStream
+import java.util.zip.InflaterInputStream
+import java.util.zip.ZipException
 
 
 class Main : AppCompatActivity() {
     private lateinit var addCardButton: FloatingActionButton
     private lateinit var cardHolder: LinearLayout
     private val addictions = HashMap<String, Instant>()
-    private val CREATE_CARD_REQUEST_CODE = 1
+    private val createCardRequestCode = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -42,7 +48,7 @@ class Main : AppCompatActivity() {
 
     private fun newCardDialog() {
         val intent = Intent(this, Create::class.java)
-        startActivityForResult(intent, CREATE_CARD_REQUEST_CODE)
+        startActivityForResult(intent, createCardRequestCode)
     }
 
     private fun createNewCard(input: Pair<String, Instant>) {
@@ -55,7 +61,7 @@ class Main : AppCompatActivity() {
         params.setMargins(16, 16, 16, 16)
         val cardView = CardView(this)
         cardView.radius = 15f
-        val typedValue: TypedValue = TypedValue()
+        val typedValue = TypedValue()
         theme.resolveAttribute(R.attr.cardColor, typedValue, true)
         cardView.setCardBackgroundColor(typedValue.data)
         cardView.setContentPadding(36, 36, 36, 36)
@@ -136,14 +142,12 @@ class Main : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CREATE_CARD_REQUEST_CODE) {
+        if (requestCode == createCardRequestCode) {
             if (resultCode == RESULT_OK) {
                 val name = data?.extras?.get("name") as String
                 val instant = data.extras?.get("instant") as Instant
                 addictions[name] = instant
                 createNewCard(Pair(name, instant))
-            } else if (resultCode == RESULT_CANCELED) {
-                //Nothing
             }
         }
     }
