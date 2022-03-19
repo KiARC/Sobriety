@@ -21,7 +21,7 @@
         android:translationY="-10sp"
         app:layout_anchor="@+id/frameLayout"
         app:layout_anchorGravity="end|bottom"
-        app:srcCompat="@android:drawable/ic_menu_add" />
+        app:srcCompat="@android:drawable/ic_input_add" />
 
     <ScrollView
         android:layout_width="match_parent"

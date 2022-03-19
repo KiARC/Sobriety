@@ -3,12 +3,11 @@ package com.katiearose.sobriety
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.DatePicker
-import android.widget.TextView
-import android.widget.TimePicker
+import android.view.animation.AnimationUtils
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
@@ -17,10 +16,9 @@ import java.time.ZonedDateTime
 
 class Create : AppCompatActivity() {
     private lateinit var createButton: Button
-    private lateinit var datePickerButton: Button
-    private lateinit var timePickerButton: Button
-    private lateinit var cancelButton: Button
-    private lateinit var nameEntry: TextView
+    private lateinit var datePickerButton: ConstraintLayout
+    private lateinit var timePickerButton: ConstraintLayout
+    private lateinit var nameEntry: EditText
     private lateinit var dateView: TextView
     private lateinit var timeView: TextView
     private lateinit var startDateTime: ZonedDateTime
@@ -28,23 +26,30 @@ class Create : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create)
-        createButton = findViewById(R.id.createButton)
-        datePickerButton = findViewById(R.id.datePickerButton)
-        timePickerButton = findViewById(R.id.timePickerButton)
-        cancelButton = findViewById(R.id.cancelButton)
-        nameEntry = findViewById(R.id.nameEntry)
-        dateView = findViewById(R.id.dateViewer)
-        timeView = findViewById(R.id.timeViewer)
+
+        createButton = findViewById(R.id.btnCreate)
+
+        datePickerButton = findViewById(R.id.clPickDate)
+        timePickerButton = findViewById(R.id.clPickTime)
+
+        nameEntry = findViewById(R.id.etTitle)
+        dateView = findViewById(R.id.tvDate)
+        timeView = findViewById(R.id.tvTime)
+
         datePickerButton.setOnClickListener { pickDate() }
         timePickerButton.setOnClickListener { pickTime() }
-        cancelButton.setOnClickListener {
-            setResult(Activity.RESULT_CANCELED, Intent())
-            finish()
-        }
+
         createButton.setOnClickListener { create() }
+
         startDateTime = ZonedDateTime.now(ZoneId.systemDefault())
+
         dateView.text = startDateTime.toLocalDate().toString()
         timeView.text = startDateTime.toLocalTime().toString()
+    }
+
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_CANCELED, Intent())
+        finish()
     }
 
     private fun pickDate() {
@@ -91,10 +96,20 @@ class Create : AppCompatActivity() {
     }
 
     private fun create() {
+        val name = nameEntry.text.toString().trim()
+
+        //Don't allow creating without a name
+        if(name == ""){
+            val animationShake =
+                AnimationUtils.loadAnimation(this, R.anim.shake)
+            nameEntry.startAnimation(animationShake)
+            return
+        }
+
         val instant = startDateTime.toInstant()
         val intent = Intent()
         intent.putExtra("instant", instant)
-        intent.putExtra("name", nameEntry.text.toString())
+        intent.putExtra("name", name)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }

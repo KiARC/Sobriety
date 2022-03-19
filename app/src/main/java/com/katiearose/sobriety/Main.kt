@@ -1,5 +1,6 @@
 package com.katiearose.sobriety
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -10,6 +11,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -82,12 +84,23 @@ class Main : AppCompatActivity() {
         val deleteButton = Button(this)
         deleteButton.text = "Delete"
         var deleted = false
+
         deleteButton.setOnClickListener {
-            cardHolder.removeView(cardView)
-            addictions.remove(name)
-            deleted = true
+            val action: () -> Unit = {
+                cardHolder.removeView(cardView)
+                addictions.remove(name)
+                deleted = true
+            }
+            dialogConfirm("Delete entry \"$name\" ?", action)
         }
-        resetButton.setOnClickListener { date = Instant.now() }
+
+        resetButton.setOnClickListener {
+            val action: () -> Unit = {
+                date = Instant.now()
+            }
+            dialogConfirm("Reset entry \"$name\" ?", action)
+        }
+
         val cardLinearLayout = LinearLayout(this)
         cardLinearLayout.orientation = LinearLayout.VERTICAL
         cardLinearLayout.addView(title)
@@ -104,6 +117,22 @@ class Main : AppCompatActivity() {
                 if (!deleted) mainHandler.postDelayed(this, 1000L)
             }
         }, 1000L)
+    }
+
+    private fun dialogConfirm(title: String, confirmAction: () -> Unit){
+        this.let {
+            val builder = AlertDialog.Builder(it)
+            builder.apply {
+                setPositiveButton("ok"
+                ) { _, _ ->
+                    confirmAction()
+                }
+                setNegativeButton("cancel"){ _: DialogInterface, _: Int -> }
+            }
+            builder.setTitle(title)
+            builder.create()
+            builder.show()
+        }
     }
 
     private fun readCache(input: InputStream) {
