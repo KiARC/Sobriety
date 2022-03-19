@@ -12,6 +12,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 
 class Create : AppCompatActivity() {
@@ -43,8 +44,10 @@ class Create : AppCompatActivity() {
 
         startDateTime = ZonedDateTime.now(ZoneId.systemDefault())
 
+
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
         dateView.text = startDateTime.toLocalDate().toString()
-        timeView.text = startDateTime.toLocalTime().toString()
+        timeView.text = startDateTime.toLocalTime().format(formatter).toString()
     }
 
     override fun onBackPressed() {
