@@ -1,1 +1,1 @@
-PRs are completely welcome! As a general rule, master is only to be updated when a working build is available at the latest commit, so please don't PR non-passing code.
+PRs are completely welcome! As a general rule, `master` is only to be updated when a working build is available at the latest commit, so please don't PR non-passing code. Pushing to `dev` is perfectly fine if you don't want to make enough changes to warrant a whole fork/PR.
