@@ -1,0 +1,3 @@
+Create Page Redesign
+- Redesigned Create page (as the name says)
+- Added confirmation dialogs for the delete and reset actions

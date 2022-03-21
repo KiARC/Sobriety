@@ -1,0 +1,2 @@
+Compression
+- Compression now applied to caches
