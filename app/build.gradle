@@ -25,12 +25,12 @@ android {
 
         debug {
             debuggable true
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             versionNameSuffix 'debug'
-            jniDebuggable true
-            renderscriptDebuggable true
+            jniDebuggable false
+            renderscriptDebuggable false
             signingConfig signingConfigs.debug
         }
     }
