@@ -10,7 +10,9 @@
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+    </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addCardButton"
@@ -23,15 +25,28 @@
         app:layout_anchorGravity="end|bottom"
         app:srcCompat="@android:drawable/ic_input_add" />
 
+    <TextView
+        android:id="@+id/prompt"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="To add an addiction to the tracker, press the &quot;+&quot; button in the bottom right corner."
+        android:textSize="20sp"
+        android:visibility="gone"
+        app:layout_anchor="@+id/frameLayout"
+        app:layout_anchorGravity="center" />
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_anchor="@+id/frameLayout"
+        app:layout_anchorGravity="center">
 
         <LinearLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal|top"
+            android:gravity="center_horizontal|center_vertical"
             android:orientation="vertical" />
     </ScrollView>
 

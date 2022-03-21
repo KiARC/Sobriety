@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
@@ -28,6 +29,7 @@ import java.util.zip.ZipException
 class Main : AppCompatActivity() {
     private lateinit var addCardButton: FloatingActionButton
     private lateinit var cardHolder: LinearLayout
+    private lateinit var prompt: TextView
     private val addictions = HashMap<String, Instant>()
     private val createCardRequestCode = 1
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +38,7 @@ class Main : AppCompatActivity() {
         addCardButton = findViewById(R.id.addCardButton)
         addCardButton.setOnClickListener { newCardDialog() }
         cardHolder = findViewById(R.id.container)
+        prompt = findViewById(R.id.prompt)
         val params = RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -47,6 +50,15 @@ class Main : AppCompatActivity() {
             }
         } catch (e: FileNotFoundException) {
         }
+        val promptHandler = Handler(Looper.getMainLooper())
+        promptHandler.postDelayed(object : Runnable {
+            override fun run() {
+                if (addictions.size == 0) prompt.visibility = View.VISIBLE else prompt.visibility =
+                    View.GONE
+                promptHandler.postDelayed(this, 1000L)
+            }
+        }, 1000L)
+
     }
 
     private fun newCardDialog() {
@@ -119,15 +131,16 @@ class Main : AppCompatActivity() {
         }, 1000L)
     }
 
-    private fun dialogConfirm(title: String, confirmAction: () -> Unit){
+    private fun dialogConfirm(title: String, confirmAction: () -> Unit) {
         this.let {
             val builder = AlertDialog.Builder(it)
             builder.apply {
-                setPositiveButton("ok"
+                setPositiveButton(
+                    "ok"
                 ) { _, _ ->
                     confirmAction()
                 }
-                setNegativeButton("cancel"){ _: DialogInterface, _: Int -> }
+                setNegativeButton("cancel") { _: DialogInterface, _: Int -> }
             }
             builder.setTitle(title)
             builder.create()
