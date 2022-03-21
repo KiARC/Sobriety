@@ -3,76 +3,100 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Create">
 
-    <LinearLayout
+
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
+        android:orientation="vertical"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal|center_vertical"
-        android:orientation="vertical">
-
+        android:padding="30dp"
+        >
         <EditText
-            android:id="@+id/nameEntry"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Addiction Name"
-            android:inputType="textPersonName"
-            android:minHeight="48dp"
-            android:singleLine="true" />
+            android:id="@+id/etTitle"
+            android:height="48dp"
+            android:inputType="textCapSentences"
+            android:hint="Addiction name"
+            android:layout_height="wrap_content">
+        </EditText>
 
-        <LinearLayout
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/timePickerButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Pick Time" />
+            android:paddingVertical="10dp"
+            android:background="?attr/selectableItemBackground"
+            android:id="@+id/clPickTime"
+            android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/timeViewer"
+                android:id="@+id/tvPickTime"
+                android:text="Time"
+                android:layout_marginStart="3dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textSize="@dimen/text_size_medium"
+                android:textColor="?attr/colorOnBackground"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="TextView" />
-        </LinearLayout>
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/tvPickTime"
+                android:text="234:2348:349"
+                app:layout_constraintStart_toStartOf="@id/tvPickTime"
+                android:layout_height="wrap_content"/>
 
-        <LinearLayout
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/datePickerButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Pick Date" />
+            android:paddingVertical="10dp"
+            android:id="@+id/clPickDate"
+            android:background="?attr/selectableItemBackground"
+            android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/dateViewer"
+                android:id="@+id/tvPickDate"
+                android:text="Date"
+                android:layout_marginStart="3dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textSize="@dimen/text_size_medium"
+                android:textColor="?attr/colorOnBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TextView>
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/tvPickDate"
+                android:text="23.02.2017"
+                app:layout_constraintStart_toStartOf="@id/tvPickDate"
+                android:layout_height="wrap_content"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btnCreate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="TextView" />
+                android:paddingHorizontal="30dp"
+                android:text="CREATE"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <Button
-            android:id="@+id/createButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Create" />
-
-        <Button
-            android:id="@+id/cancelButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Cancel" />
-
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
