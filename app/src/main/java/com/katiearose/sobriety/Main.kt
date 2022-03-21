@@ -131,15 +131,16 @@ class Main : AppCompatActivity() {
         }, 1000L)
     }
 
-    private fun dialogConfirm(title: String, confirmAction: () -> Unit){
+    private fun dialogConfirm(title: String, confirmAction: () -> Unit) {
         this.let {
             val builder = AlertDialog.Builder(it)
             builder.apply {
-                setPositiveButton("ok"
+                setPositiveButton(
+                    "ok"
                 ) { _, _ ->
                     confirmAction()
                 }
-                setNegativeButton("cancel"){ _: DialogInterface, _: Int -> }
+                setNegativeButton("cancel") { _: DialogInterface, _: Int -> }
             }
             builder.setTitle(title)
             builder.create()

@@ -102,7 +102,7 @@ class Create : AppCompatActivity() {
         val name = nameEntry.text.toString().trim()
 
         //Don't allow creating without a name
-        if(name == ""){
+        if (name == "") {
             val animationShake =
                 AnimationUtils.loadAnimation(this, R.anim.shake)
             nameEntry.startAnimation(animationShake)
