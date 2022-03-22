@@ -11,7 +11,7 @@ android {
         minSdk 30
         targetSdk 30
         versionCode 6
-        versionName "v2.1.2"
+        versionName "v2.1.0"
         setProperty("archivesBaseName", "Sobriety $versionName")
     }
 
