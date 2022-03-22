@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/clCreate"
     tools:context=".Create">
 
 
@@ -19,7 +20,7 @@
             android:layout_height="wrap_content"
             android:height="48dp"
             android:hint="Addiction name"
-            android:inputType="textCapSentences"></EditText>
+            android:inputType="textCapSentences" />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -38,7 +39,7 @@
                 android:textColor="?attr/colorOnBackground"
                 android:textSize="@dimen/text_size_medium"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"></TextView>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tvTime"
@@ -67,7 +68,7 @@
                 android:textColor="?attr/colorOnBackground"
                 android:textSize="@dimen/text_size_medium"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"></TextView>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tvDate"

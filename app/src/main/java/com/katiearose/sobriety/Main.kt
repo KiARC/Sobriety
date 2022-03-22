@@ -27,11 +27,18 @@ import java.util.zip.ZipException
 
 
 class Main : AppCompatActivity() {
+
+    companion object{
+        const val EXTRA_NAMES = "com.katiearose.sobriety.EXTRA_NAMES"
+    }
+
     private lateinit var addCardButton: FloatingActionButton
     private lateinit var cardHolder: LinearLayout
     private lateinit var prompt: TextView
+
     private val addictions = HashMap<String, Instant>()
     private val createCardRequestCode = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -61,7 +68,13 @@ class Main : AppCompatActivity() {
     }
 
     private fun newCardDialog() {
+        //Pass current addiction names to create activity, to prevent creation of elements with identical keys
+        val addictionNames = arrayListOf<String>()
+        addictions.forEach {
+            addictionNames.add(it.key)
+        }
         val intent = Intent(this, Create::class.java)
+        intent.putStringArrayListExtra(EXTRA_NAMES, addictionNames)
         startActivityForResult(intent, createCardRequestCode)
     }
 
