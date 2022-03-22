@@ -12,6 +12,7 @@
         android:theme="@style/Theme.Sobriety">
         <activity
             android:name=".Create"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".Main"
