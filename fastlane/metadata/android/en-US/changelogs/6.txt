@@ -1,0 +1,4 @@
+Bug Fixes
+- No longer allows duplicate keys (which previously simply would not be stored)
+- Fixed typos and inconsistencies
+- Optimzed prompt updates

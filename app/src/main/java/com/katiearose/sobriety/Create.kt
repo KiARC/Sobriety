@@ -8,6 +8,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.android.material.snackbar.Snackbar
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
@@ -23,6 +24,9 @@ class Create : AppCompatActivity() {
     private lateinit var dateView: TextView
     private lateinit var timeView: TextView
     private lateinit var startDateTime: ZonedDateTime
+
+    private lateinit var names: ArrayList<String>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +52,8 @@ class Create : AppCompatActivity() {
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
         dateView.text = startDateTime.toLocalDate().toString()
         timeView.text = startDateTime.toLocalTime().format(formatter).toString()
+
+        names = intent.getStringArrayListExtra(Main.EXTRA_NAMES) as ArrayList<String>
     }
 
     override fun onBackPressed() {
@@ -100,9 +106,13 @@ class Create : AppCompatActivity() {
 
     private fun create() {
         val name = nameEntry.text.toString().trim()
+        val nameExists = names.contains(name)
 
-        //Don't allow creating without a name
-        if (name == "") {
+        //Don't allow creating without a name, or with a duplicate name
+        if (name == "" || nameExists) {
+            if (nameExists){
+                Snackbar.make(findViewById(R.id.clCreate),"Can't create duplicate entries", Snackbar.LENGTH_SHORT).show()
+            }
             val animationShake =
                 AnimationUtils.loadAnimation(this, R.anim.shake)
             nameEntry.startAnimation(animationShake)

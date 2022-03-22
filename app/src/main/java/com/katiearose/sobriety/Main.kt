@@ -27,11 +27,18 @@ import java.util.zip.ZipException
 
 
 class Main : AppCompatActivity() {
+
+    companion object{
+        const val EXTRA_NAMES = "com.katiearose.sobriety.EXTRA_NAMES"
+    }
+
     private lateinit var addCardButton: FloatingActionButton
     private lateinit var cardHolder: LinearLayout
     private lateinit var prompt: TextView
+
     private val addictions = HashMap<String, Instant>()
     private val createCardRequestCode = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -50,19 +57,24 @@ class Main : AppCompatActivity() {
             }
         } catch (e: FileNotFoundException) {
         }
-        val promptHandler = Handler(Looper.getMainLooper())
-        promptHandler.postDelayed(object : Runnable {
-            override fun run() {
-                if (addictions.size == 0) prompt.visibility = View.VISIBLE else prompt.visibility =
-                    View.GONE
-                promptHandler.postDelayed(this, 1000L)
-            }
-        }, 1000L)
+        updatePromptVisibility()
+    }
 
+    private fun updatePromptVisibility(){
+        prompt.visibility = when(addictions.size == 0){
+            true -> View.VISIBLE
+            else -> View.GONE
+        }
     }
 
     private fun newCardDialog() {
+        //Pass current addiction names to create activity, to prevent creation of elements with identical keys
+        val addictionNames = arrayListOf<String>()
+        addictions.forEach {
+            addictionNames.add(it.key)
+        }
         val intent = Intent(this, Create::class.java)
+        intent.putStringArrayListExtra(EXTRA_NAMES, addictionNames)
         startActivityForResult(intent, createCardRequestCode)
     }
 
@@ -102,6 +114,7 @@ class Main : AppCompatActivity() {
                 cardHolder.removeView(cardView)
                 addictions.remove(name)
                 deleted = true
+                updatePromptVisibility()
             }
             dialogConfirm("Delete entry \"$name\" ?", action)
         }
@@ -200,6 +213,16 @@ class Main : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         writeCache()
+    }
+
+
+    /**
+     * This gets called once the Create Activity is closed (Necessary to hide the prompt in case
+     * a first addiction was added to the list.
+     */
+    override fun onResume() {
+        updatePromptVisibility()
+        super.onResume()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
