@@ -23,12 +23,11 @@ import java.io.ObjectOutputStream
 import java.time.Instant
 import java.util.zip.DeflaterOutputStream
 import java.util.zip.InflaterInputStream
-import java.util.zip.ZipException
 
 
 class Main : AppCompatActivity() {
 
-    companion object{
+    companion object {
         const val EXTRA_NAMES = "com.katiearose.sobriety.EXTRA_NAMES"
     }
 
@@ -36,7 +35,7 @@ class Main : AppCompatActivity() {
     private lateinit var cardHolder: LinearLayout
     private lateinit var prompt: TextView
 
-    private val addictions = HashMap<String, Instant>()
+    private val addictions = HashMap<String, Pair<Instant, CircularBuffer<Long>>>()
     private val createCardRequestCode = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,8 +59,8 @@ class Main : AppCompatActivity() {
         updatePromptVisibility()
     }
 
-    private fun updatePromptVisibility(){
-        prompt.visibility = when(addictions.size == 0){
+    private fun updatePromptVisibility() {
+        prompt.visibility = when (addictions.size == 0) {
             true -> View.VISIBLE
             else -> View.GONE
         }
@@ -78,7 +77,7 @@ class Main : AppCompatActivity() {
         startActivityForResult(intent, createCardRequestCode)
     }
 
-    private fun createNewCard(input: Pair<String, Instant>) {
+    private fun createNewCard(input: Triple<String, Instant, CircularBuffer<Long>>) {
         val name = input.first
         var date = input.second
         val params = RelativeLayout.LayoutParams(
@@ -100,7 +99,12 @@ class Main : AppCompatActivity() {
         title.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
         val timeRunning = TextView(this)
         timeRunning.textSize = 16F
-        timeRunning.text = timeSinceInstant(date)
+        timeRunning.text = secondsToString(timeSinceInstant(date))
+        val averageOfLastThree = TextView(this)
+        averageOfLastThree.textSize = 12F
+        val buffer = input.third
+
+        averageOfLastThree.text = "Recent Average: ${secondsToString(averageFromBuffer(buffer))}"
         val buttons = LinearLayout(this)
         buttons.orientation = LinearLayout.HORIZONTAL
         val resetButton = Button(this)
@@ -121,7 +125,11 @@ class Main : AppCompatActivity() {
 
         resetButton.setOnClickListener {
             val action: () -> Unit = {
+                buffer.update(timeSinceInstant(date))
                 date = Instant.now()
+
+                averageOfLastThree.text =
+                    "Recent Average: ${secondsToString(averageFromBuffer(buffer))}"
             }
             dialogConfirm("Reset entry \"$name\" ?", action)
         }
@@ -130,6 +138,7 @@ class Main : AppCompatActivity() {
         cardLinearLayout.orientation = LinearLayout.VERTICAL
         cardLinearLayout.addView(title)
         cardLinearLayout.addView(timeRunning)
+        cardLinearLayout.addView(averageOfLastThree)
         buttons.addView(resetButton)
         buttons.addView(deleteButton)
         cardLinearLayout.addView(buttons)
@@ -138,7 +147,7 @@ class Main : AppCompatActivity() {
         val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.postDelayed(object : Runnable {
             override fun run() {
-                timeRunning.text = timeSinceInstant(date)
+                timeRunning.text = secondsToString(timeSinceInstant(date))
                 if (!deleted) mainHandler.postDelayed(this, 1000L)
             }
         }, 1000L)
@@ -166,25 +175,32 @@ class Main : AppCompatActivity() {
         try {
             InflaterInputStream(cache.inputStream()).use { iis ->
                 ObjectInputStream(iis).use {
-                    addictions.putAll(it.readObject() as HashMap<String, Instant>)
+                    addictions.putAll(it.readObject() as HashMap<String, Pair<Instant, CircularBuffer<Long>>>)
                 }
             }
-        } catch (e: ZipException) {
+            for (addiction in addictions) {
+                createNewCard(Triple(addiction.key, addiction.value.first, addiction.value.second))
+            }
+        } catch (e: ClassCastException) {
             readLegacyCache(cache.inputStream())
-        }
-        for (addiction in addictions) {
-            createNewCard(Pair(addiction.key, addiction.value))
         }
     }
 
     @Deprecated(
-        "For old uncompressed caches.",
+        "For old caches without buffers.",
         ReplaceWith("readCache(FileInputStream)"),
         DeprecationLevel.WARNING
     )
     private fun readLegacyCache(input: InputStream) {
-        ObjectInputStream(input).use {
-            addictions.putAll(it.readObject() as HashMap<String, Instant>)
+        InflaterInputStream(input).use { iis ->
+            ObjectInputStream(iis).use {
+                for (i in it.readObject() as HashMap<String, Instant>) {
+                    addictions[i.key] = Pair(i.value, CircularBuffer(3))
+                }
+            }
+        }
+        for (addiction in addictions) {
+            createNewCard(Triple(addiction.key, addiction.value.first, addiction.value.second))
         }
     }
 
@@ -198,17 +214,19 @@ class Main : AppCompatActivity() {
         }
     }
 
-    private fun timeSinceInstant(given: Instant): String {
-        var distance = Instant.now().epochSecond - given.epochSecond
-        val s = distance % 60
-        distance -= s
-        val m = (distance % 3600) / 60
-        distance -= m * 60
-        val h = (distance % 86400) / 3600
-        distance -= h * 3600
-        val d = distance / 86400
+    private fun secondsToString(given: Long): String {
+        var time = given
+        val s = time % 60
+        time -= s
+        val m = (time % 3600) / 60
+        time -= m * 60
+        val h = (time % 86400) / 3600
+        time -= h * 3600
+        val d = time / 86400
         return "$d days, $h hours, $m minutes and $s seconds"
     }
+
+    private fun timeSinceInstant(given: Instant) = Instant.now().epochSecond - given.epochSecond
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -231,9 +249,22 @@ class Main : AppCompatActivity() {
             if (resultCode == RESULT_OK) {
                 val name = data?.extras?.get("name") as String
                 val instant = data.extras?.get("instant") as Instant
-                addictions[name] = instant
-                createNewCard(Pair(name, instant))
+                val buffer = CircularBuffer<Long>(3)
+                addictions[name] = Pair(instant, buffer)
+                createNewCard(Triple(name, instant, buffer))
             }
         }
+    }
+
+    private fun averageFromBuffer(buffer: CircularBuffer<Long>): Long {
+        var num = 0
+        var total: Long = 0
+        for (i in 0..2) {
+            buffer.get(i)?.let {
+                total += it
+                num++
+            }
+        }
+        return if (num != 0) total / num else 0
     }
 }
