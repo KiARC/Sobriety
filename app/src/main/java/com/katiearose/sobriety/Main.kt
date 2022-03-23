@@ -100,7 +100,7 @@ class Main : AppCompatActivity() {
         title.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
         val timeRunning = TextView(this)
         timeRunning.textSize = 16F
-        timeRunning.text = timeSinceInstant(date)
+        timeRunning.text = secondsToString(timeSinceInstant(date))
         val buttons = LinearLayout(this)
         buttons.orientation = LinearLayout.HORIZONTAL
         val resetButton = Button(this)
@@ -138,7 +138,7 @@ class Main : AppCompatActivity() {
         val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.postDelayed(object : Runnable {
             override fun run() {
-                timeRunning.text = timeSinceInstant(date)
+                timeRunning.text = secondsToString(timeSinceInstant(date))
                 if (!deleted) mainHandler.postDelayed(this, 1000L)
             }
         }, 1000L)
@@ -198,17 +198,19 @@ class Main : AppCompatActivity() {
         }
     }
 
-    private fun timeSinceInstant(given: Instant): String {
-        var distance = Instant.now().epochSecond - given.epochSecond
-        val s = distance % 60
-        distance -= s
-        val m = (distance % 3600) / 60
-        distance -= m * 60
-        val h = (distance % 86400) / 3600
-        distance -= h * 3600
-        val d = distance / 86400
+    private fun secondsToString(given: Long): String {
+        var time = given
+        val s = time % 60
+        time -= s
+        val m = (time % 3600) / 60
+        time -= m * 60
+        val h = (time % 86400) / 3600
+        time -= h * 3600
+        val d = time / 86400
         return "$d days, $h hours, $m minutes and $s seconds"
     }
+
+    private fun timeSinceInstant(given: Instant) = Instant.now().epochSecond - given.epochSecond
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
