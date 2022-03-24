@@ -1,0 +1,3 @@
+Average Sober Time
+- Now displays the average distance between the last three relapses for each card
+- Uncompressed caches are no longer supported
