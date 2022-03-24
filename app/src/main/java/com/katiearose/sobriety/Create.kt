@@ -110,8 +110,12 @@ class Create : AppCompatActivity() {
 
         //Don't allow creating without a name, or with a duplicate name
         if (name == "" || nameExists) {
-            if (nameExists){
-                Snackbar.make(findViewById(R.id.clCreate),"Can't create duplicate entries", Snackbar.LENGTH_SHORT).show()
+            if (nameExists) {
+                Snackbar.make(
+                    findViewById(R.id.clCreate),
+                    "Can't create duplicate entries",
+                    Snackbar.LENGTH_SHORT
+                ).show()
             }
             val animationShake =
                 AnimationUtils.loadAnimation(this, R.anim.shake)

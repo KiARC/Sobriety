@@ -21,10 +21,10 @@
         android:clickable="true"
         android:translationX="-30dp"
         android:translationY="-30dp"
-        app:tint="@android:color/white"
         app:layout_anchor="@+id/frameLayout"
         app:layout_anchorGravity="end|bottom"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:tint="@android:color/white" />
 
     <TextView
         android:id="@+id/prompt"
