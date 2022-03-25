@@ -3,25 +3,9 @@ package com.katiearose.sobriety
 import java.io.Serializable
 import java.time.Instant
 
-class Addiction : Serializable {
-    val name: String
-    var lastRelapse: Instant
-    var averageRelapseDuration: Long
-    var relapses: Int
-
-    constructor(name: String, lastRelapse: Instant, averageRelapseDuration: Long, relapses: Int) {
-        this.name = name
-        this.lastRelapse = lastRelapse
-        this.averageRelapseDuration = averageRelapseDuration
-        this.relapses = relapses
-    }
-
-    constructor(name: String, start: Instant) {
-        this.name = name
-        this.lastRelapse = start
-        this.relapses = 1
-        this.averageRelapseDuration = Main.timeSinceInstant(start)
-    }
+class Addiction(val name: String, var lastRelapse: Instant) : Serializable {
+    var averageRelapseDuration = 0L
+    private var relapses = 0
 
     fun relapse() {
         relapses++
