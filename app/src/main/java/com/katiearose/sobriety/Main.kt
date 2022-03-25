@@ -77,9 +77,7 @@ class Main : AppCompatActivity() {
         startActivityForResult(intent, createCardRequestCode)
     }
 
-    private fun createNewCard(input: Triple<String, Instant, CircularBuffer<Long>>) {
-        val name = input.first
-        var date = input.second
+    private fun createNewCard(key: String) {
         val params = RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -95,14 +93,14 @@ class Main : AppCompatActivity() {
         cardView.cardElevation = 30f
         val title = TextView(this)
         title.textSize = 24F
-        title.text = name
+        title.text = key
         title.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
         val timeRunning = TextView(this)
         timeRunning.textSize = 16F
-        timeRunning.text = secondsToString(timeSinceInstant(date))
+        timeRunning.text = secondsToString(timeSinceInstant(addictions[key]!!.first))
         val averageOfLastThree = TextView(this)
         averageOfLastThree.textSize = 12F
-        val buffer = input.third
+        val buffer = addictions[key]!!.second
 
         averageOfLastThree.text = "Recent Average: ${secondsToString(averageFromBuffer(buffer))}"
         val buttons = LinearLayout(this)
@@ -116,22 +114,22 @@ class Main : AppCompatActivity() {
         deleteButton.setOnClickListener {
             val action: () -> Unit = {
                 cardHolder.removeView(cardView)
-                addictions.remove(name)
+                addictions.remove(key)
                 deleted = true
                 updatePromptVisibility()
             }
-            dialogConfirm("Delete entry \"$name\" ?", action)
+            dialogConfirm("Delete entry \"$key\" ?", action)
         }
 
         resetButton.setOnClickListener {
             val action: () -> Unit = {
-                buffer.update(timeSinceInstant(date))
-                date = Instant.now()
+                buffer.update(timeSinceInstant(addictions[key]!!.first))
+                addictions[key] = Pair(Instant.now(), addictions[key]!!.second)
 
                 averageOfLastThree.text =
                     "Recent Average: ${secondsToString(averageFromBuffer(buffer))}"
             }
-            dialogConfirm("Reset entry \"$name\" ?", action)
+            dialogConfirm("Reset entry \"$key\" ?", action)
         }
 
         val cardLinearLayout = LinearLayout(this)
@@ -147,7 +145,7 @@ class Main : AppCompatActivity() {
         val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.postDelayed(object : Runnable {
             override fun run() {
-                timeRunning.text = secondsToString(timeSinceInstant(date))
+                timeRunning.text = secondsToString(timeSinceInstant(addictions[key]!!.first))
                 if (!deleted) mainHandler.postDelayed(this, 1000L)
             }
         }, 1000L)
@@ -179,7 +177,7 @@ class Main : AppCompatActivity() {
                 }
             }
             for (addiction in addictions) {
-                createNewCard(Triple(addiction.key, addiction.value.first, addiction.value.second))
+                createNewCard(addiction.key)
             }
         } catch (e: ClassCastException) {
             readLegacyCache(cache.inputStream())
@@ -200,7 +198,7 @@ class Main : AppCompatActivity() {
             }
         }
         for (addiction in addictions) {
-            createNewCard(Triple(addiction.key, addiction.value.first, addiction.value.second))
+            createNewCard(addiction.key)
         }
     }
 
@@ -251,7 +249,7 @@ class Main : AppCompatActivity() {
                 val instant = data.extras?.get("instant") as Instant
                 val buffer = CircularBuffer<Long>(3)
                 addictions[name] = Pair(instant, buffer)
-                createNewCard(Triple(name, instant, buffer))
+                createNewCard(name)
             }
         }
     }
