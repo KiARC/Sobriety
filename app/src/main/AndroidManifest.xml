@@ -12,8 +12,8 @@
         android:theme="@style/Theme.Sobriety">
         <activity
             android:name=".Create"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Main"
             android:exported="true"

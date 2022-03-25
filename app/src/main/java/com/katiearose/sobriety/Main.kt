@@ -29,13 +29,26 @@ class Main : AppCompatActivity() {
 
     companion object {
         const val EXTRA_NAMES = "com.katiearose.sobriety.EXTRA_NAMES"
+        fun secondsToString(given: Long): String {
+            var time = given
+            val s = time % 60
+            time -= s
+            val m = (time % 3600) / 60
+            time -= m * 60
+            val h = (time % 86400) / 3600
+            time -= h * 3600
+            val d = time / 86400
+            return "$d days, $h hours, $m minutes and $s seconds"
+        }
+
+        fun timeSinceInstant(given: Instant) = Instant.now().epochSecond - given.epochSecond
     }
 
     private lateinit var addCardButton: FloatingActionButton
     private lateinit var cardHolder: LinearLayout
     private lateinit var prompt: TextView
 
-    private val addictions = HashMap<String, Pair<Instant, CircularBuffer<Long>>>()
+    private val addictions = ArrayList<Addiction>()
     private val createCardRequestCode = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,14 +83,14 @@ class Main : AppCompatActivity() {
         //Pass current addiction names to create activity, to prevent creation of elements with identical keys
         val addictionNames = arrayListOf<String>()
         addictions.forEach {
-            addictionNames.add(it.key)
+            addictionNames.add(it.name)
         }
         val intent = Intent(this, Create::class.java)
         intent.putStringArrayListExtra(EXTRA_NAMES, addictionNames)
         startActivityForResult(intent, createCardRequestCode)
     }
 
-    private fun createNewCard(key: String) {
+    private fun createNewCard(addiction: Addiction) {
         val params = RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -93,16 +106,14 @@ class Main : AppCompatActivity() {
         cardView.cardElevation = 30f
         val title = TextView(this)
         title.textSize = 24F
-        title.text = key
+        title.text = addiction.name
         title.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
         val timeRunning = TextView(this)
         timeRunning.textSize = 16F
-        timeRunning.text = secondsToString(timeSinceInstant(addictions[key]!!.first))
-        val averageOfLastThree = TextView(this)
-        averageOfLastThree.textSize = 12F
-        val buffer = addictions[key]!!.second
-
-        averageOfLastThree.text = "Recent Average: ${secondsToString(averageFromBuffer(buffer))}"
+        timeRunning.text = secondsToString(timeSinceInstant(addiction.lastRelapse))
+        val average = TextView(this)
+        average.textSize = 12F
+        average.text = "Average: ${secondsToString(addiction.averageRelapseDuration)}"
         val buttons = LinearLayout(this)
         buttons.orientation = LinearLayout.HORIZONTAL
         val resetButton = Button(this)
@@ -113,28 +124,26 @@ class Main : AppCompatActivity() {
         deleteButton.setOnClickListener {
             val action: () -> Unit = {
                 cardHolder.removeView(cardView)
-                addictions.remove(key)
+                addictions.remove(addiction)
                 updatePromptVisibility()
             }
-            dialogConfirm("Delete entry \"$key\" ?", action)
+            dialogConfirm("Delete entry \"${addiction.name}\" ?", action)
         }
 
         resetButton.setOnClickListener {
             val action: () -> Unit = {
-                buffer.update(timeSinceInstant(addictions[key]!!.first))
-                addictions[key] = Pair(Instant.now(), addictions[key]!!.second)
-
-                averageOfLastThree.text =
-                    "Recent Average: ${secondsToString(averageFromBuffer(buffer))}"
+                addiction.relapse()
+                average.text =
+                    "Recent Average: ${secondsToString(addiction.averageRelapseDuration)}"
             }
-            dialogConfirm("Reset entry \"$key\" ?", action)
+            dialogConfirm("Reset entry \"${addiction.name}\" ?", action)
         }
 
         val cardLinearLayout = LinearLayout(this)
         cardLinearLayout.orientation = LinearLayout.VERTICAL
         cardLinearLayout.addView(title)
         cardLinearLayout.addView(timeRunning)
-        cardLinearLayout.addView(averageOfLastThree)
+        cardLinearLayout.addView(average)
         buttons.addView(resetButton)
         buttons.addView(deleteButton)
         cardLinearLayout.addView(buttons)
@@ -143,10 +152,10 @@ class Main : AppCompatActivity() {
         val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.postDelayed(object : Runnable {
             override fun run() {
-                if(addictions[key] == null){
+                if (!addictions.contains(addiction)) {
                     return
                 }
-                timeRunning.text = secondsToString(timeSinceInstant(addictions[key]!!.first))
+                timeRunning.text = secondsToString(timeSinceInstant(addiction.lastRelapse))
                 mainHandler.postDelayed(this, 1000L)
             }
         }, 1000L)
@@ -174,32 +183,34 @@ class Main : AppCompatActivity() {
         try {
             InflaterInputStream(cache.inputStream()).use { iis ->
                 ObjectInputStream(iis).use {
-                    addictions.putAll(it.readObject() as HashMap<String, Pair<Instant, CircularBuffer<Long>>>)
+                    addictions.addAll(it.readObject() as ArrayList<Addiction>)
                 }
             }
             for (addiction in addictions) {
-                createNewCard(addiction.key)
+                createNewCard(addiction)
             }
         } catch (e: ClassCastException) {
-            readLegacyCache(cache.inputStream())
+            readCache(cache.inputStream())
         }
     }
 
     @Deprecated(
-        "For old caches without buffers.",
+        "For old caches before the implementation of the Addiction class.",
         ReplaceWith("readCache(FileInputStream)"),
         DeprecationLevel.WARNING
     )
     private fun readLegacyCache(input: InputStream) {
+        val a = HashMap<String, Pair<Instant, CircularBuffer<Long>>>()
         InflaterInputStream(input).use { iis ->
             ObjectInputStream(iis).use {
-                for (i in it.readObject() as HashMap<String, Instant>) {
-                    addictions[i.key] = Pair(i.value, CircularBuffer(3))
+                for (i in it.readObject() as HashMap<String, Pair<Instant, CircularBuffer<Long>>>) {
+                    a[i.key] = i.value
                 }
             }
         }
-        for (addiction in addictions) {
-            createNewCard(addiction.key)
+        for (ad in a) {
+            val addiction = Addiction(ad.key, ad.value.first)
+            createNewCard(addiction)
         }
     }
 
@@ -213,19 +224,6 @@ class Main : AppCompatActivity() {
         }
     }
 
-    private fun secondsToString(given: Long): String {
-        var time = given
-        val s = time % 60
-        time -= s
-        val m = (time % 3600) / 60
-        time -= m * 60
-        val h = (time % 86400) / 3600
-        time -= h * 3600
-        val d = time / 86400
-        return "$d days, $h hours, $m minutes and $s seconds"
-    }
-
-    private fun timeSinceInstant(given: Instant) = Instant.now().epochSecond - given.epochSecond
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -248,22 +246,10 @@ class Main : AppCompatActivity() {
             if (resultCode == RESULT_OK) {
                 val name = data?.extras?.get("name") as String
                 val instant = data.extras?.get("instant") as Instant
-                val buffer = CircularBuffer<Long>(3)
-                addictions[name] = Pair(instant, buffer)
-                createNewCard(name)
+                val addiction = Addiction(name, instant)
+                addictions.add(addiction)
+                createNewCard(addiction)
             }
         }
-    }
-
-    private fun averageFromBuffer(buffer: CircularBuffer<Long>): Long {
-        var num = 0
-        var total: Long = 0
-        for (i in 0..2) {
-            buffer.get(i)?.let {
-                total += it
-                num++
-            }
-        }
-        return if (num != 0) total / num else 0
     }
 }

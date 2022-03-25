@@ -2,8 +2,12 @@ package com.katiearose.sobriety
 
 import java.io.Serializable
 
-
-class CircularBuffer<T>(size: Int) : Serializable {
+@Deprecated(
+    "For old caches before the implementation of the Addiction class.",
+    ReplaceWith("N/A"),
+    DeprecationLevel.WARNING
+)
+internal class CircularBuffer<T>(size: Int) : Serializable {
     private val buffer: ArrayList<T?> = ArrayList(size)
 
     init {
