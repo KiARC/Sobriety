@@ -109,13 +109,11 @@ class Main : AppCompatActivity() {
         resetButton.text = "Reset"
         val deleteButton = Button(this)
         deleteButton.text = "Delete"
-        var deleted = false
 
         deleteButton.setOnClickListener {
             val action: () -> Unit = {
                 cardHolder.removeView(cardView)
                 addictions.remove(key)
-                deleted = true
                 updatePromptVisibility()
             }
             dialogConfirm("Delete entry \"$key\" ?", action)
@@ -145,8 +143,11 @@ class Main : AppCompatActivity() {
         val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.postDelayed(object : Runnable {
             override fun run() {
+                if(addictions[key] == null){
+                    return
+                }
                 timeRunning.text = secondsToString(timeSinceInstant(addictions[key]!!.first))
-                if (!deleted) mainHandler.postDelayed(this, 1000L)
+                mainHandler.postDelayed(this, 1000L)
             }
         }, 1000L)
     }
