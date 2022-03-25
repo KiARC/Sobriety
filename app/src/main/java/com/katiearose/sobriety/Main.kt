@@ -134,7 +134,7 @@ class Main : AppCompatActivity() {
             val action: () -> Unit = {
                 addiction.relapse()
                 average.text =
-                    "Recent Average: ${secondsToString(addiction.averageRelapseDuration)}"
+                    "Average: ${secondsToString(addiction.averageRelapseDuration)}"
             }
             dialogConfirm("Reset entry \"${addiction.name}\" ?", action)
         }
