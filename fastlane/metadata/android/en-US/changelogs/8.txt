@@ -1,0 +1,3 @@
+New Class!
+- A new class was added to better store data
+- Average is now a running average and not just of the last three relapses
