@@ -5,14 +5,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -44,6 +45,7 @@ class Main : AppCompatActivity() {
         fun timeSinceInstant(given: Instant) = Instant.now().epochSecond - given.epochSecond
 
         val addictions = ArrayList<Addiction>()
+        var deleting = false;
     }
 
     private lateinit var addCardButton: FloatingActionButton
@@ -59,7 +61,6 @@ class Main : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         addCardButton = findViewById(R.id.addCardButton)
         addCardButton.setOnClickListener { newCardDialog() }
-//        cardHolder = findViewById(R.id.container)
         prompt = findViewById(R.id.prompt)
         val params = RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -80,8 +81,18 @@ class Main : AppCompatActivity() {
         recyclerAddictions.layoutManager = layoutManager
         recyclerAddictions.adapter = adapterAddictions
 
-
-
+        val mainHandler = Handler(Looper.getMainLooper())
+        mainHandler.postDelayed(object : Runnable {
+            override fun run() {
+                //Skip the time refresh, when a delete was initiated, to not reset delete animation
+                if(!deleting){
+                    adapterAddictions.notifyDataSetChanged()
+                }else{
+                    deleting = false
+                }
+                mainHandler.postDelayed(this, 1000L)
+            }
+        }, 1000L)
     }
 
     fun updatePromptVisibility() {
@@ -161,12 +172,10 @@ class Main : AppCompatActivity() {
         }
     }
 
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         writeCache()
     }
-
 
     /**
      * This gets called once the Create Activity is closed (Necessary to hide the prompt in case
@@ -191,7 +200,7 @@ class Main : AppCompatActivity() {
     }
 }
 
-class AddictionCardAdapter(val activity: Main): RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>(){
+class AddictionCardAdapter(private val activity: Main): RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>(){
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -215,6 +224,7 @@ class AddictionCardAdapter(val activity: Main): RecyclerView.Adapter<AddictionCa
                 Main.addictions.remove(addiction)
                 activity.updatePromptVisibility()
                 notifyItemRemoved(position)
+                Main.deleting = true
             }
             activity.dialogConfirm("Delete entry \"${addiction.name}\" ?", action)
         }
@@ -226,22 +236,6 @@ class AddictionCardAdapter(val activity: Main): RecyclerView.Adapter<AddictionCa
             }
             activity.dialogConfirm("Reset entry \"${addiction.name}\" ?", action)
         }
-
-        holder.cardView.setOnClickListener {
-            notifyItemChanged(position)
-        }
-
-        val mainHandler = Handler(Looper.getMainLooper())
-        mainHandler.postDelayed(object : Runnable {
-            override fun run() {
-                if (!Main.addictions.contains(addiction)) {
-                    return
-                }
-                holder.textViewTime.text =
-                    Main.secondsToString(Main.timeSinceInstant(addiction.lastRelapse))
-                mainHandler.postDelayed(this, 1000L)
-            }
-        }, 1000L)
     }
 
     override fun getItemCount() = Main.addictions.size
@@ -252,6 +246,5 @@ class AddictionCardAdapter(val activity: Main): RecyclerView.Adapter<AddictionCa
         val textViewAverage: TextView = itemView.findViewById(R.id.textViewAverage)
         val buttonDelete: ImageView = itemView.findViewById(R.id.imageDelete)
         val buttonReset: ImageView = itemView.findViewById(R.id.imageReset)
-        val cardView: CardView = itemView.findViewById(R.id.cardViewAddiction)
     }
 }
