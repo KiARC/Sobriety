@@ -1,5 +1,6 @@
 package com.katiearose.sobriety
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -59,32 +59,33 @@ class Main : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         addCardButton = findViewById(R.id.addCardButton)
         addCardButton.setOnClickListener { newCardDialog() }
         prompt = findViewById(R.id.prompt)
-        val params = RelativeLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        params.setMargins(16, 16, 16, 16)
+
         try {
             this.openFileInput("Sobriety.cache").use {
                 readCache(it)
             }
         } catch (e: FileNotFoundException) {
         }
+
         updatePromptVisibility()
 
+        //Create adapter, and layout manager for recyclerview and attach them
         adapterAddictions = AddictionCardAdapter(this)
         val recyclerAddictions = findViewById<RecyclerView>(R.id.recyclerAddictions)
         val layoutManager = LinearLayoutManager(this)
         recyclerAddictions.layoutManager = layoutManager
         recyclerAddictions.adapter = adapterAddictions
 
+        //main handler to refresh all cards in sync
         val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.postDelayed(object : Runnable {
+            @SuppressLint("NotifyDataSetChanged")
             override fun run() {
-                //Skip the time refresh, when a delete was initiated, to not reset delete animation
+                //Skip the refresh, when a delete was initiated < 1 second ago, to not reset delete animation
                 if(!deleting){
                     adapterAddictions.notifyDataSetChanged()
                 }else{
