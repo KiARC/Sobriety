@@ -1,0 +1,3 @@
+Bug fixes
+- App no longer crashes when reading old caches
+- Caches older than the v3.x.x format are ignored
