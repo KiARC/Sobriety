@@ -193,19 +193,23 @@ class Main : AppCompatActivity() {
             readLegacyCache(cache.inputStream())
         }
     }
-    
+
     private fun readLegacyCache(input: InputStream) {
-        val a = HashMap<String, Pair<Instant, CircularBuffer<Long>>>()
-        InflaterInputStream(input).use { iis ->
-            ObjectInputStream(iis).use {
-                for (i in it.readObject() as HashMap<String, Pair<Instant, CircularBuffer<Long>>>) {
-                    a[i.key] = i.value
+        try {
+            val a = HashMap<String, Pair<Instant, CircularBuffer<Long>>>()
+            InflaterInputStream(input).use { iis ->
+                ObjectInputStream(iis).use {
+                    for (i in it.readObject() as HashMap<String, Pair<Instant, CircularBuffer<Long>>>) {
+                        a[i.key] = i.value
+                    }
                 }
             }
-        }
-        for (ad in a) {
-            val addiction = Addiction(ad.key, ad.value.first)
-            createNewCard(addiction)
+            for (ad in a) {
+                val addiction = Addiction(ad.key, ad.value.first)
+                createNewCard(addiction)
+            }
+        } catch (e: Exception) {
+            //Do nothing, i.e. if the cache is older than the previous version just ignore it, supporting every previous version would take more code than it's worth.
         }
     }
 
