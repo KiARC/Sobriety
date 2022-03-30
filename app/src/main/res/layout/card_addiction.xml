@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_margin="10dp"
+    app:cardCornerRadius="8dp"
+    android:elevation="30dp"
+    android:id="@+id/cardViewAddiction"
+    app:cardBackgroundColor="?attr/cardColor"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textViewAddictionName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ADDICTION NAME"
+            android:textColor="?attr/colorTextOnCard"
+            android:textSize="@dimen/text_size_medium"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 days 5 hours 20 minutes 10 seconds"
+            android:textColor="?attr/colorTextOnCard"
+            android:textSize="@dimen/text_size_small"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewAddictionName" />
+
+        <TextView
+            android:id="@+id/textViewAverage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Average: 3d 20h 10m 5s"
+            android:visibility="visible"
+            android:textColor="?attr/colorTextOnCard"
+            android:textSize="@dimen/text_size_small"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTime" />
+
+        <ImageView
+            android:id="@+id/imageDelete"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="5dp"
+            app:tint="?attr/colorIconOnCard"
+            android:src="@drawable/ic_baseline_delete_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewAverage"/>
+
+        <ImageView
+            android:id="@+id/imageReset"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/ic_reset"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/imageDelete"
+            app:tint="?attr/colorIconOnCard" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
