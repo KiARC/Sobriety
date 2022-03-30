@@ -190,15 +190,10 @@ class Main : AppCompatActivity() {
                 createNewCard(addiction)
             }
         } catch (e: ClassCastException) {
-            readCache(cache.inputStream())
+            readLegacyCache(cache.inputStream())
         }
     }
-
-    @Deprecated(
-        "For old caches before the implementation of the Addiction class.",
-        ReplaceWith("readCache(FileInputStream)"),
-        DeprecationLevel.WARNING
-    )
+    
     private fun readLegacyCache(input: InputStream) {
         val a = HashMap<String, Pair<Instant, CircularBuffer<Long>>>()
         InflaterInputStream(input).use { iis ->
