@@ -66,7 +66,7 @@ class Main : AppCompatActivity() {
         updatePromptVisibility()
 
         //Create adapter, and layout manager for recyclerview and attach them
-        adapterAddictions = AddictionCardAdapter(this)
+        adapterAddictions = AddictionCardAdapter(this, cacheHandler)
         val recyclerAddictions = findViewById<RecyclerView>(R.id.recyclerAddictions)
         val layoutManager = LinearLayoutManager(this)
         recyclerAddictions.layoutManager = layoutManager

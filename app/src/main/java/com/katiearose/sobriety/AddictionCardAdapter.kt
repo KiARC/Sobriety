@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class AddictionCardAdapter(private val activity: Main): RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>(){
+class AddictionCardAdapter(private val activity: Main, private val cacheHandler: CacheHandler): RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>(){
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -32,6 +32,7 @@ class AddictionCardAdapter(private val activity: Main): RecyclerView.Adapter<Add
                 activity.updatePromptVisibility()
                 notifyItemRemoved(position)
                 Main.deleting = true
+                cacheHandler.writeCache()
             }
             activity.dialogConfirm("Delete entry \"${addiction.name}\" ?", action)
         }
@@ -40,6 +41,7 @@ class AddictionCardAdapter(private val activity: Main): RecyclerView.Adapter<Add
             val action: () -> Unit = {
                 addiction.relapse()
                 notifyItemChanged(position)
+                cacheHandler.writeCache()
             }
             activity.dialogConfirm("Log relapse of \"${addiction.name}\" ?", action)
         }
