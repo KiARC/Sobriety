@@ -1,6 +1,5 @@
 package com.katiearose.sobriety
 
-import AddictionCardAdapter
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent

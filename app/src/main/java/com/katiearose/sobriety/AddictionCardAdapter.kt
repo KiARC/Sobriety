@@ -1,11 +1,11 @@
+package com.katiearose.sobriety
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.katiearose.sobriety.Main
-import com.katiearose.sobriety.R
 
 class AddictionCardAdapter(private val activity: Main): RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>(){
     override fun onCreateViewHolder(
