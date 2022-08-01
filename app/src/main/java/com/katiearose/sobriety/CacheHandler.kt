@@ -42,6 +42,7 @@ class CacheHandler(private val activity: Main) {
         }
         return result
     }
+
     fun writeCache() {
         activity.openFileOutput("Sobriety.cache", AppCompatActivity.MODE_PRIVATE).use { fos ->
             DeflaterOutputStream(fos, true).use { dos ->

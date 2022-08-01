@@ -37,7 +37,7 @@ class Main : AppCompatActivity() {
         fun timeSinceInstant(given: Instant) = Instant.now().epochSecond - given.epochSecond
 
         val addictions = ArrayList<Addiction>()
-        var deleting = false;
+        var deleting = false
     }
 
     private lateinit var addCardButton: FloatingActionButton
@@ -77,9 +77,9 @@ class Main : AppCompatActivity() {
             @SuppressLint("NotifyDataSetChanged")
             override fun run() {
                 //Skip the refresh, when a delete was initiated < 1 second ago, to not reset delete animation
-                if(!deleting){
+                if (!deleting) {
                     adapterAddictions.notifyDataSetChanged()
-                }else{
+                } else {
                     cacheHandler.writeCache()
                     deleting = false
                 }

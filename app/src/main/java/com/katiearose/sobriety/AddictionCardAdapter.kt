@@ -7,12 +7,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class AddictionCardAdapter(private val activity: Main, private val cacheHandler: CacheHandler): RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>(){
+class AddictionCardAdapter(private val activity: Main, private val cacheHandler: CacheHandler) :
+    RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): AddictionCardViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.card_addiction, parent, false)
+        val itemView =
+            LayoutInflater.from(parent.context).inflate(R.layout.card_addiction, parent, false)
         return AddictionCardViewHolder(itemView)
     }
 
@@ -23,8 +25,10 @@ class AddictionCardAdapter(private val activity: Main, private val cacheHandler:
         val addiction = Main.addictions[position]
 
         holder.textViewName.text = addiction.name
-        holder.textViewTime.text = Main.secondsToString(Main.timeSinceInstant(addiction.lastRelapse))
-        holder.textViewAverage.text = "Recent Average: ${Main.secondsToString(addiction.averageRelapseDuration)}"
+        holder.textViewTime.text =
+            Main.secondsToString(Main.timeSinceInstant(addiction.lastRelapse))
+        holder.textViewAverage.text =
+            "Recent Average: ${Main.secondsToString(addiction.averageRelapseDuration)}"
 
         holder.buttonDelete.setOnClickListener {
             val action: () -> Unit = {
@@ -49,7 +53,7 @@ class AddictionCardAdapter(private val activity: Main, private val cacheHandler:
 
     override fun getItemCount() = Main.addictions.size
 
-    class AddictionCardViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+    class AddictionCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textViewName: TextView = itemView.findViewById(R.id.textViewAddictionName)
         val textViewTime: TextView = itemView.findViewById(R.id.textViewTime)
         val textViewAverage: TextView = itemView.findViewById(R.id.textViewAverage)
