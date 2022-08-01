@@ -24,7 +24,7 @@ class AddictionCardAdapter(private val activity: Main): RecyclerView.Adapter<Add
 
         holder.textViewName.text = addiction.name
         holder.textViewTime.text = Main.secondsToString(Main.timeSinceInstant(addiction.lastRelapse))
-        holder.textViewAverage.text = "Average: ${Main.secondsToString(addiction.averageRelapseDuration)}"
+        holder.textViewAverage.text = "Recent Average: ${Main.secondsToString(addiction.averageRelapseDuration)}"
 
         holder.buttonDelete.setOnClickListener {
             val action: () -> Unit = {
@@ -41,7 +41,7 @@ class AddictionCardAdapter(private val activity: Main): RecyclerView.Adapter<Add
                 addiction.relapse()
                 notifyItemChanged(position)
             }
-            activity.dialogConfirm("Reset entry \"${addiction.name}\" ?", action)
+            activity.dialogConfirm("Log relapse of \"${addiction.name}\" ?", action)
         }
     }
 
