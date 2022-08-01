@@ -15,6 +15,6 @@ class Addiction(val name: String, var lastRelapse: Instant) : Serializable {
     }
 
     private fun calculateAverageRelapseDuration(): Long {
-        return relapses.getAll().sumOf { it!! } / 3L
+        return relapses.getAll().filterNotNull().sumOf { it } / 3L
     }
 }
