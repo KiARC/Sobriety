@@ -123,11 +123,6 @@ class Main : AppCompatActivity() {
         }
     }
 
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        super.onSaveInstanceState(outState)
-//        writeCache()
-//    }
-
     /**
      * This gets called once the Create Activity is closed (Necessary to hide the prompt in case
      * a first addiction was added to the list.
