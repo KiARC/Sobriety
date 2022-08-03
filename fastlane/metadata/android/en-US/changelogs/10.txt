@@ -1,0 +1,6 @@
+Glorious Icons
+  - CircularBuffers + last-3 averages are back, because I realized how much more useful a last-3 average is
+  - New RecyclerView implementation courtesy of JakeGonder, which should improve performance
+  - Updated caching system that is much more reliable
+  - Code has been refactored to be more understandable
+  - UI updates, also courtesy of JakeGonder!

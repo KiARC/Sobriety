@@ -4,15 +4,17 @@ import java.io.Serializable
 import java.time.Instant
 
 class Addiction(val name: String, var lastRelapse: Instant) : Serializable {
-    var averageRelapseDuration = 0L
-    private var relapses = 0
+    var averageRelapseDuration = Main.timeSinceInstant(lastRelapse)
+        private set
+    private var relapses = CircularBuffer<Long>(3)
 
     fun relapse() {
-        relapses++
-        averageRelapseDuration = calculateAverageRelapseDuration(Main.timeSinceInstant(lastRelapse))
+        relapses.update(Main.timeSinceInstant(lastRelapse))
+        averageRelapseDuration = calculateAverageRelapseDuration()
         lastRelapse = Instant.now()
     }
 
-    private fun calculateAverageRelapseDuration(new: Long): Long =
-        ((averageRelapseDuration * (relapses - 1)) + new) / relapses
+    private fun calculateAverageRelapseDuration(): Long {
+        return relapses.getAll().filterNotNull().sumOf { it } / 3L
+    }
 }

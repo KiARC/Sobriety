@@ -6,10 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -18,12 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.FileNotFoundException
-import java.io.InputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
 import java.time.Instant
-import java.util.zip.DeflaterOutputStream
-import java.util.zip.InflaterInputStream
 
 
 class Main : AppCompatActivity() {
@@ -45,7 +37,7 @@ class Main : AppCompatActivity() {
         fun timeSinceInstant(given: Instant) = Instant.now().epochSecond - given.epochSecond
 
         val addictions = ArrayList<Addiction>()
-        var deleting = false;
+        var deleting = false
     }
 
     private lateinit var addCardButton: FloatingActionButton
@@ -53,7 +45,7 @@ class Main : AppCompatActivity() {
     private lateinit var prompt: TextView
 
     private lateinit var adapterAddictions: AddictionCardAdapter
-
+    private lateinit var cacheHandler: CacheHandler
     private val createCardRequestCode = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,10 +55,10 @@ class Main : AppCompatActivity() {
         addCardButton = findViewById(R.id.addCardButton)
         addCardButton.setOnClickListener { newCardDialog() }
         prompt = findViewById(R.id.prompt)
-
+        cacheHandler = CacheHandler(this)
         try {
             this.openFileInput("Sobriety.cache").use {
-                readCache(it)
+                addictions.addAll(cacheHandler.readCache(it))
             }
         } catch (e: FileNotFoundException) {
         }
@@ -74,21 +66,21 @@ class Main : AppCompatActivity() {
         updatePromptVisibility()
 
         //Create adapter, and layout manager for recyclerview and attach them
-        adapterAddictions = AddictionCardAdapter(this)
+        adapterAddictions = AddictionCardAdapter(this, cacheHandler)
         val recyclerAddictions = findViewById<RecyclerView>(R.id.recyclerAddictions)
         val layoutManager = LinearLayoutManager(this)
         recyclerAddictions.layoutManager = layoutManager
         recyclerAddictions.adapter = adapterAddictions
-
         //main handler to refresh all cards in sync
         val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.postDelayed(object : Runnable {
             @SuppressLint("NotifyDataSetChanged")
             override fun run() {
                 //Skip the refresh, when a delete was initiated < 1 second ago, to not reset delete animation
-                if(!deleting){
+                if (!deleting) {
                     adapterAddictions.notifyDataSetChanged()
-                }else{
+                } else {
+                    cacheHandler.writeCache()
                     deleting = false
                 }
                 mainHandler.postDelayed(this, 1000L)
@@ -131,52 +123,6 @@ class Main : AppCompatActivity() {
         }
     }
 
-    private fun readCache(input: InputStream) {
-        val cache = input.readBytes()
-        try {
-            InflaterInputStream(cache.inputStream()).use { iis ->
-                ObjectInputStream(iis).use {
-                    addictions.addAll(it.readObject() as ArrayList<Addiction>)
-                }
-            }
-        } catch (e: ClassCastException) {
-            readLegacyCache(cache.inputStream())
-        }
-    }
-
-    private fun readLegacyCache(input: InputStream) {
-        try {
-            val a = HashMap<String, Pair<Instant, CircularBuffer<Long>>>()
-            InflaterInputStream(input).use { iis ->
-                ObjectInputStream(iis).use {
-                    for (i in it.readObject() as HashMap<String, Pair<Instant, CircularBuffer<Long>>>) {
-                        a[i.key] = i.value
-                    }
-                }
-            }
-            for (ad in a) {
-                val addiction = Addiction(ad.key, ad.value.first)
-            }
-        } catch (e: Exception) {
-            //Do nothing, i.e. if the cache is older than the previous version just ignore it, supporting every previous version would take more code than it's worth.
-        }
-    }
-
-    private fun writeCache() {
-        this.openFileOutput("Sobriety.cache", MODE_PRIVATE).use { fos ->
-            DeflaterOutputStream(fos, true).use { dos ->
-                ObjectOutputStream(dos).use {
-                    it.writeObject(addictions)
-                }
-            }
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        writeCache()
-    }
-
     /**
      * This gets called once the Create Activity is closed (Necessary to hide the prompt in case
      * a first addiction was added to the list.
@@ -194,57 +140,9 @@ class Main : AppCompatActivity() {
                 val instant = data.extras?.get("instant") as Instant
                 val addiction = Addiction(name, instant)
                 addictions.add(addiction)
+                cacheHandler.writeCache()
                 adapterAddictions.notifyDataSetChanged()
             }
         }
-    }
-}
-
-class AddictionCardAdapter(private val activity: Main): RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>(){
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): AddictionCardViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.card_addiction, parent, false)
-        return AddictionCardViewHolder(itemView)
-    }
-
-    override fun onBindViewHolder(
-        holder: AddictionCardViewHolder,
-        position: Int
-    ) {
-        val addiction = Main.addictions[position]
-
-        holder.textViewName.text = addiction.name
-        holder.textViewTime.text = Main.secondsToString(Main.timeSinceInstant(addiction.lastRelapse))
-        holder.textViewAverage.text = "Average: ${Main.secondsToString(addiction.averageRelapseDuration)}"
-
-        holder.buttonDelete.setOnClickListener {
-            val action: () -> Unit = {
-                Main.addictions.remove(addiction)
-                activity.updatePromptVisibility()
-                notifyItemRemoved(position)
-                Main.deleting = true
-            }
-            activity.dialogConfirm("Delete entry \"${addiction.name}\" ?", action)
-        }
-
-        holder.buttonReset.setOnClickListener {
-            val action: () -> Unit = {
-                addiction.relapse()
-                notifyItemChanged(position)
-            }
-            activity.dialogConfirm("Reset entry \"${addiction.name}\" ?", action)
-        }
-    }
-
-    override fun getItemCount() = Main.addictions.size
-
-    class AddictionCardViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        val textViewName: TextView = itemView.findViewById(R.id.textViewAddictionName)
-        val textViewTime: TextView = itemView.findViewById(R.id.textViewTime)
-        val textViewAverage: TextView = itemView.findViewById(R.id.textViewAverage)
-        val buttonDelete: ImageView = itemView.findViewById(R.id.imageDelete)
-        val buttonReset: ImageView = itemView.findViewById(R.id.imageReset)
     }
 }
