@@ -13,20 +13,32 @@ class CacheHandler(private val activity: Main) {
         val cache = input.readBytes()
         try {
             InflaterInputStream(cache.inputStream()).use { iis ->
+                ObjectInputStream(iis).use { ois ->
+                    val cacheData = ois.readObject() as ArrayList<HashMap<Int, Any>>
+                    cacheData.forEach {
+                        result.add(Addiction.fromCacheable(it))
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            InflaterInputStream(cache.inputStream()).use { iis ->
                 ObjectInputStream(iis).use {
                     result.addAll(it.readObject() as ArrayList<Addiction>)
                 }
             }
-        } catch (e: Exception) {
         }
         return result
     }
 
     fun writeCache() {
+        val output = ArrayList<HashMap<Int, Any>>()
+        Main.addictions.forEach {
+            output.add(it.toCacheable())
+        }
         activity.openFileOutput("Sobriety.cache", AppCompatActivity.MODE_PRIVATE).use { fos ->
             DeflaterOutputStream(fos, true).use { dos ->
                 ObjectOutputStream(dos).use {
-                    it.writeObject(Main.addictions)
+                    it.writeObject(output)
                 }
             }
         }
