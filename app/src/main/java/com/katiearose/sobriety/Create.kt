@@ -65,6 +65,7 @@ class Create : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Pick Starting Date")
         val input = DatePicker(this)
+        input.maxDate = System.currentTimeMillis()
         input.updateDate(startDateTime.year, startDateTime.monthValue - 1, startDateTime.dayOfMonth)
         builder.setView(input)
         builder.setPositiveButton(
