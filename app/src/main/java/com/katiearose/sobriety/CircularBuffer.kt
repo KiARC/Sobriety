@@ -2,7 +2,7 @@ package com.katiearose.sobriety
 
 import java.io.Serializable
 
-internal class CircularBuffer<T>(size: Int) : Serializable {
+class CircularBuffer<T>(size: Int) : Serializable {
     private val buffer: ArrayList<T?> = ArrayList(size)
 
     init {
