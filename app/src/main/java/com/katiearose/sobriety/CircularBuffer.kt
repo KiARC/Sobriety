@@ -2,7 +2,7 @@ package com.katiearose.sobriety
 
 import java.io.Serializable
 
-internal class CircularBuffer<T>(size: Int) : Serializable {
+class CircularBuffer<T>(size: Int) : Serializable {
     private val buffer: ArrayList<T?> = ArrayList(size)
 
     init {
@@ -12,8 +12,9 @@ internal class CircularBuffer<T>(size: Int) : Serializable {
     }
 
     fun update(obj: T) {
-        buffer[2] = buffer[1]
-        buffer[1] = buffer[0]
+        for (i in buffer.indices.reversed()) {
+            if (i > 0) buffer[i] = buffer[i - 1]
+        }
         buffer[0] = obj
     }
 

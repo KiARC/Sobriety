@@ -1,7 +1,9 @@
 name: Android CI
 
 on:
-  [push, pull_request]
+  push:
+  pull_request:
+    types: [opened, reopened]
 
 jobs:
   fastlane-validation:

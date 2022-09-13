@@ -1,0 +1,5 @@
+5.2.1 Patches and tweaks
+  - Made the app usable on API versions as old as Oreo
+  - Updated gradle
+  - Fixed up stupid code, no bugs though
+  - New cache format (Unprecedented, I know /s) but this time it should be able to be used easily even if features get added in the future
