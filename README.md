@@ -1,10 +1,14 @@
-<a href="https://apt.izzysoft.de/fdroid/index/apk/com.katiearose.sobriety"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="200em"/></a>
-
 # Sobriety
 
 ## What Is Sobriety?
 
 Sobriety is a simple and minimal app to track how long you've been sober from anything you want. It'll tell you how long it's been since you logged a relapse, and the average time between your three most recent relapses, so that you have more input with which to work on recovery. Sobriety has no trackers, and runs completely on your device, and every feature is completely free.
+
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/com.katiearose.sobriety/)
+
+or get the APK from the [Releases section](https://github.com/KiARC/Sobriety/releases/latest).
 
 ## Why Does Sobriety Exist?
 
