@@ -56,7 +56,8 @@ class Main : AppCompatActivity() {
         addCardButton.setOnClickListener { newCardDialog() }
         prompt = findViewById(R.id.prompt)
         cacheHandler = CacheHandler(this)
-        try {
+        if (addictions.isEmpty())
+            try {
             this.openFileInput("Sobriety.cache").use {
                 addictions.addAll(cacheHandler.readCache(it))
             }
