@@ -1,0 +1,4 @@
+Lots of patches
+- Fixed future dates being able to be selected
+- Downgraded to JDK11 for compatibility with more devices
+- Patched duplication bug
