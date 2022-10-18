@@ -16,22 +16,50 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.FileNotFoundException
 import java.time.Instant
+import java.time.Month
+import java.time.ZoneId
+import java.util.*
 
 
 class Main : AppCompatActivity() {
 
     companion object {
         const val EXTRA_NAMES = "com.katiearose.sobriety.EXTRA_NAMES"
+        private const val MINUTE = 60
+        private const val HOUR = 60 * 60
+        private const val DAY = 60 * 60 * 24
+        private const val WEEK = 60 * 60 * 24 * 7
         fun secondsToString(given: Long): String {
             var time = given
-            val s = time % 60
+            val localDate = Date(given * 1000).toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+            val daysInYear = if (localDate.isLeapYear) 366 * DAY else 365 * DAY
+            val daysInMonth = when (localDate.month) {
+                Month.JANUARY, Month.MARCH, Month.MAY, Month.JULY, Month.AUGUST, Month.OCTOBER, Month.DECEMBER -> 31 * DAY
+                Month.FEBRUARY -> if (localDate.isLeapYear) 29 * DAY else 28 * DAY
+                else -> 30 * DAY
+            }
+            val s = time % MINUTE
             time -= s
-            val m = (time % 3600) / 60
-            time -= m * 60
-            val h = (time % 86400) / 3600
-            time -= h * 3600
-            val d = time / 86400
-            return "$d days, $h hours, $m minutes and $s seconds"
+            val m = (time % HOUR) / MINUTE
+            time -= m * MINUTE
+            val h = (time % DAY) / HOUR
+            time -= h * HOUR
+            val d = (time % WEEK) / DAY
+            time -= d * DAY
+            val w = (time % daysInMonth) / WEEK
+            time -= w * WEEK
+            val mo = (time % daysInYear) / daysInMonth
+            time -= mo * daysInMonth
+            val y = time / daysInYear
+            val stringBuilder = StringBuilder()
+            if (y != 0L) stringBuilder.append("$y years, ")
+            if (mo != 0L) stringBuilder.append("$mo months, ")
+            if (w != 0L) stringBuilder.append("$w weeks, ")
+            if (d != 0L) stringBuilder.append("$d days, ")
+            if (h != 0L) stringBuilder.append("$h hours, ")
+            if (m != 0L) stringBuilder.append("$m minutes, ")
+            stringBuilder.append("and $s seconds")
+            return stringBuilder.toString()
         }
 
         fun timeSinceInstant(given: Instant) = Instant.now().epochSecond - given.epochSecond
