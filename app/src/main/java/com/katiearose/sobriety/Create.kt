@@ -3,12 +3,11 @@ package com.katiearose.sobriety
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
@@ -20,6 +19,7 @@ class Create : AppCompatActivity() {
     private lateinit var createButton: Button
     private lateinit var datePickerButton: ConstraintLayout
     private lateinit var timePickerButton: ConstraintLayout
+    private lateinit var textInputLayout: TextInputLayout
     private lateinit var nameEntry: EditText
     private lateinit var dateView: TextView
     private lateinit var timeView: TextView
@@ -37,6 +37,7 @@ class Create : AppCompatActivity() {
         datePickerButton = findViewById(R.id.clPickDate)
         timePickerButton = findViewById(R.id.clPickTime)
 
+        textInputLayout = findViewById(R.id.til)
         nameEntry = findViewById(R.id.etTitle)
         dateView = findViewById(R.id.tvDate)
         timeView = findViewById(R.id.tvTime)
@@ -110,17 +111,11 @@ class Create : AppCompatActivity() {
         val nameExists = names.contains(name)
 
         //Don't allow creating without a name, or with a duplicate name
-        if (name == "" || nameExists) {
-            if (nameExists) {
-                Snackbar.make(
-                    findViewById(R.id.clCreate),
-                    "Can't create duplicate entries",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            }
-            val animationShake =
+        if (name.isEmpty() || nameExists) {
+            textInputLayout.error = if (name.isEmpty()) "Name is empty" else "Can't create duplicate entries"
+            /*val animationShake =
                 AnimationUtils.loadAnimation(this, R.anim.shake)
-            nameEntry.startAnimation(animationShake)
+            nameEntry.startAnimation(animationShake)*/
             return
         }
 
