@@ -7,12 +7,18 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class Create : AppCompatActivity() {
@@ -63,26 +69,23 @@ class Create : AppCompatActivity() {
     }
 
     private fun pickDate() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Pick Starting Date")
-        val input = DatePicker(this)
-        input.maxDate = System.currentTimeMillis()
-        input.updateDate(startDateTime.year, startDateTime.monthValue - 1, startDateTime.dayOfMonth)
-        builder.setView(input)
-        builder.setPositiveButton(
-            "OK"
-        ) { _, _ ->
-            startDateTime = ZonedDateTime.of(
-                LocalDate.of(input.year, input.month + 1, input.dayOfMonth),
-                startDateTime.toLocalTime(),
-                ZoneId.systemDefault()
-            )
-            dateView.text = startDateTime.toLocalDate().toString()
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Pick Starting Date")
+            .setCalendarConstraints(CalendarConstraints.Builder().setEnd(System.currentTimeMillis()).build())
+            .build()
+        datePicker.addOnPositiveButtonClickListener {
+            if (it > System.currentTimeMillis())
+                Snackbar.make(findViewById(R.id.clCreate), "You can't select a future date", LENGTH_SHORT).show()
+            else {
+                startDateTime = ZonedDateTime.of(
+                    Date(it).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                    startDateTime.toLocalTime(),
+                    ZoneId.systemDefault()
+                )
+                dateView.text = startDateTime.toLocalDate().toString()
+            }
         }
-        builder.setNegativeButton(
-            "Cancel"
-        ) { dialog, _ -> dialog.cancel() }
-        builder.show()
+        datePicker.show(supportFragmentManager, null)
     }
 
     private fun pickTime() {
