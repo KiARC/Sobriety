@@ -51,7 +51,8 @@ class Main : AppCompatActivity() {
             if (d != 0L) stringBuilder.append("$d days, ")
             if (h != 0L) stringBuilder.append("$h hours, ")
             if (m != 0L) stringBuilder.append("$m minutes, ")
-            stringBuilder.append("and $s seconds")
+            if (!(y == 0L && mo == 0L && w == 0L && d == 0L && h == 0L && m == 0L)) stringBuilder.append("and ")
+            stringBuilder.append("$s seconds")
             return stringBuilder.toString()
         }
 
