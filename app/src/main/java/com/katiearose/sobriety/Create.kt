@@ -89,14 +89,14 @@ class Create : AppCompatActivity() {
     }
 
     private fun pickTime() {
-        val now = ZonedDateTime.now()
+        val isToday = startDateTime.toLocalDate() == ZonedDateTime.now().toLocalDate()
         val timePicker = MaterialTimePicker.Builder()
             .setTitleText("Pick Starting Time")
-            .setHour(now.hour)
-            .setMinute(now.minute)
+            .setHour(ZonedDateTime.now().hour)
+            .setMinute(ZonedDateTime.now().minute)
             .build()
         timePicker.addOnPositiveButtonClickListener {
-            if (timePicker.hour > now.hour || timePicker.minute > now.minute)
+            if ((timePicker.hour > startDateTime.hour || timePicker.minute > startDateTime.minute) && isToday)
                 Snackbar.make(findViewById(R.id.clCreate), "You can't select a future time", LENGTH_SHORT).show()
             else {
                 startDateTime = ZonedDateTime.of(
