@@ -16,8 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.FileNotFoundException
 import java.time.Instant
-import java.time.Month
-import java.time.ZoneId
 import java.util.*
 
 
@@ -26,18 +24,13 @@ class Main : AppCompatActivity() {
     companion object {
         const val EXTRA_NAMES = "com.katiearose.sobriety.EXTRA_NAMES"
         private const val MINUTE = 60
-        private const val HOUR = 60 * 60
-        private const val DAY = 60 * 60 * 24
-        private const val WEEK = 60 * 60 * 24 * 7
+        private const val HOUR = MINUTE * 60
+        private const val DAY = HOUR * 24
+        private const val WEEK = DAY * 7
+        private const val MONTH = DAY * 31
+        private const val YEAR = MONTH * 12
         fun secondsToString(given: Long): String {
             var time = given
-            val localDate = Date(given * 1000).toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-            val daysInYear = if (localDate.isLeapYear) 366 * DAY else 365 * DAY
-            val daysInMonth = when (localDate.month) {
-                Month.JANUARY, Month.MARCH, Month.MAY, Month.JULY, Month.AUGUST, Month.OCTOBER, Month.DECEMBER -> 31 * DAY
-                Month.FEBRUARY -> if (localDate.isLeapYear) 29 * DAY else 28 * DAY
-                else -> 30 * DAY
-            }
             val s = time % MINUTE
             time -= s
             val m = (time % HOUR) / MINUTE
@@ -46,11 +39,11 @@ class Main : AppCompatActivity() {
             time -= h * HOUR
             val d = (time % WEEK) / DAY
             time -= d * DAY
-            val w = (time % daysInMonth) / WEEK
+            val w = (time % MONTH) / WEEK
             time -= w * WEEK
-            val mo = (time % daysInYear) / daysInMonth
-            time -= mo * daysInMonth
-            val y = time / daysInYear
+            val mo = (time % YEAR) / MONTH
+            time -= mo * MONTH
+            val y = time / YEAR
             val stringBuilder = StringBuilder()
             if (y != 0L) stringBuilder.append("$y years, ")
             if (mo != 0L) stringBuilder.append("$mo months, ")
