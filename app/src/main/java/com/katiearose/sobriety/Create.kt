@@ -3,8 +3,9 @@ package com.katiearose.sobriety
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.widget.*
-import androidx.appcompat.app.AlertDialog
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.datepicker.CalendarConstraints
@@ -12,13 +13,12 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
-import java.time.LocalDate
+import com.google.android.material.timepicker.MaterialTimePicker
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class Create : AppCompatActivity() {
@@ -89,24 +89,25 @@ class Create : AppCompatActivity() {
     }
 
     private fun pickTime() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Pick Starting Time")
-        val input = TimePicker(this)
-        builder.setView(input)
-        builder.setPositiveButton(
-            "OK"
-        ) { _, _ ->
-            if (input.validateInput()) startDateTime = ZonedDateTime.of(
-                startDateTime.toLocalDate(),
-                LocalTime.of(input.hour, input.minute),
-                ZoneId.systemDefault()
-            )
-            timeView.text = startDateTime.toLocalTime().toString()
+        val now = ZonedDateTime.now()
+        val timePicker = MaterialTimePicker.Builder()
+            .setTitleText("Pick Starting Time")
+            .setHour(now.hour)
+            .setMinute(now.minute)
+            .build()
+        timePicker.addOnPositiveButtonClickListener {
+            if (timePicker.hour > now.hour || timePicker.minute > now.minute)
+                Snackbar.make(findViewById(R.id.clCreate), "You can't select a future time", LENGTH_SHORT).show()
+            else {
+                startDateTime = ZonedDateTime.of(
+                    startDateTime.toLocalDate(),
+                    LocalTime.of(timePicker.hour, timePicker.minute),
+                    ZoneId.systemDefault()
+                )
+                timeView.text = startDateTime.toLocalTime().toString()
+            }
         }
-        builder.setNegativeButton(
-            "Cancel"
-        ) { dialog, _ -> dialog.cancel() }
-        builder.show()
+        timePicker.show(supportFragmentManager, null)
     }
 
     private fun create() {
