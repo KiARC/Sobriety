@@ -96,8 +96,8 @@ class Create : AppCompatActivity() {
             .setMinute(ZonedDateTime.now().minute)
             .build()
         timePicker.addOnPositiveButtonClickListener {
-            if (timePicker.hour > ZonedDateTime.now().hour ||
-                (timePicker.hour == ZonedDateTime.now().hour && timePicker.minute > ZonedDateTime.now().minute) &&
+            if ((timePicker.hour > ZonedDateTime.now().hour ||
+                (timePicker.hour == ZonedDateTime.now().hour && timePicker.minute > ZonedDateTime.now().minute)) &&
                 isToday)
                 Snackbar.make(findViewById(R.id.clCreate), "You can't select a future time", LENGTH_SHORT).show()
             else {
