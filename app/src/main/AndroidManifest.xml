@@ -16,8 +16,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activities.Main"
-            android:exported="true"
-            android:label="@string/addictions">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

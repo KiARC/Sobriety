@@ -2,6 +2,7 @@ package com.sixtyninefourtwenty.imdefinitelysober
 
 import com.sixtyninefourtwenty.imdefinitelysober.activities.Main
 import com.sixtyninefourtwenty.imdefinitelysober.internal.CircularBuffer
+import com.sixtyninefourtwenty.imdefinitelysober.utils.secondsFromNow
 import java.io.Serializable
 import java.time.Instant
 
@@ -10,11 +11,11 @@ class Addiction(
     var lastRelapse: Instant,
     var relapses: CircularBuffer<Long> = CircularBuffer(3) //Default is a new one, but you can provide your own (from a cache)
 ) : Serializable {
-    var averageRelapseDuration = Main.timeSinceInstant(lastRelapse)
+    var averageRelapseDuration = lastRelapse.secondsFromNow()
         private set
 
     fun relapse() {
-        relapses.update(Main.timeSinceInstant(lastRelapse))
+        relapses.update(lastRelapse.secondsFromNow())
         averageRelapseDuration = calculateAverageRelapseDuration()
         lastRelapse = Instant.now()
     }

@@ -1,5 +1,6 @@
 package com.sixtyninefourtwenty.imdefinitelysober
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,8 +9,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sixtyninefourtwenty.imdefinitelysober.activities.Main
 import com.sixtyninefourtwenty.imdefinitelysober.internal.CacheHandler
+import com.sixtyninefourtwenty.imdefinitelysober.utils.convertSecondsToString
+import com.sixtyninefourtwenty.imdefinitelysober.utils.showConfirmDialog
+import com.sixtyninefourtwenty.imdefinitelysober.utils.secondsFromNow
 
-class AddictionCardAdapter(private val activity: Main, private val cacheHandler: CacheHandler) :
+class AddictionCardAdapter(private val context: Context, private val cacheHandler: CacheHandler) :
     RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -28,19 +32,18 @@ class AddictionCardAdapter(private val activity: Main, private val cacheHandler:
 
         holder.textViewName.text = addiction.name
         holder.textViewTime.text =
-            Main.secondsToString(Main.timeSinceInstant(addiction.lastRelapse), activity)
+            context.convertSecondsToString(addiction.lastRelapse.secondsFromNow())
         holder.textViewAverage.text =
-            activity.getString(R.string.recent_avg, Main.secondsToString(addiction.averageRelapseDuration, activity))
+            context.getString(R.string.recent_avg, context.convertSecondsToString(addiction.averageRelapseDuration))
 
         holder.buttonDelete.setOnClickListener {
             val action: () -> Unit = {
                 Main.addictions.remove(addiction)
-                activity.updatePromptVisibility()
                 notifyItemRemoved(position)
                 Main.deleting = true
                 cacheHandler.writeCache()
             }
-            activity.dialogConfirm(activity.getString(R.string.delete_confirm, addiction.name), action)
+            context.showConfirmDialog(context.getString(R.string.delete), context.getString(R.string.delete_confirm, addiction.name), action)
         }
 
         holder.buttonReset.setOnClickListener {
@@ -49,7 +52,7 @@ class AddictionCardAdapter(private val activity: Main, private val cacheHandler:
                 notifyItemChanged(position)
                 cacheHandler.writeCache()
             }
-            activity.dialogConfirm(activity.getString(R.string.relapse_confirm, addiction.name), action)
+            context.showConfirmDialog(context.getString(R.string.relapse), context.getString(R.string.relapse_confirm, addiction.name), action)
         }
     }
 

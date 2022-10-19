@@ -22,7 +22,7 @@
     <string name="seconds">%d seconds</string>
     <string name="recent_avg">Recent Average: %s</string>
     <string name="delete">Delete</string>
-    <string name="delete_confirm">Delete entry \"%s\"?</string>
+    <string name="delete_confirm">Do you really want to delete entry \"%s\"?\nThis action cannot be undone.</string>
     <string name="relapse">Relapse</string>
     <string name="relapse_confirm">Log relapse of \"%s\"?</string>
 </resources>
