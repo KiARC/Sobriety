@@ -11,7 +11,7 @@
         android:id="@+id/til"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Addiction name"
+        android:hint="@string/addiction_name"
         android:layout_marginTop="240dp"
         app:layout_constraintBottom_toTopOf="@id/clPickTime"
         app:layout_constraintTop_toTopOf="parent" >
@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="3dp"
-            android:text="Time"
+            android:text="@string/time"
             android:textColor="?attr/colorOnBackground"
             android:textSize="@dimen/text_size_medium"
             app:layout_constraintStart_toStartOf="parent"
@@ -49,10 +49,9 @@
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="234:2348:349"
+            tools:text="234:2348:349"
             app:layout_constraintStart_toStartOf="@id/tvPickTime"
             app:layout_constraintTop_toBottomOf="@id/tvPickTime" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -71,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="3dp"
-            android:text="Date"
+            android:text="@string/date"
             android:textColor="?attr/colorOnBackground"
             android:textSize="@dimen/text_size_medium"
             app:layout_constraintStart_toStartOf="parent"
@@ -81,10 +80,9 @@
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="23.02.2017"
+            tools:text="23.02.2017"
             app:layout_constraintStart_toStartOf="@id/tvPickDate"
             app:layout_constraintTop_toBottomOf="@id/tvPickDate" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -93,7 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingHorizontal="30dp"
-        android:text="CREATE"
+        android:text="@string/create"
         android:layout_marginBottom="240dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

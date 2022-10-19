@@ -70,12 +70,12 @@ class Create : AppCompatActivity() {
 
     private fun pickDate() {
         val datePicker = MaterialDatePicker.Builder.datePicker()
-            .setTitleText("Pick Starting Date")
+            .setTitleText(R.string.pick_starting_date)
             .setCalendarConstraints(CalendarConstraints.Builder().setEnd(System.currentTimeMillis()).build())
             .build()
         datePicker.addOnPositiveButtonClickListener {
             if (it > System.currentTimeMillis())
-                Snackbar.make(findViewById(R.id.clCreate), "You can't select a future date", LENGTH_SHORT).show()
+                Snackbar.make(findViewById(R.id.clCreate), R.string.error_future_date, LENGTH_SHORT).show()
             else {
                 startDateTime = ZonedDateTime.of(
                     Date(it).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
@@ -91,7 +91,7 @@ class Create : AppCompatActivity() {
     private fun pickTime() {
         val isToday = startDateTime.toLocalDate() == ZonedDateTime.now().toLocalDate()
         val timePicker = MaterialTimePicker.Builder()
-            .setTitleText("Pick Starting Time")
+            .setTitleText(R.string.pick_starting_time)
             .setHour(ZonedDateTime.now().hour)
             .setMinute(ZonedDateTime.now().minute)
             .build()
@@ -99,7 +99,7 @@ class Create : AppCompatActivity() {
             if ((timePicker.hour > ZonedDateTime.now().hour ||
                 (timePicker.hour == ZonedDateTime.now().hour && timePicker.minute > ZonedDateTime.now().minute)) &&
                 isToday)
-                Snackbar.make(findViewById(R.id.clCreate), "You can't select a future time", LENGTH_SHORT).show()
+                Snackbar.make(findViewById(R.id.clCreate), R.string.error_future_time, LENGTH_SHORT).show()
             else {
                 startDateTime = ZonedDateTime.of(
                     startDateTime.toLocalDate(),
@@ -118,7 +118,7 @@ class Create : AppCompatActivity() {
 
         //Don't allow creating without a name, or with a duplicate name
         if (name.isEmpty() || nameExists) {
-            textInputLayout.error = if (name.isEmpty()) "Name is empty" else "Can't create duplicate entries"
+            textInputLayout.error = if (name.isEmpty()) getString(R.string.error_empty_name) else getString(R.string.error_duplicate_entry)
             /*val animationShake =
                 AnimationUtils.loadAnimation(this, R.anim.shake)
             nameEntry.startAnimation(animationShake)*/

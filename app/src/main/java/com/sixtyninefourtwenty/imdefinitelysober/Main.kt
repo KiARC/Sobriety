@@ -1,13 +1,12 @@
 package com.sixtyninefourtwenty.imdefinitelysober
 
 import android.annotation.SuppressLint
-import android.content.DialogInterface
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -18,18 +17,17 @@ import java.io.FileNotFoundException
 import java.time.Instant
 import java.util.*
 
-
 class Main : AppCompatActivity() {
 
     companion object {
-        const val EXTRA_NAMES = "com.katiearose.sobriety.EXTRA_NAMES"
+        const val EXTRA_NAMES = "com.sixtyninefourtwenty.imdefinitelysober.EXTRA_NAMES"
         private const val MINUTE = 60
         private const val HOUR = MINUTE * 60
         private const val DAY = HOUR * 24
         private const val WEEK = DAY * 7
         private const val MONTH = DAY * 31
         private const val YEAR = MONTH * 12
-        fun secondsToString(given: Long): String {
+        fun secondsToString(given: Long, context: Context): String {
             var time = given
             val s = time % MINUTE
             time -= s
@@ -45,14 +43,16 @@ class Main : AppCompatActivity() {
             time -= mo * MONTH
             val y = time / YEAR
             val stringBuilder = StringBuilder()
-            if (y != 0L) stringBuilder.append("$y years, ")
-            if (mo != 0L) stringBuilder.append("$mo months, ")
-            if (w != 0L) stringBuilder.append("$w weeks, ")
-            if (d != 0L) stringBuilder.append("$d days, ")
-            if (h != 0L) stringBuilder.append("$h hours, ")
-            if (m != 0L) stringBuilder.append("$m minutes, ")
-            if (!(y == 0L && mo == 0L && w == 0L && d == 0L && h == 0L && m == 0L)) stringBuilder.append("and ")
-            stringBuilder.append("$s seconds")
+            if (y != 0L) stringBuilder.append(context.getString(R.string.years))
+            if (mo != 0L) stringBuilder.append(context.getString(R.string.months))
+            if (w != 0L) stringBuilder.append(context.getString(R.string.weeks))
+            if (d != 0L) stringBuilder.append(context.getString(R.string.days))
+            if (h != 0L) stringBuilder.append(context.getString(R.string.hours))
+            if (m != 0L) stringBuilder.append(context.getString(R.string.minutes))
+            if (!(y == 0L && mo == 0L && w == 0L && d == 0L && h == 0L && m == 0L)) stringBuilder.append(
+                context.getString(R.string.and)
+            )
+            stringBuilder.append(context.getString(R.string.seconds))
             return stringBuilder.toString()
         }
 
@@ -63,7 +63,6 @@ class Main : AppCompatActivity() {
     }
 
     private lateinit var addCardButton: FloatingActionButton
-    private lateinit var cardHolder: LinearLayout
     private lateinit var prompt: TextView
 
     private lateinit var adapterAddictions: AddictionCardAdapter
@@ -80,11 +79,11 @@ class Main : AppCompatActivity() {
         cacheHandler = CacheHandler(this)
         if (addictions.isEmpty())
             try {
-            this.openFileInput("Sobriety.cache").use {
-                addictions.addAll(cacheHandler.readCache(it))
+                this.openFileInput("Sobriety.cache").use {
+                    addictions.addAll(cacheHandler.readCache(it))
+                }
+            } catch (e: FileNotFoundException) {
             }
-        } catch (e: FileNotFoundException) {
-        }
 
         updatePromptVisibility()
 
@@ -112,10 +111,7 @@ class Main : AppCompatActivity() {
     }
 
     fun updatePromptVisibility() {
-        prompt.visibility = when (addictions.size == 0) {
-            true -> View.VISIBLE
-            else -> View.GONE
-        }
+        prompt.visibility = if (addictions.size == 0) View.VISIBLE else View.GONE
     }
 
     private fun newCardDialog() {
@@ -134,11 +130,11 @@ class Main : AppCompatActivity() {
             val builder = AlertDialog.Builder(it)
             builder.apply {
                 setPositiveButton(
-                    "ok"
+                    android.R.string.ok
                 ) { _, _ ->
                     confirmAction()
                 }
-                setNegativeButton("cancel") { _: DialogInterface, _: Int -> }
+                setNegativeButton(android.R.string.cancel, null)
             }
             builder.setTitle(title)
             builder.create()
@@ -157,15 +153,13 @@ class Main : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == createCardRequestCode) {
-            if (resultCode == RESULT_OK) {
-                val name = data?.extras?.get("name") as String
-                val instant = data.extras?.get("instant") as Instant
-                val addiction = Addiction(name, instant)
-                addictions.add(addiction)
-                cacheHandler.writeCache()
-                adapterAddictions.notifyDataSetChanged()
-            }
+        if (requestCode == createCardRequestCode && resultCode == RESULT_OK) {
+            val name = data?.extras?.get("name") as String
+            val instant = data.extras?.get("instant") as Instant
+            val addiction = Addiction(name, instant)
+            addictions.add(addiction)
+            cacheHandler.writeCache()
+            adapterAddictions.notifyDataSetChanged()
         }
     }
 }
