@@ -12,7 +12,7 @@ android {
         minSdk 21
         targetSdk 33
         versionCode 1
-        versionName "20221020"
+        versionName "1.0"
         setProperty("archivesBaseName", "I'm Definitely Sober v$versionName")
     }
 
