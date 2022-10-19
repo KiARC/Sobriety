@@ -10,12 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Sobriety">
         <activity
-            android:name=".Create"
+            android:name=".activities.Create"
             android:exported="false"
             android:label="@string/add_new_addiction"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Main"
+            android:name=".activities.Main"
             android:exported="true"
             android:label="@string/addictions">
             <intent-filter>

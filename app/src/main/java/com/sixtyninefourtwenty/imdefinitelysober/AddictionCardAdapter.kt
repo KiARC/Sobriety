@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.sixtyninefourtwenty.imdefinitelysober.activities.Main
+import com.sixtyninefourtwenty.imdefinitelysober.internal.CacheHandler
 
 class AddictionCardAdapter(private val activity: Main, private val cacheHandler: CacheHandler) :
     RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>() {

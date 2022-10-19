@@ -1,4 +1,4 @@
-package com.sixtyninefourtwenty.imdefinitelysober
+package com.sixtyninefourtwenty.imdefinitelysober.activities
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -13,6 +13,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.sixtyninefourtwenty.imdefinitelysober.Addiction
+import com.sixtyninefourtwenty.imdefinitelysober.AddictionCardAdapter
+import com.sixtyninefourtwenty.imdefinitelysober.internal.CacheHandler
+import com.sixtyninefourtwenty.imdefinitelysober.R
 import java.io.FileNotFoundException
 import java.time.Instant
 import java.util.*

@@ -1,4 +1,4 @@
-package com.sixtyninefourtwenty.imdefinitelysober
+package com.sixtyninefourtwenty.imdefinitelysober.internal
 
 import java.io.Serializable
 

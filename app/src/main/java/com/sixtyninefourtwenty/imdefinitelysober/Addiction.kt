@@ -1,5 +1,7 @@
 package com.sixtyninefourtwenty.imdefinitelysober
 
+import com.sixtyninefourtwenty.imdefinitelysober.activities.Main
+import com.sixtyninefourtwenty.imdefinitelysober.internal.CircularBuffer
 import java.io.Serializable
 import java.time.Instant
 

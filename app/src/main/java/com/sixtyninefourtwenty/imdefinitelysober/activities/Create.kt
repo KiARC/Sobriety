@@ -1,4 +1,4 @@
-package com.sixtyninefourtwenty.imdefinitelysober
+package com.sixtyninefourtwenty.imdefinitelysober.activities
 
 import android.app.Activity
 import android.content.Intent
@@ -14,6 +14,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
+import com.sixtyninefourtwenty.imdefinitelysober.R
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -117,7 +118,9 @@ class Create : AppCompatActivity() {
 
         //Don't allow creating without a name, or with a duplicate name
         if (name.isEmpty() || nameExists) {
-            textInputLayout.error = if (name.isEmpty()) getString(R.string.error_empty_name) else getString(R.string.error_duplicate_entry)
+            textInputLayout.error = if (name.isEmpty()) getString(R.string.error_empty_name) else getString(
+                R.string.error_duplicate_entry
+            )
             return
         }
 

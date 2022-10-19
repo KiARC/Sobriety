@@ -1,2 +1,2 @@
 <menu xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".Main" />
+    tools:context=".activities.Main" />

@@ -1,6 +1,8 @@
-package com.sixtyninefourtwenty.imdefinitelysober
+package com.sixtyninefourtwenty.imdefinitelysober.internal
 
 import androidx.appcompat.app.AppCompatActivity
+import com.sixtyninefourtwenty.imdefinitelysober.Addiction
+import com.sixtyninefourtwenty.imdefinitelysober.activities.Main
 import java.io.InputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
