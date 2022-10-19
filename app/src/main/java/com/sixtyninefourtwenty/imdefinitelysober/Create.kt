@@ -1,4 +1,4 @@
-package com.katiearose.sobriety
+package com.sixtyninefourtwenty.imdefinitelysober
 
 import android.app.Activity
 import android.content.Intent

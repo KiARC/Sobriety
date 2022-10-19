@@ -1,4 +1,4 @@
-package com.katiearose.sobriety
+package com.sixtyninefourtwenty.imdefinitelysober
 
 import java.io.Serializable
 import java.time.Instant

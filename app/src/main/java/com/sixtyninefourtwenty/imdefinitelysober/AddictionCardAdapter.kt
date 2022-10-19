@@ -1,4 +1,4 @@
-package com.katiearose.sobriety
+package com.sixtyninefourtwenty.imdefinitelysober
 
 import android.view.LayoutInflater
 import android.view.View

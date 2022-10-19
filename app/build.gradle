@@ -7,12 +7,12 @@ android {
     compileSdk 30
 
     defaultConfig {
-        applicationId "com.katiearose.sobriety"
+        applicationId "com.sixtyninefourtwenty.imdefinitelysober"
         minSdk 26
         targetSdk 30
-        versionCode 13
-        versionName "v5.4.2"
-        setProperty("archivesBaseName", "Sobriety $versionName")
+        versionCode 1
+        versionName "20221020"
+        setProperty("archivesBaseName", "I'm Definitely Sober v$versionName")
     }
 
     buildTypes {

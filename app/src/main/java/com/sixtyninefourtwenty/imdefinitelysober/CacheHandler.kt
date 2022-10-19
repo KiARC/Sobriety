@@ -1,4 +1,4 @@
-package com.katiearose.sobriety
+package com.sixtyninefourtwenty.imdefinitelysober
 
 import androidx.appcompat.app.AppCompatActivity
 import java.io.InputStream

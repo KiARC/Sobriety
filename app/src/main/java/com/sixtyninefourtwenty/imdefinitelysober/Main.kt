@@ -1,4 +1,4 @@
-package com.katiearose.sobriety
+package com.sixtyninefourtwenty.imdefinitelysober
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
