@@ -33,6 +33,7 @@ class AddictionCardAdapter(private val context: Context, private val cacheHandle
         holder.textViewName.text = addiction.name
         holder.textViewTime.text =
             context.convertSecondsToString(addiction.lastRelapse.secondsFromNow())
+        holder.textViewAverage.visibility = if (addiction.averageRelapseDuration == -1L) View.GONE else View.VISIBLE
         holder.textViewAverage.text =
             context.getString(R.string.recent_avg, context.convertSecondsToString(addiction.averageRelapseDuration))
 

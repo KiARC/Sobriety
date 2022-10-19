@@ -13,6 +13,7 @@ private const val MONTH = DAY * 31
 private const val YEAR = MONTH * 12
 
 fun Context.convertSecondsToString(given: Long): String {
+    if (given == -1L) return ""
     var time = given
     val s = time % MINUTE
     time -= s
