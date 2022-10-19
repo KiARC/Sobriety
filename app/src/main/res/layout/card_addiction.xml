@@ -76,6 +76,19 @@
             app:layout_constraintTop_toTopOf="@+id/imageDelete"
             app:tint="?attr/colorIconOnCard" />
 
+        <ImageView
+            android:id="@+id/imageStop"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:foreground="@drawable/ripple"
+            android:src="@drawable/ic_baseline_stop_24"
+            android:contentDescription="@string/stop"
+            android:tooltipText="@string/stop"
+            app:layout_constraintEnd_toStartOf="@id/imageReset"
+            app:layout_constraintTop_toTopOf="@+id/imageDelete"
+            app:tint="?attr/colorIconOnCard" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

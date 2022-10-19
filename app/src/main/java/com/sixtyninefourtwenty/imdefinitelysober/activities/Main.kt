@@ -5,11 +5,14 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.sixtyninefourtwenty.imdefinitelysober.Addiction
 import com.sixtyninefourtwenty.imdefinitelysober.AddictionCardAdapter
 import com.sixtyninefourtwenty.imdefinitelysober.R
@@ -40,11 +43,11 @@ class Main : AppCompatActivity() {
     private val addNewAddiction = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
             val name = it.data?.extras?.getString("name") as String
-            val instant =
+            @Suppress("DEPRECATION") val instant =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                     it.data?.extras?.getSerializable("instant", Instant::class.java) as Instant
                 else it.data?.extras?.getSerializable("instant") as Instant
-            val addiction = Addiction(name, instant)
+            val addiction = Addiction(name, instant, false, 0)
             addictions.add(addiction)
             cacheHandler.writeCache()
             adapterAddictions.notifyDataSetChanged()
@@ -88,10 +91,26 @@ class Main : AppCompatActivity() {
                 val pos = viewHolder.adapterPosition
                 val action: () -> Unit = {
                     addictions[pos].relapse()
+                    addictions[pos].isStopped = false
                     this.notifyItemChanged(pos)
                     cacheHandler.writeCache()
                 }
                 showConfirmDialog(getString(R.string.relapse), getString(R.string.relapse_confirm, addictions[pos].name), action)
+            }
+            setOnButtonStopClickListener {
+                val viewHolder = it.tag as ViewHolder
+                val pos = viewHolder.adapterPosition
+                if (addictions[pos].isStopped)
+                    Snackbar.make(binding.root, getString(R.string.already_stopped, addictions[pos].name), BaseTransientBottomBar.LENGTH_SHORT).show()
+                else {
+                    val action: () -> Unit = {
+                        addictions[pos].isStopped = true
+                        addictions[pos].timeStopped = System.currentTimeMillis()
+                        this.notifyItemChanged(pos)
+                        cacheHandler.writeCache()
+                    }
+                    showConfirmDialog(getString(R.string.stop), getString(R.string.stop_confirm, addictions[pos].name), action)
+                }
             }
         }
         val recyclerAddictions = findViewById<RecyclerView>(R.id.recyclerAddictions)

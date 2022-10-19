@@ -25,4 +25,8 @@
     <string name="delete_confirm">Do you really want to delete entry \"%s\"?\nThis action cannot be undone.</string>
     <string name="relapse">Relapse</string>
     <string name="relapse_confirm">Log relapse of \"%s\"?</string>
+    <string name="stop">Stop</string>
+    <string name="stop_confirm">Stop abstaining from \"%s\"?</string>
+    <string name="stop_notice">Stopped at: %s\nYour attempt lasted %s</string>
+    <string name="already_stopped">You have already stopped abstaining from \"%s\".\nPress the Relapse button to start over.</string>
 </resources>
