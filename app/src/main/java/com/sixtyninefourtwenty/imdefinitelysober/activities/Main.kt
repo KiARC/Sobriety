@@ -9,11 +9,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.sixtyninefourtwenty.imdefinitelysober.Addiction
 import com.sixtyninefourtwenty.imdefinitelysober.AddictionCardAdapter
 import com.sixtyninefourtwenty.imdefinitelysober.R
 import com.sixtyninefourtwenty.imdefinitelysober.databinding.ActivityMainBinding
 import com.sixtyninefourtwenty.imdefinitelysober.internal.CacheHandler
+import com.sixtyninefourtwenty.imdefinitelysober.utils.showConfirmDialog
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -68,7 +70,30 @@ class Main : AppCompatActivity() {
         updatePromptVisibility()
 
         //Create adapter, and layout manager for recyclerview and attach them
-        adapterAddictions = AddictionCardAdapter(this, cacheHandler)
+        adapterAddictions = AddictionCardAdapter(this)
+        adapterAddictions.apply {
+            setOnButtonDeleteClickListener {
+                val viewHolder = it.tag as ViewHolder
+                val pos = viewHolder.adapterPosition
+                val action: () -> Unit = {
+                    addictions.remove(addictions[pos])
+                    this.notifyItemRemoved(pos)
+                    deleting = true
+                    cacheHandler.writeCache()
+                }
+                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_confirm, addictions[pos].name), action)
+            }
+            setOnButtonRelapseClickListener {
+                val viewHolder = it.tag as ViewHolder
+                val pos = viewHolder.adapterPosition
+                val action: () -> Unit = {
+                    addictions[pos].relapse()
+                    this.notifyItemChanged(pos)
+                    cacheHandler.writeCache()
+                }
+                showConfirmDialog(getString(R.string.relapse), getString(R.string.relapse_confirm, addictions[pos].name), action)
+            }
+        }
         val recyclerAddictions = findViewById<RecyclerView>(R.id.recyclerAddictions)
         val layoutManager = LinearLayoutManager(this)
         recyclerAddictions.layoutManager = layoutManager
