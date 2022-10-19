@@ -1,5 +1,6 @@
 package com.sixtyninefourtwenty.imdefinitelysober.internal
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import com.sixtyninefourtwenty.imdefinitelysober.Addiction
 import com.sixtyninefourtwenty.imdefinitelysober.activities.Main
@@ -9,7 +10,7 @@ import java.io.ObjectOutputStream
 import java.util.zip.DeflaterOutputStream
 import java.util.zip.InflaterInputStream
 
-class CacheHandler(private val activity: Main) {
+class CacheHandler(private val context: Context) {
     fun readCache(input: InputStream): ArrayList<Addiction> {
         val result = ArrayList<Addiction>()
         val cache = input.readBytes()
@@ -37,7 +38,7 @@ class CacheHandler(private val activity: Main) {
         Main.addictions.forEach {
             output.add(it.toCacheable())
         }
-        activity.openFileOutput("Sobriety.cache", AppCompatActivity.MODE_PRIVATE).use { fos ->
+        context.openFileOutput("Sobriety.cache", AppCompatActivity.MODE_PRIVATE).use { fos ->
             DeflaterOutputStream(fos, true).use { dos ->
                 ObjectOutputStream(dos).use {
                     it.writeObject(output)
