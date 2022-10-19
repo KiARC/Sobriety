@@ -16,6 +16,10 @@ import com.sixtyninefourtwenty.imdefinitelysober.AddictionCardAdapter
 import com.sixtyninefourtwenty.imdefinitelysober.R
 import com.sixtyninefourtwenty.imdefinitelysober.databinding.ActivityMainBinding
 import com.sixtyninefourtwenty.imdefinitelysober.internal.CacheHandler
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.FileNotFoundException
 import java.time.Instant
 import java.util.*
@@ -69,7 +73,9 @@ class Main : AppCompatActivity() {
     private lateinit var cacheHandler: CacheHandler
     private val createCardRequestCode = 1
     private lateinit var binding: ActivityMainBinding
+    private val mainScope = MainScope()
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -93,21 +99,18 @@ class Main : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         recyclerAddictions.layoutManager = layoutManager
         recyclerAddictions.adapter = adapterAddictions
-        //main handler to refresh all cards in sync
-        val mainHandler = Handler(Looper.getMainLooper())
-        mainHandler.postDelayed(object : Runnable {
-            @SuppressLint("NotifyDataSetChanged")
-            override fun run() {
-                //Skip the refresh, when a delete was initiated < 1 second ago, to not reset delete animation
+
+        mainScope.launch {
+            while (true) {
                 if (!deleting) {
                     adapterAddictions.notifyDataSetChanged()
                 } else {
                     cacheHandler.writeCache()
                     deleting = false
                 }
-                mainHandler.postDelayed(this, 1000L)
+                delay(1000)
             }
-        }, 1000L)
+        }
     }
 
     fun updatePromptVisibility() {
@@ -151,6 +154,11 @@ class Main : AppCompatActivity() {
     override fun onResume() {
         updatePromptVisibility()
         super.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mainScope.cancel()
     }
 
     //i'll handle this later
