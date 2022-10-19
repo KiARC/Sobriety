@@ -7,16 +7,15 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.sixtyninefourtwenty.imdefinitelysober.Addiction
 import com.sixtyninefourtwenty.imdefinitelysober.AddictionCardAdapter
-import com.sixtyninefourtwenty.imdefinitelysober.internal.CacheHandler
 import com.sixtyninefourtwenty.imdefinitelysober.R
+import com.sixtyninefourtwenty.imdefinitelysober.databinding.ActivityMainBinding
+import com.sixtyninefourtwenty.imdefinitelysober.internal.CacheHandler
 import java.io.FileNotFoundException
 import java.time.Instant
 import java.util.*
@@ -47,16 +46,16 @@ class Main : AppCompatActivity() {
             time -= mo * MONTH
             val y = time / YEAR
             val stringBuilder = StringBuilder()
-            if (y != 0L) stringBuilder.append(context.getString(R.string.years))
-            if (mo != 0L) stringBuilder.append(context.getString(R.string.months))
-            if (w != 0L) stringBuilder.append(context.getString(R.string.weeks))
-            if (d != 0L) stringBuilder.append(context.getString(R.string.days))
-            if (h != 0L) stringBuilder.append(context.getString(R.string.hours))
-            if (m != 0L) stringBuilder.append(context.getString(R.string.minutes))
+            if (y != 0L) stringBuilder.append(context.getString(R.string.years, y)).append(" ")
+            if (mo != 0L) stringBuilder.append(context.getString(R.string.months, mo)).append(" ")
+            if (w != 0L) stringBuilder.append(context.getString(R.string.weeks, w)).append(" ")
+            if (d != 0L) stringBuilder.append(context.getString(R.string.days, d)).append(" ")
+            if (h != 0L) stringBuilder.append(context.getString(R.string.hours, h)).append(" ")
+            if (m != 0L) stringBuilder.append(context.getString(R.string.minutes, m)).append(" ")
             if (!(y == 0L && mo == 0L && w == 0L && d == 0L && h == 0L && m == 0L)) stringBuilder.append(
                 context.getString(R.string.and)
-            )
-            stringBuilder.append(context.getString(R.string.seconds))
+            ).append(" ")
+            stringBuilder.append(context.getString(R.string.seconds, s))
             return stringBuilder.toString()
         }
 
@@ -66,20 +65,17 @@ class Main : AppCompatActivity() {
         var deleting = false
     }
 
-    private lateinit var addCardButton: FloatingActionButton
-    private lateinit var prompt: TextView
-
     private lateinit var adapterAddictions: AddictionCardAdapter
     private lateinit var cacheHandler: CacheHandler
     private val createCardRequestCode = 1
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        addCardButton = findViewById(R.id.addCardButton)
-        addCardButton.setOnClickListener { newCardDialog() }
-        prompt = findViewById(R.id.prompt)
+        binding.addCardButton.setOnClickListener { newCardDialog() }
         cacheHandler = CacheHandler(this)
         if (addictions.isEmpty())
             try {
@@ -115,7 +111,7 @@ class Main : AppCompatActivity() {
     }
 
     fun updatePromptVisibility() {
-        prompt.visibility = if (addictions.size == 0) View.VISIBLE else View.GONE
+        binding.prompt.visibility = if (addictions.size == 0) View.VISIBLE else View.GONE
     }
 
     //i'll handle this later

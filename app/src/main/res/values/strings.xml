@@ -12,17 +12,17 @@
     <string name="error_duplicate_entry">Can\'t create duplicate entries</string>
     <string name="error_future_date">You can\'t select a future date</string>
     <string name="error_future_time">You can\'t select a future time</string>
-    <string name="years">%d years, </string>
-    <string name="months">%d months, </string>
-    <string name="weeks">%d weeks, </string>
-    <string name="days">%d days, </string>
-    <string name="hours">%d hours, </string>
-    <string name="minutes">%d minutes, </string>
-    <string name="and">and </string>
+    <string name="years">%d years,</string>
+    <string name="months">%d months,</string>
+    <string name="weeks">%d weeks,</string>
+    <string name="days">%d days,</string>
+    <string name="hours">%d hours,</string>
+    <string name="minutes">%d minutes,</string>
+    <string name="and">and</string>
     <string name="seconds">%d seconds</string>
     <string name="recent_avg">Recent Average: %s</string>
     <string name="delete">Delete</string>
-    <string name="delete_confirm">Delete entry %s?</string>
+    <string name="delete_confirm">Delete entry \"%s\"?</string>
     <string name="relapse">Relapse</string>
-    <string name="relapse_confirm">Log relapse of %s?</string>
+    <string name="relapse_confirm">Log relapse of \"%s\"?</string>
 </resources>
