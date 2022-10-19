@@ -114,6 +114,8 @@ class Main : AppCompatActivity() {
         prompt.visibility = if (addictions.size == 0) View.VISIBLE else View.GONE
     }
 
+    //i'll handle this later
+    @Suppress("DEPRECATION")
     private fun newCardDialog() {
         //Pass current addiction names to create activity, to prevent creation of elements with identical keys
         val addictionNames = arrayListOf<String>()
@@ -151,6 +153,9 @@ class Main : AppCompatActivity() {
         super.onResume()
     }
 
+    //i'll handle this later
+    @SuppressLint("NotifyDataSetChanged")
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == createCardRequestCode && resultCode == RESULT_OK) {

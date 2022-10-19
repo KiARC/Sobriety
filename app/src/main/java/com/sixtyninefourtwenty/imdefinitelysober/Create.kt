@@ -20,7 +20,6 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-
 class Create : AppCompatActivity() {
     private lateinit var createButton: Button
     private lateinit var datePickerButton: ConstraintLayout
@@ -32,7 +31,6 @@ class Create : AppCompatActivity() {
     private lateinit var startDateTime: ZonedDateTime
 
     private lateinit var names: ArrayList<String>
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +61,7 @@ class Create : AppCompatActivity() {
         names = intent.getStringArrayListExtra(Main.EXTRA_NAMES) as ArrayList<String>
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         setResult(Activity.RESULT_CANCELED, Intent())
         finish()
@@ -119,9 +118,6 @@ class Create : AppCompatActivity() {
         //Don't allow creating without a name, or with a duplicate name
         if (name.isEmpty() || nameExists) {
             textInputLayout.error = if (name.isEmpty()) getString(R.string.error_empty_name) else getString(R.string.error_duplicate_entry)
-            /*val animationShake =
-                AnimationUtils.loadAnimation(this, R.anim.shake)
-            nameEntry.startAnimation(animationShake)*/
             return
         }
 
