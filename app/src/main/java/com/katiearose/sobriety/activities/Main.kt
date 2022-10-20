@@ -3,10 +3,12 @@ package com.katiearose.sobriety.activities
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,8 +30,21 @@ class Main : AppCompatActivity() {
 
     private lateinit var adapterAddictions: AddictionCardAdapter
     private lateinit var cacheHandler: CacheHandler
-    private val createCardRequestCode = 1
     private lateinit var binding: ActivityMainBinding
+    @SuppressLint("NotifyDataSetChanged")
+    private val addNewAddiction = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == RESULT_OK) {
+            val name = it.data?.extras?.getString("name") as String
+            val instant =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                    it.data?.extras?.getSerializable("instant", Instant::class.java) as Instant
+                else it.data?.extras?.getSerializable("instant") as Instant
+            val addiction = Addiction(name, instant)
+            addictions.add(addiction)
+            cacheHandler.writeCache()
+            adapterAddictions.notifyDataSetChanged()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,12 +95,10 @@ class Main : AppCompatActivity() {
     private fun newCardDialog() {
         //Pass current addiction names to create activity, to prevent creation of elements with identical keys
         val addictionNames = arrayListOf<String>()
-        addictions.forEach {
-            addictionNames.add(it.name)
-        }
+        addictions.forEach { addictionNames.add(it.name) }
         val intent = Intent(this, Create::class.java)
-        intent.putStringArrayListExtra(EXTRA_NAMES, addictionNames)
-        startActivityForResult(intent, createCardRequestCode)
+            .putStringArrayListExtra(EXTRA_NAMES, addictionNames)
+        addNewAddiction.launch(intent)
     }
 
     fun dialogConfirm(title: String, confirmAction: () -> Unit) {
@@ -112,19 +125,5 @@ class Main : AppCompatActivity() {
     override fun onResume() {
         updatePromptVisibility()
         super.onResume()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == createCardRequestCode) {
-            if (resultCode == RESULT_OK) {
-                val name = data?.extras?.get("name") as String
-                val instant = data.extras?.get("instant") as Instant
-                val addiction = Addiction(name, instant)
-                addictions.add(addiction)
-                cacheHandler.writeCache()
-                adapterAddictions.notifyDataSetChanged()
-            }
-        }
     }
 }
