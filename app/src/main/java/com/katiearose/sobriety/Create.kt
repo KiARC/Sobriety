@@ -3,23 +3,29 @@ package com.katiearose.sobriety
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.animation.AnimationUtils
-import android.widget.*
-import androidx.appcompat.app.AlertDialog
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar
-import java.time.LocalDate
+import com.google.android.material.textfield.TextInputLayout
+import com.google.android.material.timepicker.MaterialTimePicker
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 
 class Create : AppCompatActivity() {
     private lateinit var createButton: Button
     private lateinit var datePickerButton: ConstraintLayout
     private lateinit var timePickerButton: ConstraintLayout
+    private lateinit var textInputLayout: TextInputLayout
     private lateinit var nameEntry: EditText
     private lateinit var dateView: TextView
     private lateinit var timeView: TextView
@@ -37,6 +43,7 @@ class Create : AppCompatActivity() {
         datePickerButton = findViewById(R.id.clPickDate)
         timePickerButton = findViewById(R.id.clPickTime)
 
+        textInputLayout = findViewById(R.id.til)
         nameEntry = findViewById(R.id.etTitle)
         dateView = findViewById(R.id.tvDate)
         timeView = findViewById(R.id.tvTime)
@@ -62,47 +69,47 @@ class Create : AppCompatActivity() {
     }
 
     private fun pickDate() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Pick Starting Date")
-        val input = DatePicker(this)
-        input.maxDate = System.currentTimeMillis()
-        input.updateDate(startDateTime.year, startDateTime.monthValue - 1, startDateTime.dayOfMonth)
-        builder.setView(input)
-        builder.setPositiveButton(
-            "OK"
-        ) { _, _ ->
-            startDateTime = ZonedDateTime.of(
-                LocalDate.of(input.year, input.month + 1, input.dayOfMonth),
-                startDateTime.toLocalTime(),
-                ZoneId.systemDefault()
-            )
-            dateView.text = startDateTime.toLocalDate().toString()
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Pick Starting Date")
+            .setCalendarConstraints(CalendarConstraints.Builder().setEnd(System.currentTimeMillis()).build())
+            .build()
+        datePicker.addOnPositiveButtonClickListener {
+            if (it > System.currentTimeMillis())
+                Snackbar.make(findViewById(R.id.clCreate), "You can't select a future date", LENGTH_SHORT).show()
+            else {
+                startDateTime = ZonedDateTime.of(
+                    Date(it).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                    startDateTime.toLocalTime(),
+                    ZoneId.systemDefault()
+                )
+                dateView.text = startDateTime.toLocalDate().toString()
+            }
         }
-        builder.setNegativeButton(
-            "Cancel"
-        ) { dialog, _ -> dialog.cancel() }
-        builder.show()
+        datePicker.show(supportFragmentManager, null)
     }
 
     private fun pickTime() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Pick Starting Time")
-        val input = TimePicker(this)
-        builder.setView(input)
-        builder.setPositiveButton(
-            "OK"
-        ) { _, _ ->
-            if (input.validateInput()) startDateTime = ZonedDateTime.of(
-                startDateTime.toLocalDate(),
-                LocalTime.of(input.hour, input.minute),
-                ZoneId.systemDefault()
-            )
-            timeView.text = startDateTime.toLocalTime().toString()
+        val isToday = startDateTime.toLocalDate() == ZonedDateTime.now().toLocalDate()
+        val timePicker = MaterialTimePicker.Builder()
+            .setTitleText("Pick Starting Time")
+            .setHour(ZonedDateTime.now().hour)
+            .setMinute(ZonedDateTime.now().minute)
+            .build()
+        timePicker.addOnPositiveButtonClickListener {
+            if ((timePicker.hour > ZonedDateTime.now().hour ||
+                (timePicker.hour == ZonedDateTime.now().hour && timePicker.minute > ZonedDateTime.now().minute)) &&
+                isToday)
+                Snackbar.make(findViewById(R.id.clCreate), "You can't select a future time", LENGTH_SHORT).show()
+            else {
+                startDateTime = ZonedDateTime.of(
+                    startDateTime.toLocalDate(),
+                    LocalTime.of(timePicker.hour, timePicker.minute),
+                    ZoneId.systemDefault()
+                )
+                timeView.text = startDateTime.toLocalTime().toString()
+            }
         }
-        builder.setNegativeButton(
-            "Cancel"
-        ) { dialog, _ -> dialog.cancel() }
-        builder.show()
+        timePicker.show(supportFragmentManager, null)
     }
 
     private fun create() {
@@ -110,17 +117,11 @@ class Create : AppCompatActivity() {
         val nameExists = names.contains(name)
 
         //Don't allow creating without a name, or with a duplicate name
-        if (name == "" || nameExists) {
-            if (nameExists) {
-                Snackbar.make(
-                    findViewById(R.id.clCreate),
-                    "Can't create duplicate entries",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            }
-            val animationShake =
+        if (name.isEmpty() || nameExists) {
+            textInputLayout.error = if (name.isEmpty()) "Name is empty" else "Can't create duplicate entries"
+            /*val animationShake =
                 AnimationUtils.loadAnimation(this, R.anim.shake)
-            nameEntry.startAnimation(animationShake)
+            nameEntry.startAnimation(animationShake)*/
             return
         }
 
