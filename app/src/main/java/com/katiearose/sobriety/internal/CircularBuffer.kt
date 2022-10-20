@@ -1,4 +1,4 @@
-package com.katiearose.sobriety
+package com.katiearose.sobriety.internal
 
 import java.io.Serializable
 

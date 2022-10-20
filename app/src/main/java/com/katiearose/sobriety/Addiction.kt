@@ -1,5 +1,7 @@
 package com.katiearose.sobriety
 
+import com.katiearose.sobriety.activities.Main
+import com.katiearose.sobriety.internal.CircularBuffer
 import java.io.Serializable
 import java.time.Instant
 

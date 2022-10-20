@@ -1,4 +1,4 @@
-package com.katiearose.sobriety
+package com.katiearose.sobriety.activities
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -14,6 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.katiearose.sobriety.Addiction
+import com.katiearose.sobriety.AddictionCardAdapter
+import com.katiearose.sobriety.R
+import com.katiearose.sobriety.internal.CacheHandler
 import java.io.FileNotFoundException
 import java.time.Instant
 import java.util.*

@@ -1,4 +1,4 @@
-package com.katiearose.sobriety
+package com.katiearose.sobriety.activities
 
 import android.app.Activity
 import android.content.Intent
@@ -14,6 +14,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.timepicker.MaterialTimePicker
+import com.katiearose.sobriety.R
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime

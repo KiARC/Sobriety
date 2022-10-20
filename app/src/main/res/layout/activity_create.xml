@@ -5,7 +5,7 @@
     android:id="@+id/clCreate"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Create">
+    tools:context=".activities.Create">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til"
