@@ -1,7 +1,7 @@
 package com.katiearose.sobriety
 
-import com.katiearose.sobriety.activities.Main
 import com.katiearose.sobriety.internal.CircularBuffer
+import com.katiearose.sobriety.utils.secondsFromNow
 import java.io.Serializable
 import java.time.Instant
 
@@ -14,7 +14,7 @@ class Addiction(
         private set
 
     fun relapse() {
-        relapses.update(Main.timeSinceInstant(lastRelapse))
+        relapses.update(lastRelapse.secondsFromNow())
         averageRelapseDuration = calculateAverageRelapseDuration()
         lastRelapse = Instant.now()
     }
