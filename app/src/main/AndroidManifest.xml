@@ -10,10 +10,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Sobriety">
         <activity
+            android:name=".activities.Timeline"
+            android:exported="false"
+            android:label="@string/timeline">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".activities.Create"
             android:exported="false"
             android:label="@string/add_new_addiction"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize" >
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".activities.Main"
             android:exported="true">
@@ -22,6 +34,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
         </activity>
     </application>
 

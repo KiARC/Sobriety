@@ -29,4 +29,11 @@
     <string name="stop_confirm">Stop abstaining from \"%s\"?</string>
     <string name="stop_notice">Stopped at: %s\nYour attempt lasted %s</string>
     <string name="already_stopped">You have already stopped abstaining from \"%s\".\nPress the Relapse button to start over.</string>
+    <string name="timeline">Timeline</string>
+    <string name="showing_timeline">Showing timeline for addiction \"%s\"</string>
+    <string name="attempt">Attempt %d</string>
+    <string name="time_started">Time started: %s</string>
+    <string name="time_range">Time started: %s\nↆ\nTime ended: %s</string>
+    <string name="duration">Duration: %s</string>
+    <string name="ongoing">Ongoing… Keep it up!</string>
 </resources>

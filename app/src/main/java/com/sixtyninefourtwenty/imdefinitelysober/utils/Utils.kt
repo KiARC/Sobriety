@@ -52,3 +52,17 @@ fun Context.showConfirmDialog(title: String, message: String, action: () -> Unit
 }
 
 fun Instant.secondsFromNow(): Long = Instant.now().epochSecond - this.epochSecond
+
+/**
+ * Puts the specified value to the last key in this map.
+ */
+fun <K, V> LinkedHashMap<K, V>.putLast(value: V) {
+    val lastKey = keys.map { it }.last()
+    put(lastKey, value)
+}
+
+fun <K, V> LinkedHashMap<K, V>.getKeyValuePairAtIndex(index: Int): Pair<K, V> {
+    val key = keys.map { it }[index]
+    val value = values.map { it }[index]
+    return Pair(key, value)
+}

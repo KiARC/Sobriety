@@ -20,6 +20,7 @@ class AddictionCardAdapter(private val context: Context) :
     private lateinit var onButtonDeleteClickListener: OnClickListener
     private lateinit var onButtonRelapseClickListener: OnClickListener
     private lateinit var onButtonStopClickListener: OnClickListener
+    private lateinit var onTimelineButtonClickListener: OnClickListener
     private val dateFormat = DateFormat.getDateTimeInstance()
 
     fun setOnButtonDeleteClickListener(onButtonDeleteClickListener: OnClickListener) {
@@ -34,6 +35,10 @@ class AddictionCardAdapter(private val context: Context) :
         this.onButtonStopClickListener = onButtonStopClickListener
     }
 
+    fun setOnTimelineButtonClickListener(onTimelineButtonClickListener: OnClickListener) {
+        this.onTimelineButtonClickListener = onTimelineButtonClickListener
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -41,7 +46,7 @@ class AddictionCardAdapter(private val context: Context) :
         val itemView =
             LayoutInflater.from(parent.context).inflate(R.layout.card_addiction, parent, false)
         return AddictionCardViewHolder(itemView, onButtonDeleteClickListener, onButtonRelapseClickListener,
-        onButtonStopClickListener)
+        onButtonStopClickListener, onTimelineButtonClickListener)
     }
 
     override fun onBindViewHolder(
@@ -64,7 +69,8 @@ class AddictionCardAdapter(private val context: Context) :
 
     class AddictionCardViewHolder(itemView: View, onButtonDeleteClickListener: OnClickListener,
                                   onButtonRelapseClickListener: OnClickListener,
-                                  onButtonStopClickListener: OnClickListener) : RecyclerView.ViewHolder(itemView) {
+                                  onButtonStopClickListener: OnClickListener,
+                                  onTimelineButtonClickListener: OnClickListener) : RecyclerView.ViewHolder(itemView) {
         val textViewName: TextView = itemView.findViewById(R.id.textViewAddictionName)
         val textViewTime: TextView = itemView.findViewById(R.id.textViewTime)
         val textViewAverage: TextView = itemView.findViewById(R.id.textViewAverage)
@@ -81,6 +87,10 @@ class AddictionCardAdapter(private val context: Context) :
             itemView.findViewById<ImageView>(R.id.imageStop).apply {
                 tag = this@AddictionCardViewHolder
                 setOnClickListener(onButtonStopClickListener)
+            }
+            itemView.findViewById<ImageView>(R.id.imageTimeline).apply {
+                tag = this@AddictionCardViewHolder
+                setOnClickListener(onTimelineButtonClickListener)
             }
         }
     }
