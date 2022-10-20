@@ -12,8 +12,7 @@
         <activity
             android:name=".activities.Create"
             android:exported="false"
-            android:label="Add new addiction"
-            android:windowSoftInputMode="adjustResize" />
+            android:label="Add new addiction" />
         <activity
             android:name=".activities.Main"
             android:exported="true"

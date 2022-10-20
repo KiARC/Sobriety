@@ -17,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.AddictionCardAdapter
 import com.katiearose.sobriety.R
+import com.katiearose.sobriety.databinding.ActivityMainBinding
 import com.katiearose.sobriety.internal.CacheHandler
 import java.io.FileNotFoundException
 import java.time.Instant
@@ -67,21 +68,17 @@ class Main : AppCompatActivity() {
         val addictions = ArrayList<Addiction>()
         var deleting = false
     }
-
-    private lateinit var addCardButton: FloatingActionButton
-    private lateinit var prompt: TextView
-
     private lateinit var adapterAddictions: AddictionCardAdapter
     private lateinit var cacheHandler: CacheHandler
     private val createCardRequestCode = 1
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        addCardButton = findViewById(R.id.addCardButton)
-        addCardButton.setOnClickListener { newCardDialog() }
-        prompt = findViewById(R.id.prompt)
+        binding.addCardButton.setOnClickListener { newCardDialog() }
         cacheHandler = CacheHandler(this)
         if (addictions.isEmpty())
             try {
@@ -95,10 +92,9 @@ class Main : AppCompatActivity() {
 
         //Create adapter, and layout manager for recyclerview and attach them
         adapterAddictions = AddictionCardAdapter(this, cacheHandler)
-        val recyclerAddictions = findViewById<RecyclerView>(R.id.recyclerAddictions)
         val layoutManager = LinearLayoutManager(this)
-        recyclerAddictions.layoutManager = layoutManager
-        recyclerAddictions.adapter = adapterAddictions
+        binding.recyclerAddictions.layoutManager = layoutManager
+        binding.recyclerAddictions.adapter = adapterAddictions
         //main handler to refresh all cards in sync
         val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.postDelayed(object : Runnable {
@@ -117,7 +113,7 @@ class Main : AppCompatActivity() {
     }
 
     fun updatePromptVisibility() {
-        prompt.visibility = when (addictions.size == 0) {
+        binding.prompt.visibility = when (addictions.size == 0) {
             true -> View.VISIBLE
             else -> View.GONE
         }
