@@ -8,7 +8,7 @@ class Addiction(
     var lastRelapse: Instant,
     var relapses: CircularBuffer<Long> = CircularBuffer(3) //Default is a new one, but you can provide your own (from a cache)
 ) : Serializable {
-    var averageRelapseDuration = Main.timeSinceInstant(lastRelapse)
+    var averageRelapseDuration = if (relapses.get(0) == null) -1 else calculateAverageRelapseDuration()
         private set
 
     fun relapse() {

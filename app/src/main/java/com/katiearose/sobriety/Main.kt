@@ -30,6 +30,7 @@ class Main : AppCompatActivity() {
         private const val MONTH = DAY * 31
         private const val YEAR = MONTH * 12
         fun secondsToString(given: Long): String {
+            if (given == -1L) return "" // -1 is returned if addiction has never been relapsed, don't bother calculating
             var time = given
             val s = time % MINUTE
             time -= s
