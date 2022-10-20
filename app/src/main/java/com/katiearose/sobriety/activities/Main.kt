@@ -1,7 +1,6 @@
 package com.katiearose.sobriety.activities
 
 import android.annotation.SuppressLint
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -9,10 +8,11 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.AddictionCardAdapter
 import com.katiearose.sobriety.R
@@ -38,11 +38,11 @@ class Main : AppCompatActivity() {
     private val addNewAddiction = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
             val name = it.data?.extras?.getString("name") as String
-            val instant =
+            @Suppress("DEPRECATION") val instant =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                     it.data?.extras?.getSerializable("instant", Instant::class.java) as Instant
                 else it.data?.extras?.getSerializable("instant") as Instant
-            val addiction = Addiction(name, instant)
+            val addiction = Addiction(name, instant, false, 0)
             addictions.add(addiction)
             cacheHandler.writeCache()
             adapterAddictions.notifyDataSetChanged()
@@ -86,10 +86,26 @@ class Main : AppCompatActivity() {
                 val pos = viewHolder.adapterPosition
                 val action: () -> Unit = {
                     addictions[pos].relapse()
+                    addictions[pos].isStopped = false
                     this.notifyItemChanged(pos)
                     cacheHandler.writeCache()
                 }
                 showConfirmDialog(getString(R.string.relapse), getString(R.string.relapse_confirm, addictions[pos].name), action)
+            }
+            setOnButtonStopClickListener {
+                val viewHolder = it.tag as RecyclerView.ViewHolder
+                val pos = viewHolder.adapterPosition
+                if (addictions[pos].isStopped)
+                    Snackbar.make(binding.root, getString(R.string.already_stopped, addictions[pos].name), BaseTransientBottomBar.LENGTH_SHORT).show()
+                else {
+                    val action: () -> Unit = {
+                        addictions[pos].isStopped = true
+                        addictions[pos].timeStopped = System.currentTimeMillis()
+                        this.notifyItemChanged(pos)
+                        cacheHandler.writeCache()
+                    }
+                    showConfirmDialog(getString(R.string.stop), getString(R.string.stop_confirm, addictions[pos].name), action)
+                }
             }
         }
         val layoutManager = LinearLayoutManager(this)
@@ -126,23 +142,6 @@ class Main : AppCompatActivity() {
         val intent = Intent(this, Create::class.java)
             .putStringArrayListExtra(EXTRA_NAMES, addictionNames)
         addNewAddiction.launch(intent)
-    }
-
-    fun dialogConfirm(title: String, confirmAction: () -> Unit) {
-        this.let {
-            val builder = AlertDialog.Builder(it)
-            builder.apply {
-                setPositiveButton(
-                    android.R.string.ok
-                ) { _, _ ->
-                    confirmAction()
-                }
-                setNegativeButton(android.R.string.cancel) { _: DialogInterface, _: Int -> }
-            }
-            builder.setTitle(title)
-            builder.create()
-            builder.show()
-        }
     }
 
     /**
