@@ -12,10 +12,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.AddictionCardAdapter
+import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityMainBinding
 import com.katiearose.sobriety.internal.CacheHandler
+import com.katiearose.sobriety.utils.showConfirmDialog
 import java.io.FileNotFoundException
 import java.time.Instant
 import java.util.*
@@ -64,7 +67,31 @@ class Main : AppCompatActivity() {
         updatePromptVisibility()
 
         //Create adapter, and layout manager for recyclerview and attach them
-        adapterAddictions = AddictionCardAdapter(this, cacheHandler)
+        adapterAddictions = AddictionCardAdapter(this)
+        adapterAddictions.apply {
+            setOnButtonDeleteClickListener {
+                val viewHolder = it.tag as RecyclerView.ViewHolder
+                val pos = viewHolder.adapterPosition
+                val action: () -> Unit = {
+                    addictions.remove(addictions[pos])
+                    updatePromptVisibility()
+                    this.notifyItemRemoved(pos)
+                    deleting = true
+                    cacheHandler.writeCache()
+                }
+                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_confirm, addictions[pos].name), action)
+            }
+            setOnButtonRelapseClickListener {
+                val viewHolder = it.tag as RecyclerView.ViewHolder
+                val pos = viewHolder.adapterPosition
+                val action: () -> Unit = {
+                    addictions[pos].relapse()
+                    this.notifyItemChanged(pos)
+                    cacheHandler.writeCache()
+                }
+                showConfirmDialog(getString(R.string.relapse), getString(R.string.relapse_confirm, addictions[pos].name), action)
+            }
+        }
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerAddictions.layoutManager = layoutManager
         binding.recyclerAddictions.adapter = adapterAddictions
@@ -85,7 +112,7 @@ class Main : AppCompatActivity() {
         }, 1000L)
     }
 
-    fun updatePromptVisibility() {
+    private fun updatePromptVisibility() {
         binding.prompt.visibility = when (addictions.size == 0) {
             true -> View.VISIBLE
             else -> View.GONE

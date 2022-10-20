@@ -8,20 +8,30 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.katiearose.sobriety.activities.Main
-import com.katiearose.sobriety.internal.CacheHandler
 import com.katiearose.sobriety.utils.convertSecondsToString
 import com.katiearose.sobriety.utils.secondsFromNow
-import com.katiearose.sobriety.utils.showConfirmDialog
 
-class AddictionCardAdapter(private val context: Context, private val cacheHandler: CacheHandler) :
+class AddictionCardAdapter(private val context: Context) :
     RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>() {
+
+    private lateinit var onButtonDeleteClickListener: View.OnClickListener
+    private lateinit var onButtonRelapseClickListener: View.OnClickListener
+
+    fun setOnButtonDeleteClickListener(onButtonDeleteClickListener: View.OnClickListener) {
+        this.onButtonDeleteClickListener = onButtonDeleteClickListener
+    }
+
+    fun setOnButtonRelapseClickListener(onButtonRelapseClickListener: View.OnClickListener) {
+        this.onButtonRelapseClickListener = onButtonRelapseClickListener
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): AddictionCardViewHolder {
         val itemView =
             LayoutInflater.from(parent.context).inflate(R.layout.card_addiction, parent, false)
-        return AddictionCardViewHolder(itemView)
+        return AddictionCardViewHolder(itemView, onButtonDeleteClickListener, onButtonRelapseClickListener)
     }
 
     override fun onBindViewHolder(
@@ -36,35 +46,25 @@ class AddictionCardAdapter(private val context: Context, private val cacheHandle
         holder.textViewAverage.visibility = if (addiction.averageRelapseDuration == -1L) View.GONE else View.VISIBLE
         holder.textViewAverage.text =
             context.getString(R.string.recent_avg, context.convertSecondsToString(addiction.averageRelapseDuration))
-
-        holder.buttonDelete.setOnClickListener {
-            val action: () -> Unit = {
-                Main.addictions.remove(addiction)
-                //activity.updatePromptVisibility()
-                notifyItemRemoved(position)
-                Main.deleting = true
-                cacheHandler.writeCache()
-            }
-            context.showConfirmDialog(context.getString(R.string.delete), context.getString(R.string.delete_confirm, addiction.name), action)
-        }
-
-        holder.buttonReset.setOnClickListener {
-            val action: () -> Unit = {
-                addiction.relapse()
-                notifyItemChanged(position)
-                cacheHandler.writeCache()
-            }
-            context.showConfirmDialog(context.getString(R.string.relapse), context.getString(R.string.relapse_confirm, addiction.name), action)
-        }
     }
 
     override fun getItemCount() = Main.addictions.size
 
-    class AddictionCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class AddictionCardViewHolder(itemView: View, onButtonDeleteClickListener: View.OnClickListener,
+                                  onButtonRelapseClickListener: View.OnClickListener
+    ) : RecyclerView.ViewHolder(itemView) {
         val textViewName: TextView = itemView.findViewById(R.id.textViewAddictionName)
         val textViewTime: TextView = itemView.findViewById(R.id.textViewTime)
         val textViewAverage: TextView = itemView.findViewById(R.id.textViewAverage)
-        val buttonDelete: ImageView = itemView.findViewById(R.id.imageDelete)
-        val buttonReset: ImageView = itemView.findViewById(R.id.imageReset)
+        init {
+            itemView.findViewById<ImageView>(R.id.imageDelete).apply {
+                tag = this@AddictionCardViewHolder
+                setOnClickListener(onButtonDeleteClickListener)
+            }
+            itemView.findViewById<ImageView>(R.id.imageReset).apply {
+                tag = this@AddictionCardViewHolder
+                setOnClickListener(onButtonRelapseClickListener)
+            }
+        }
     }
 }
