@@ -61,7 +61,8 @@
             app:tint="?attr/colorIconOnCard"
             android:src="@drawable/ic_baseline_delete_24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewAverage"/>
+            app:layout_constraintTop_toBottomOf="@+id/textViewAverage"
+            />
 
         <ImageView
             android:id="@+id/imageReset"
