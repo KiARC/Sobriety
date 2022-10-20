@@ -26,10 +26,10 @@ class AddictionCardAdapter(private val activity: Main, private val cacheHandler:
 
         holder.textViewName.text = addiction.name
         holder.textViewTime.text =
-            Main.secondsToString(Main.timeSinceInstant(addiction.lastRelapse))
+            Main.secondsToString(Main.timeSinceInstant(addiction.lastRelapse), activity)
         holder.textViewAverage.visibility = if (addiction.averageRelapseDuration == -1L) View.GONE else View.VISIBLE
         holder.textViewAverage.text =
-            "Recent Average: ${Main.secondsToString(addiction.averageRelapseDuration)}"
+                activity.getString(R.string.recent_avg, Main.secondsToString(addiction.averageRelapseDuration, activity))
 
         holder.buttonDelete.setOnClickListener {
             val action: () -> Unit = {
@@ -39,7 +39,7 @@ class AddictionCardAdapter(private val activity: Main, private val cacheHandler:
                 Main.deleting = true
                 cacheHandler.writeCache()
             }
-            activity.dialogConfirm("Delete entry \"${addiction.name}\" ?", action)
+            activity.dialogConfirm(activity.getString(R.string.delete_confirm, addiction.name), action)
         }
 
         holder.buttonReset.setOnClickListener {
@@ -48,7 +48,7 @@ class AddictionCardAdapter(private val activity: Main, private val cacheHandler:
                 notifyItemChanged(position)
                 cacheHandler.writeCache()
             }
-            activity.dialogConfirm("Log relapse of \"${addiction.name}\" ?", action)
+            activity.dialogConfirm(activity.getString(R.string.relapse_confirm, addiction.name), action)
         }
     }
 

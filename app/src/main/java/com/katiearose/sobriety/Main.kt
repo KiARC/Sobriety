@@ -1,13 +1,13 @@
 package com.katiearose.sobriety
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +17,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.FileNotFoundException
 import java.time.Instant
 import java.util.*
-
 
 class Main : AppCompatActivity() {
 
@@ -29,7 +28,7 @@ class Main : AppCompatActivity() {
         private const val WEEK = DAY * 7
         private const val MONTH = DAY * 31
         private const val YEAR = MONTH * 12
-        fun secondsToString(given: Long): String {
+        fun secondsToString(given: Long, context: Context): String {
             if (given == -1L) return "" // -1 is returned if addiction has never been relapsed, don't bother calculating
             var time = given
             val s = time % MINUTE
@@ -46,14 +45,16 @@ class Main : AppCompatActivity() {
             time -= mo * MONTH
             val y = time / YEAR
             val stringBuilder = StringBuilder()
-            if (y != 0L) stringBuilder.append("$y years, ")
-            if (mo != 0L) stringBuilder.append("$mo months, ")
-            if (w != 0L) stringBuilder.append("$w weeks, ")
-            if (d != 0L) stringBuilder.append("$d days, ")
-            if (h != 0L) stringBuilder.append("$h hours, ")
-            if (m != 0L) stringBuilder.append("$m minutes, ")
-            if (!(y == 0L && mo == 0L && w == 0L && d == 0L && h == 0L && m == 0L)) stringBuilder.append("and ")
-            stringBuilder.append("$s seconds")
+            if (y != 0L) stringBuilder.append(context.getString(R.string.years, y)).append(" ")
+            if (mo != 0L) stringBuilder.append(context.getString(R.string.months, mo)).append(" ")
+            if (w != 0L) stringBuilder.append(context.getString(R.string.weeks, w)).append(" ")
+            if (d != 0L) stringBuilder.append(context.getString(R.string.days, d)).append(" ")
+            if (h != 0L) stringBuilder.append(context.getString(R.string.hours, h)).append(" ")
+            if (m != 0L) stringBuilder.append(context.getString(R.string.minutes, m)).append(" ")
+            if (!(y == 0L && mo == 0L && w == 0L && d == 0L && h == 0L && m == 0L)) stringBuilder.append(
+                context.getString(R.string.and)
+            ).append(" ")
+            stringBuilder.append(context.getString(R.string.seconds, s))
             return stringBuilder.toString()
         }
 
@@ -64,7 +65,6 @@ class Main : AppCompatActivity() {
     }
 
     private lateinit var addCardButton: FloatingActionButton
-    private lateinit var cardHolder: LinearLayout
     private lateinit var prompt: TextView
 
     private lateinit var adapterAddictions: AddictionCardAdapter
@@ -135,11 +135,11 @@ class Main : AppCompatActivity() {
             val builder = AlertDialog.Builder(it)
             builder.apply {
                 setPositiveButton(
-                    "ok"
+                    android.R.string.ok
                 ) { _, _ ->
                     confirmAction()
                 }
-                setNegativeButton("cancel") { _: DialogInterface, _: Int -> }
+                setNegativeButton(android.R.string.cancel) { _: DialogInterface, _: Int -> }
             }
             builder.setTitle(title)
             builder.create()
