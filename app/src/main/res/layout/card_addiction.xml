@@ -91,6 +91,19 @@
             app:layout_constraintTop_toTopOf="@+id/imageDelete"
             app:tint="?attr/colorIconOnCard" />
 
+        <ImageView
+            android:id="@+id/imageTimeline"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:foreground="@drawable/ripple"
+            android:src="@drawable/view_timeline_24"
+            android:contentDescription="@string/timeline"
+            android:tooltipText="@string/timeline"
+            app:layout_constraintEnd_toStartOf="@id/imageStop"
+            app:layout_constraintTop_toTopOf="@+id/imageDelete"
+            app:tint="?attr/colorIconOnCard" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

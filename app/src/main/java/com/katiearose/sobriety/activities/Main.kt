@@ -27,6 +27,7 @@ class Main : AppCompatActivity() {
 
     companion object {
         const val EXTRA_NAMES = "com.katiearose.sobriety.EXTRA_NAMES"
+        const val EXTRA_ADDICTION_POSITION = "com.katiearose.sobriety.EXTRA_ADDICTION_POSITION"
         val addictions = ArrayList<Addiction>()
         var deleting = false
     }
@@ -43,6 +44,7 @@ class Main : AppCompatActivity() {
                     it.data?.extras?.getSerializable("instant", Instant::class.java) as Instant
                 else it.data?.extras?.getSerializable("instant") as Instant
             val addiction = Addiction(name, instant, false, 0)
+            addiction.history[instant.toEpochMilli()] = 0
             addictions.add(addiction)
             cacheHandler.writeCache()
             adapterAddictions.notifyDataSetChanged()
@@ -86,7 +88,6 @@ class Main : AppCompatActivity() {
                 val pos = viewHolder.adapterPosition
                 val action: () -> Unit = {
                     addictions[pos].relapse()
-                    addictions[pos].isStopped = false
                     this.notifyItemChanged(pos)
                     cacheHandler.writeCache()
                 }
@@ -99,13 +100,19 @@ class Main : AppCompatActivity() {
                     Snackbar.make(binding.root, getString(R.string.already_stopped, addictions[pos].name), BaseTransientBottomBar.LENGTH_SHORT).show()
                 else {
                     val action: () -> Unit = {
-                        addictions[pos].isStopped = true
-                        addictions[pos].timeStopped = System.currentTimeMillis()
+                        addictions[pos].stopAbstaining()
                         this.notifyItemChanged(pos)
                         cacheHandler.writeCache()
                     }
                     showConfirmDialog(getString(R.string.stop), getString(R.string.stop_confirm, addictions[pos].name), action)
                 }
+            }
+            setOnTimelineButtonClickListener {
+                val viewHolder = it.tag as RecyclerView.ViewHolder
+                val pos = viewHolder.adapterPosition
+                val intent = Intent(this@Main, Timeline::class.java)
+                    .putExtra(EXTRA_ADDICTION_POSITION, pos)
+                startActivity(intent)
             }
         }
         val layoutManager = LinearLayoutManager(this)
