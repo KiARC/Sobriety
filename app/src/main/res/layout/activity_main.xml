@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".Main">
+    tools:context=".activities.Main">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerAddictions"
@@ -23,7 +23,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/ic_input_add"
-        app:tint="@android:color/white" />
+        app:tint="@android:color/white"
+        android:contentDescription="@string/add_new_addiction"
+        android:tooltipText="@string/add_new_addiction"/>
 
     <TextView
         android:id="@+id/prompt"
@@ -33,7 +35,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:text="To add an addiction to the tracker, press the &quot;+&quot; button in the bottom right corner."
+        android:text="@string/prompt"
         android:textSize="20sp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,6 +1,8 @@
-package com.katiearose.sobriety
+package com.katiearose.sobriety.internal
 
 import androidx.appcompat.app.AppCompatActivity
+import com.katiearose.sobriety.Addiction
+import com.katiearose.sobriety.activities.Main
 import java.io.InputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
