@@ -7,6 +7,13 @@
     <string name="pick_starting_date">Pick starting date</string>
     <string name="time">Time</string>
     <string name="pick_starting_time">Pick starting time</string>
+    <string name="priority">Priority</string>
+    <string name="edit_priority">Edit priority</string>
+    <string name="edit">Edit</string>
+    <string name="edit_priority_success">Successfully edited addiction priority</string>
+    <string name="high">High</string>
+    <string name="medium">Medium</string>
+    <string name="low">Low</string>
     <string name="create">Create</string>
     <string name="error_empty_name">Name is empty</string>
     <string name="error_duplicate_entry">Can\'t create duplicate entries</string>

@@ -6,9 +6,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.timepicker.MaterialTimePicker
+import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityCreateBinding
 import java.time.LocalTime
@@ -18,7 +20,8 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class Create : AppCompatActivity() {
-    private lateinit var startDateTime: ZonedDateTime
+    private var startDateTime = ZonedDateTime.now(ZoneId.systemDefault())
+    private var priority = Addiction.Priority.MEDIUM
 
     private lateinit var names: ArrayList<String>
     private lateinit var binding: ActivityCreateBinding
@@ -29,15 +32,42 @@ class Create : AppCompatActivity() {
         setContentView(binding.root)
         binding.clPickDate.setOnClickListener { pickDate() }
         binding.clPickTime.setOnClickListener { pickTime() }
+        binding.clPickPriority.setOnClickListener { pickPriority() }
         binding.btnCreate.setOnClickListener { create() }
 
-        startDateTime = ZonedDateTime.now(ZoneId.systemDefault())
+        @Suppress("DEPRECATION")
+        savedInstanceState?.let {
+            startDateTime = it.getSerializable("current_date_time") as ZonedDateTime
+            priority = it.getSerializable("current_priority") as Addiction.Priority
+        }
 
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
         binding.tvDate.text = startDateTime.toLocalDate().toString()
         binding.tvTime.text = startDateTime.toLocalTime().format(formatter).toString()
+        binding.tvPriority.text = when (priority) {
+            Addiction.Priority.HIGH -> getString(R.string.high)
+            Addiction.Priority.MEDIUM -> getString(R.string.medium)
+            Addiction.Priority.LOW -> getString(R.string.low)
+        }
 
         names = intent.getStringArrayListExtra(Main.EXTRA_NAMES) as ArrayList<String>
+    }
+
+    private fun pickPriority() {
+        var choice = priority.ordinal
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.priority)
+            .setSingleChoiceItems(R.array.priorities, priority.ordinal) { _, which -> choice = which }
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                priority = Addiction.Priority.values()[choice]
+                binding.tvPriority.text = when (priority) {
+                    Addiction.Priority.HIGH -> getString(R.string.high)
+                    Addiction.Priority.MEDIUM -> getString(R.string.medium)
+                    Addiction.Priority.LOW -> getString(R.string.low)
+                }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     override fun onBackPressed() {
@@ -103,9 +133,18 @@ class Create : AppCompatActivity() {
 
         val instant = startDateTime.toInstant()
         val intent = Intent()
-        intent.putExtra("instant", instant)
-        intent.putExtra("name", name)
+            .putExtra("instant", instant)
+            .putExtra("name", name)
+            .putExtra("priority", priority)
         setResult(Activity.RESULT_OK, intent)
         finish()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.apply {
+            putSerializable("current_date_time", startDateTime)
+            putSerializable("current_priority", priority)
+        }
     }
 }
