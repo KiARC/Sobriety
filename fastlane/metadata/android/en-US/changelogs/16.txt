@@ -1,0 +1,3 @@
+v6.1.1 Priorities
+  - Added feature to assign priorities to cards and sort based on those
+  - Fixed bugs
