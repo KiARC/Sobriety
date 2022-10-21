@@ -11,11 +11,16 @@ class Addiction(
     var lastRelapse: Instant,
     var isStopped: Boolean,
     var timeStopped: Long, //in milliseconds
-    val history: LinkedHashMap<Long, Long> = LinkedHashMap(), //in milliseconds
+    val history: LinkedHashMap<Long, Long>, //in milliseconds
+    var priority: Priority,
     private val relapses: CircularBuffer<Long> = CircularBuffer(3) //Default is a new one, but you can provide your own (from a cache)
 ) : Serializable {
     var averageRelapseDuration = if (relapses.get(0) == null) -1 else calculateAverageRelapseDuration()
         private set
+
+    enum class Priority {
+        HIGH, MEDIUM, LOW
+    }
 
     fun stopAbstaining() {
         isStopped = true
@@ -47,7 +52,8 @@ class Addiction(
         map[2] = isStopped
         map[3] = timeStopped
         map[4] = history
-        map[5] = relapses
+        map[5] = priority
+        map[6] = relapses
         return map
     }
 
@@ -59,7 +65,8 @@ class Addiction(
                 map[2] as Boolean,
                 map[3] as Long,
                 map[4] as LinkedHashMap<Long, Long>,
-                map[5] as CircularBuffer<Long>
+                map[5] as Priority,
+                map[6] as CircularBuffer<Long>
             )
         }
     }

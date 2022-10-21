@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.katiearose.sobriety.Addiction
@@ -35,17 +36,25 @@ class Main : AppCompatActivity() {
     private lateinit var adapterAddictions: AddictionCardAdapter
     private lateinit var cacheHandler: CacheHandler
     private lateinit var binding: ActivityMainBinding
+    @Suppress("DEPRECATION") //google, why did you deprecate a function that's literally the only way on android 12 and lower
     @SuppressLint("NotifyDataSetChanged")
     private val addNewAddiction = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
             val name = it.data?.extras?.getString("name") as String
-            @Suppress("DEPRECATION") val instant =
+            val instant =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                     it.data?.extras?.getSerializable("instant", Instant::class.java) as Instant
                 else it.data?.extras?.getSerializable("instant") as Instant
-            val addiction = Addiction(name, instant, false, 0)
+            val priority =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                    it.data?.extras?.getSerializable("priority", Addiction.Priority::class.java) as Addiction.Priority
+                else it.data?.extras?.getSerializable("priority") as Addiction.Priority
+            val addiction = Addiction(name, instant, false, 0, LinkedHashMap(), priority)
             addiction.history[instant.toEpochMilli()] = 0
             addictions.add(addiction)
+            addictions.sortWith { a1, a2 ->
+                a1.priority.compareTo(a2.priority)
+            }
             cacheHandler.writeCache()
             adapterAddictions.notifyDataSetChanged()
         }
@@ -114,6 +123,25 @@ class Main : AppCompatActivity() {
                     .putExtra(EXTRA_ADDICTION_POSITION, pos)
                 startActivity(intent)
             }
+            setOnPriorityTextViewClickListener {
+                val viewHolder = it.tag as RecyclerView.ViewHolder
+                val pos = viewHolder.adapterPosition
+                var choice = addictions[pos].priority.ordinal
+                MaterialAlertDialogBuilder(this@Main)
+                    .setTitle(R.string.edit_priority)
+                    .setSingleChoiceItems(R.array.priorities, addictions[pos].priority.ordinal) { _, which -> choice = which }
+                    .setPositiveButton(R.string.edit) { _, _ ->
+                        addictions[pos].priority = Addiction.Priority.values()[choice]
+                        addictions.sortWith { a1, a2 ->
+                            a1.priority.compareTo(a2.priority)
+                        }
+                        cacheHandler.writeCache()
+                        adapterAddictions.notifyDataSetChanged()
+                        Snackbar.make(binding.root, R.string.edit_priority_success, BaseTransientBottomBar.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            }
         }
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerAddictions.layoutManager = layoutManager
@@ -136,10 +164,7 @@ class Main : AppCompatActivity() {
     }
 
     private fun updatePromptVisibility() {
-        binding.prompt.visibility = when (addictions.size == 0) {
-            true -> View.VISIBLE
-            else -> View.GONE
-        }
+        binding.prompt.visibility = if (addictions.size == 0) View.VISIBLE else View.GONE
     }
 
     private fun newCardDialog() {
