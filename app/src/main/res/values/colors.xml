@@ -10,4 +10,5 @@
     <color name="red">#ff0000</color>
     <color name="orange">#ff9900</color>
     <color name="green">#00cc00</color>
+    <color name="sobriety_bg">#a382ce</color>
 </resources>
