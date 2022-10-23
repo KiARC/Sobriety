@@ -1,6 +1,9 @@
 package com.katiearose.sobriety.utils
 
+import android.app.Activity
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.katiearose.sobriety.R
 import java.time.Instant
@@ -49,6 +52,18 @@ fun Context.showConfirmDialog(title: String, message: String, action: () -> Unit
         .setPositiveButton(android.R.string.ok) { _, _ -> action() }
         .setNegativeButton(android.R.string.cancel, null)
         .show()
+}
+
+fun Activity.applyThemes() {
+    val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+    when (preferences.getString("theme", "system")) {
+        "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+    }
+    if (preferences.getBoolean("material_you", false)) {
+        setTheme(R.style.Theme_Sobriety_Material3)
+    } else setTheme(R.style.Theme_Sobriety)
 }
 
 fun Instant.secondsFromNow(): Long = Instant.now().epochSecond - this.epochSecond

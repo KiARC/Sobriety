@@ -7,4 +7,27 @@
         <item>@string/low</item>
     </string-array>
 
+    <string-array name="theme_entries" translatable="false">
+        <item>@string/light_theme</item>
+        <item>@string/dark_theme</item>
+        <item>@string/system_theme</item>
+    </string-array>
+
+    <string-array name="theme_entry_values" translatable="false">
+        <item>light</item>
+        <item>dark</item>
+        <item>system</item>
+    </string-array>
+
+    <!-- Android 9 and lower doesn't have system dark theme, so disabling the option -->
+    <string-array name="theme_entries_p" translatable="false">
+        <item>@string/light_theme</item>
+        <item>@string/dark_theme</item>
+    </string-array>
+
+    <string-array name="theme_entry_values_p" translatable="false">
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
+
 </resources>
