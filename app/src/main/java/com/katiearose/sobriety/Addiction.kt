@@ -5,6 +5,7 @@ import com.katiearose.sobriety.utils.putLast
 import com.katiearose.sobriety.utils.secondsFromNow
 import java.io.Serializable
 import java.time.Instant
+import java.time.LocalDate
 
 class Addiction(
     val name: String,
@@ -13,6 +14,7 @@ class Addiction(
     var timeStopped: Long, //in milliseconds
     val history: LinkedHashMap<Long, Long>, //in milliseconds
     var priority: Priority,
+    val dailyNotes: LinkedHashMap<LocalDate, String>,
     private val relapses: CircularBuffer<Long> = CircularBuffer(3) //Default is a new one, but you can provide your own (from a cache)
 ) : Serializable {
     var averageRelapseDuration = if (relapses.get(0) == null) -1 else calculateAverageRelapseDuration()
@@ -63,14 +65,27 @@ class Addiction(
 
     companion object {
         fun fromCacheable(map: HashMap<Int, Any>): Addiction {
-            return Addiction(
+            //Migration strategies
+            if (map.size == 7) {
+                return Addiction(
+                    map[0] as String,
+                    map[1] as Instant,
+                    map[2] as Boolean,
+                    map[3] as Long,
+                    map[4] as LinkedHashMap<Long, Long>,
+                    map[5] as Priority,
+                    LinkedHashMap(),
+                    map[6] as CircularBuffer<Long>
+                )
+            } else return Addiction(
                 map[0] as String,
                 map[1] as Instant,
                 map[2] as Boolean,
                 map[3] as Long,
                 map[4] as LinkedHashMap<Long, Long>,
                 map[5] as Priority,
-                map[6] as CircularBuffer<Long>
+                map[6] as LinkedHashMap<LocalDate, String>,
+                map[7] as CircularBuffer<Long>
             )
         }
     }

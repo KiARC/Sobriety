@@ -16,6 +16,7 @@ import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -23,12 +24,14 @@ import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.AddictionCardAdapter
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityMainBinding
+import com.katiearose.sobriety.databinding.DialogMiscBinding
 import com.katiearose.sobriety.internal.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.showConfirmDialog
 import java.io.FileNotFoundException
 import java.time.Instant
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 class Main : AppCompatActivity() {
 
@@ -55,7 +58,7 @@ class Main : AppCompatActivity() {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                     it.data?.extras?.getSerializable("priority", Addiction.Priority::class.java) as Addiction.Priority
                 else it.data?.extras?.getSerializable("priority") as Addiction.Priority
-            val addiction = Addiction(name, instant, false, 0, LinkedHashMap(), priority)
+            val addiction = Addiction(name, instant, false, 0, LinkedHashMap(), priority, LinkedHashMap())
             if (!addiction.isFuture())
                 addiction.history[instant.toEpochMilli()] = 0
             addictions.add(addiction)
@@ -181,6 +184,21 @@ class Main : AppCompatActivity() {
                     .setNegativeButton(android.R.string.cancel, null)
                     .show()
             }
+            setOnMiscButtonClickListener {
+                val viewHolder = it.tag as RecyclerView.ViewHolder
+                val pos = viewHolder.adapterPosition
+                var dialogViewBinding: DialogMiscBinding? = DialogMiscBinding.inflate(layoutInflater)
+                val dialog = BottomSheetDialog(this@Main)
+                dialogViewBinding!!.dailyNotes.setOnClickListener {
+                    startActivity(Intent(this@Main, DailyNotes::class.java)
+                        .putExtra(EXTRA_ADDICTION_POSITION, pos)
+                    )
+                    dialog.dismiss()
+                }
+                dialog.setContentView(dialogViewBinding.root)
+                dialog.setOnDismissListener { dialogViewBinding = null }
+                dialog.show()
+            }
         }
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerAddictions.layoutManager = layoutManager
@@ -192,8 +210,11 @@ class Main : AppCompatActivity() {
             override fun run() {
                 //Skip the refresh, when a delete was initiated < 1 second ago, to not reset delete animation
                 if (!deleting) {
+                    //if the future time has just elapsed, insert that time into history.
+                    //Note that to handle cases where the time elapses while the app is closed,
+                    //i have to do this catch-all check. it's ugly, but it works.
                     for (addiction in addictions) {
-                        if (addiction.history.isEmpty() && addiction.lastRelapse.epochSecond < Instant.now().epochSecond) { //if the future time has just elapsed
+                        if (addiction.history.isEmpty() && addiction.lastRelapse.epochSecond < Instant.now().epochSecond) {
                             addiction.history[addiction.lastRelapse.toEpochMilli()] = 0
                         }
                     }

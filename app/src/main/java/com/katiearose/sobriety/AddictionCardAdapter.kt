@@ -24,6 +24,7 @@ class AddictionCardAdapter(private val context: Context) :
     private lateinit var onButtonStopClickListener: OnClickListener
     private lateinit var onTimelineButtonClickListener: OnClickListener
     private lateinit var onPriorityTextViewClickListener: OnClickListener
+    private lateinit var onMiscButtonClickListener: OnClickListener
     private val dateFormat = DateFormat.getDateTimeInstance()
 
     fun setOnButtonDeleteClickListener(onButtonDeleteClickListener: OnClickListener) {
@@ -46,6 +47,10 @@ class AddictionCardAdapter(private val context: Context) :
         this.onPriorityTextViewClickListener = onPriorityTextViewClickListener
     }
 
+    fun setOnMiscButtonClickListener(onMiscButtonClickListener: OnClickListener) {
+        this.onMiscButtonClickListener = onMiscButtonClickListener
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -53,7 +58,8 @@ class AddictionCardAdapter(private val context: Context) :
         val itemView =
             LayoutInflater.from(parent.context).inflate(R.layout.card_addiction, parent, false)
         return AddictionCardViewHolder(itemView, onButtonDeleteClickListener, onButtonRelapseClickListener,
-        onButtonStopClickListener, onTimelineButtonClickListener, onPriorityTextViewClickListener)
+        onButtonStopClickListener, onTimelineButtonClickListener, onPriorityTextViewClickListener,
+        onMiscButtonClickListener)
     }
 
     override fun onBindViewHolder(
@@ -94,7 +100,8 @@ class AddictionCardAdapter(private val context: Context) :
                                   onButtonRelapseClickListener: OnClickListener,
                                   onButtonStopClickListener: OnClickListener,
                                   onTimelineButtonClickListener: OnClickListener,
-                                  onPriorityTextViewClickListener: OnClickListener
+                                  onPriorityTextViewClickListener: OnClickListener,
+                                  onMiscButtonClickListener: OnClickListener
     ) : RecyclerView.ViewHolder(itemView) {
         val textViewName: TextView = itemView.findViewById(R.id.textViewAddictionName)
         val textViewPriority: TextView = itemView.findViewById(R.id.textViewPriority)
@@ -120,6 +127,10 @@ class AddictionCardAdapter(private val context: Context) :
             textViewPriority.apply {
                 tag = this@AddictionCardViewHolder
                 setOnClickListener(onPriorityTextViewClickListener)
+            }
+            itemView.findViewById<ImageView>(R.id.imageMisc).apply {
+                tag = this@AddictionCardViewHolder
+                setOnClickListener(onMiscButtonClickListener)
             }
         }
     }

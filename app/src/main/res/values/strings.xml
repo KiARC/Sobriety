@@ -54,4 +54,14 @@
     <string name="not_tracked_yet">\"%s\" has not been tracked yet. If you want to track it now, press the Relapse button.</string>
     <string name="track_now">Track now</string>
     <string name="start_tracking_now">Are you ready to start tracking \"%s\" now?</string>
+    <string name="misc">Miscellaneous</string>
+    <string name="daily_notes">Daily notes</string>
+    <string name="add_note">Add note</string>
+    <string name="note">Note</string>
+    <string name="note_hint">Enter notes…</string>
+    <string name="error_empty_note">Note cannot be empty</string>
+    <string name="save">Save</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
+    <string name="delete_note_confirm">Do you really want to delete the note for %s?\nThis action cannot be undone.</string>
 </resources>
