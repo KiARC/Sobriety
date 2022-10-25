@@ -56,7 +56,8 @@ class Main : AppCompatActivity() {
                     it.data?.extras?.getSerializable("priority", Addiction.Priority::class.java) as Addiction.Priority
                 else it.data?.extras?.getSerializable("priority") as Addiction.Priority
             val addiction = Addiction(name, instant, false, 0, LinkedHashMap(), priority)
-            addiction.history[instant.toEpochMilli()] = 0
+            if (!addiction.isFuture())
+                addiction.history[instant.toEpochMilli()] = 0
             addictions.add(addiction)
             addictions.sortWith { a1, a2 ->
                 a1.priority.compareTo(a2.priority)
@@ -88,8 +89,8 @@ class Main : AppCompatActivity() {
         cacheHandler = CacheHandler(this)
         if (addictions.isEmpty())
             try {
-            this.openFileInput("Sobriety.cache").use {
-                addictions.addAll(cacheHandler.readCache(it))
+                this.openFileInput("Sobriety.cache").use {
+                    addictions.addAll(cacheHandler.readCache(it))
             }
         } catch (e: FileNotFoundException) {
         }
@@ -102,55 +103,74 @@ class Main : AppCompatActivity() {
             setOnButtonDeleteClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val pos = viewHolder.adapterPosition
+                val selectedAddiction = addictions[pos]
                 val action: () -> Unit = {
-                    addictions.remove(addictions[pos])
+                    addictions.remove(selectedAddiction)
                     updatePromptVisibility()
                     this.notifyItemRemoved(pos)
                     deleting = true
                     cacheHandler.writeCache()
                 }
-                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_confirm, addictions[pos].name), action)
+                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_confirm, selectedAddiction.name), action)
             }
             setOnButtonRelapseClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val pos = viewHolder.adapterPosition
-                val action: () -> Unit = {
-                    addictions[pos].relapse()
-                    this.notifyItemChanged(pos)
-                    cacheHandler.writeCache()
+                val selectedAddiction = addictions[pos]
+                if (!selectedAddiction.isFuture()) {
+                    val action: () -> Unit = {
+                        selectedAddiction.relapse()
+                        this.notifyItemChanged(pos)
+                        cacheHandler.writeCache()
+                    }
+                    showConfirmDialog(getString(R.string.relapse), getString(R.string.relapse_confirm, selectedAddiction.name), action)
+                } else {
+                    val action: () -> Unit = {
+                        selectedAddiction.lastRelapse = Instant.now()
+                        selectedAddiction.history[System.currentTimeMillis()] = 0
+                        this.notifyItemChanged(pos)
+                        cacheHandler.writeCache()
+                    }
+                    showConfirmDialog(getString(R.string.track_now), getString(R.string.start_tracking_now, selectedAddiction.name), action)
                 }
-                showConfirmDialog(getString(R.string.relapse), getString(R.string.relapse_confirm, addictions[pos].name), action)
             }
             setOnButtonStopClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val pos = viewHolder.adapterPosition
-                if (addictions[pos].isStopped)
-                    Snackbar.make(binding.root, getString(R.string.already_stopped, addictions[pos].name), BaseTransientBottomBar.LENGTH_SHORT).show()
-                else {
-                    val action: () -> Unit = {
-                        addictions[pos].stopAbstaining()
-                        this.notifyItemChanged(pos)
-                        cacheHandler.writeCache()
+                val selectedAddiction = addictions[pos]
+                if (!selectedAddiction.isFuture()) {
+                    if (selectedAddiction.isStopped)
+                        Snackbar.make(binding.root, getString(R.string.already_stopped, selectedAddiction.name), BaseTransientBottomBar.LENGTH_SHORT).show()
+                    else {
+                        val action: () -> Unit = {
+                            selectedAddiction.stopAbstaining()
+                            this.notifyItemChanged(pos)
+                            cacheHandler.writeCache()
+                        }
+                        showConfirmDialog(getString(R.string.stop), getString(R.string.stop_confirm, selectedAddiction.name), action)
                     }
-                    showConfirmDialog(getString(R.string.stop), getString(R.string.stop_confirm, addictions[pos].name), action)
-                }
+                } else Snackbar.make(binding.root, getString(R.string.not_tracked_yet, selectedAddiction.name), BaseTransientBottomBar.LENGTH_SHORT).show()
             }
             setOnTimelineButtonClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val pos = viewHolder.adapterPosition
-                val intent = Intent(this@Main, Timeline::class.java)
-                    .putExtra(EXTRA_ADDICTION_POSITION, pos)
-                startActivity(intent)
+                val selectedAddiction = addictions[pos]
+                if (!selectedAddiction.isFuture()) {
+                    val intent = Intent(this@Main, Timeline::class.java)
+                        .putExtra(EXTRA_ADDICTION_POSITION, pos)
+                    startActivity(intent)
+                } else Snackbar.make(binding.root, getString(R.string.not_tracked_yet, selectedAddiction.name), BaseTransientBottomBar.LENGTH_SHORT).show()
             }
             setOnPriorityTextViewClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val pos = viewHolder.adapterPosition
-                var choice = addictions[pos].priority.ordinal
+                val selectedAddiction = addictions[pos]
+                var choice = selectedAddiction.priority.ordinal
                 MaterialAlertDialogBuilder(this@Main)
                     .setTitle(R.string.edit_priority)
-                    .setSingleChoiceItems(R.array.priorities, addictions[pos].priority.ordinal) { _, which -> choice = which }
+                    .setSingleChoiceItems(R.array.priorities, selectedAddiction.priority.ordinal) { _, which -> choice = which }
                     .setPositiveButton(R.string.edit) { _, _ ->
-                        addictions[pos].priority = Addiction.Priority.values()[choice]
+                        selectedAddiction.priority = Addiction.Priority.values()[choice]
                         addictions.sortWith { a1, a2 ->
                             a1.priority.compareTo(a2.priority)
                         }

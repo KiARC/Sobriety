@@ -3,12 +3,11 @@ package com.katiearose.sobriety.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.R
@@ -42,6 +41,7 @@ class Create : AppCompatActivity() {
             startDateTime = it.getSerializable("current_date_time") as ZonedDateTime
             priority = it.getSerializable("current_priority") as Addiction.Priority
         }
+        checkFutureDateTime()
 
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
         binding.tvDate.text = startDateTime.toLocalDate().toString()
@@ -53,6 +53,10 @@ class Create : AppCompatActivity() {
         }
 
         names = intent.getStringArrayListExtra(Main.EXTRA_NAMES) as ArrayList<String>
+    }
+
+    private fun checkFutureDateTime() {
+        binding.futureTimeNotice.visibility = if (startDateTime > ZonedDateTime.now()) View.VISIBLE else View.GONE
     }
 
     private fun pickPriority() {
@@ -83,40 +87,31 @@ class Create : AppCompatActivity() {
             .setCalendarConstraints(CalendarConstraints.Builder().setEnd(System.currentTimeMillis()).build())
             .build()
         datePicker.addOnPositiveButtonClickListener {
-            if (it > System.currentTimeMillis())
-                Snackbar.make(binding.root, R.string.error_future_date, LENGTH_SHORT).show()
-            else {
-                startDateTime = ZonedDateTime.of(
-                    Date(it).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-                    startDateTime.toLocalTime(),
-                    ZoneId.systemDefault()
-                )
-                binding.tvDate.text = startDateTime.toLocalDate().toString()
-            }
+            startDateTime = ZonedDateTime.of(
+                Date(it).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                startDateTime.toLocalTime(),
+                ZoneId.systemDefault()
+            )
+            binding.tvDate.text = startDateTime.toLocalDate().toString()
+            checkFutureDateTime()
         }
         datePicker.show(supportFragmentManager, null)
     }
 
     private fun pickTime() {
-        val isToday = startDateTime.toLocalDate() == ZonedDateTime.now().toLocalDate()
         val timePicker = MaterialTimePicker.Builder()
             .setTitleText(R.string.pick_starting_time)
             .setHour(ZonedDateTime.now().hour)
             .setMinute(ZonedDateTime.now().minute)
             .build()
         timePicker.addOnPositiveButtonClickListener {
-            if ((timePicker.hour > ZonedDateTime.now().hour ||
-                (timePicker.hour == ZonedDateTime.now().hour && timePicker.minute > ZonedDateTime.now().minute)) &&
-                isToday)
-                Snackbar.make(binding.root, R.string.error_future_time, LENGTH_SHORT).show()
-            else {
-                startDateTime = ZonedDateTime.of(
-                    startDateTime.toLocalDate(),
-                    LocalTime.of(timePicker.hour, timePicker.minute),
-                    ZoneId.systemDefault()
-                )
-                binding.tvTime.text = startDateTime.toLocalTime().toString()
-            }
+            startDateTime = ZonedDateTime.of(
+                startDateTime.toLocalDate(),
+                LocalTime.of(timePicker.hour, timePicker.minute),
+                ZoneId.systemDefault()
+            )
+            binding.tvTime.text = startDateTime.toLocalTime().toString()
+            checkFutureDateTime()
         }
         timePicker.show(supportFragmentManager, null)
     }

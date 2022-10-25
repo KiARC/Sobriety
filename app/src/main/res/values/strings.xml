@@ -17,8 +17,6 @@
     <string name="create">Create</string>
     <string name="error_empty_name">Name is empty</string>
     <string name="error_duplicate_entry">Can\'t create duplicate entries</string>
-    <string name="error_future_date">You can\'t select a future date</string>
-    <string name="error_future_time">You can\'t select a future time</string>
     <string name="years">%d years,</string>
     <string name="months">%d months,</string>
     <string name="weeks">%d weeks,</string>
@@ -51,4 +49,9 @@
     <string name="system_theme">System theme</string>
     <string name="material_you">Material You</string>
     <string name="material_you_subtext">Android 12 users, rejoice!</string>
+    <string name="future_time_notice">You have selected a future date/time. The app will only start tracking this addiction after this time.</string>
+    <string name="time_until_tracked">Will be tracked after %s</string>
+    <string name="not_tracked_yet">\"%s\" has not been tracked yet. If you want to track it now, press the Relapse button.</string>
+    <string name="track_now">Track now</string>
+    <string name="start_tracking_now">Are you ready to start tracking \"%s\" now?</string>
 </resources>

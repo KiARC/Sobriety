@@ -14,6 +14,7 @@ import com.katiearose.sobriety.utils.convertSecondsToString
 import com.katiearose.sobriety.utils.secondsFromNow
 import java.text.DateFormat
 import java.util.*
+import kotlin.math.absoluteValue
 
 class AddictionCardAdapter(private val context: Context) :
     RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>() {
@@ -73,10 +74,15 @@ class AddictionCardAdapter(private val context: Context) :
             Addiction.Priority.MEDIUM -> ResourcesCompat.getColor(context.resources, R.color.orange, context.theme)
             Addiction.Priority.LOW -> ResourcesCompat.getColor(context.resources, R.color.green, context.theme)
         })
-        holder.textViewTime.text = if (!addiction.isStopped) context.convertSecondsToString(addiction.lastRelapse.secondsFromNow())
-        else context.getString(R.string.stop_notice,
-            dateFormat.format(Date(addiction.timeStopped)),
-            context.convertSecondsToString((addiction.timeStopped - addiction.lastRelapse.toEpochMilli()) / 1000))
+        if (addiction.isFuture()) {
+            holder.textViewTime.text = context.getString(R.string.time_until_tracked,
+                context.convertSecondsToString(addiction.lastRelapse.secondsFromNow().absoluteValue))
+        } else {
+            holder.textViewTime.text = if (!addiction.isStopped) context.convertSecondsToString(addiction.lastRelapse.secondsFromNow())
+            else context.getString(R.string.stop_notice,
+                dateFormat.format(Date(addiction.timeStopped)),
+                context.convertSecondsToString((addiction.timeStopped - addiction.lastRelapse.toEpochMilli()) / 1000))
+        }
         holder.textViewAverage.visibility = if (addiction.averageRelapseDuration == -1L) View.GONE else View.VISIBLE
         holder.textViewAverage.text =
             context.getString(R.string.recent_avg, context.convertSecondsToString(addiction.averageRelapseDuration))

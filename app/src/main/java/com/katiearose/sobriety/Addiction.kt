@@ -22,6 +22,10 @@ class Addiction(
         HIGH, MEDIUM, LOW
     }
 
+    fun isFuture(): Boolean {
+        return lastRelapse > Instant.now()
+    }
+
     fun stopAbstaining() {
         isStopped = true
         timeStopped = System.currentTimeMillis()
@@ -31,7 +35,7 @@ class Addiction(
     }
 
     fun relapse() {
-        if (!isStopped) {
+        if (!isStopped && !isFuture()) {
             relapses.update(lastRelapse.secondsFromNow())
             history.putLast(System.currentTimeMillis())
         }
