@@ -59,7 +59,8 @@ class Addiction(
         map[3] = timeStopped
         map[4] = history
         map[5] = priority
-        map[6] = relapses
+        map[6] = dailyNotes
+        map[7] = relapses
         return map
     }
 

@@ -54,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/btn_expand_collapse"
-        android:layout_marginTop="10dp"
+        android:layout_marginVertical="10dp"
         app:contentPadding="6dp">
 
         <TextView

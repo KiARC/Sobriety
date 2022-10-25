@@ -13,6 +13,7 @@ import com.katiearose.sobriety.NoteAdapter
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityDailyNotesBinding
 import com.katiearose.sobriety.databinding.DialogAddNoteBinding
+import com.katiearose.sobriety.internal.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.getKeyValuePairAtIndex
 import com.katiearose.sobriety.utils.showConfirmDialog
@@ -27,12 +28,14 @@ class DailyNotes : AppCompatActivity() {
     private lateinit var adapter: NoteAdapter
     private val dateFormat = DateTimeFormatter.ofPattern("MMMM dd yyyy")
     private lateinit var addiction: Addiction
+    private lateinit var cacheHandler: CacheHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         applyThemes()
         super.onCreate(savedInstanceState)
         binding = ActivityDailyNotesBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        cacheHandler = CacheHandler(this)
 
         val pos = intent.extras!!.getInt(Main.EXTRA_ADDICTION_POSITION)
         addiction = Main.addictions[pos]
@@ -61,7 +64,7 @@ class DailyNotes : AppCompatActivity() {
                 val pos = viewHolder.adapterPosition
                 val action: () -> Unit = {
                     addiction.dailyNotes.remove(addiction.dailyNotes.getKeyValuePairAtIndex(pos).first)
-                    adapter.setNotes(addiction.dailyNotes)
+                    updateNotesList()
                 }
                 showConfirmDialog(getString(R.string.delete), getString(R.string.delete_note_confirm, dateFormat.format(addiction.dailyNotes.getKeyValuePairAtIndex(pos).first)), action)
             }
@@ -97,11 +100,19 @@ class DailyNotes : AppCompatActivity() {
                 dialogViewBinding!!.noteInputLayout.error = getString(R.string.error_empty_note)
             } else {
                 addiction.dailyNotes[pickedDate] = dialogViewBinding!!.noteInput.text.toString()
-                adapter.setNotes(addiction.dailyNotes)
+                updateNotesList()
                 dialog.dismiss()
             }
         }
         dialog.setOnDismissListener { dialogViewBinding = null }
         dialog.show()
+    }
+
+    private fun updateNotesList() {
+        val sorted = addiction.dailyNotes.toSortedMap()
+        addiction.dailyNotes.clear()
+        addiction.dailyNotes.putAll(sorted)
+        cacheHandler.writeCache()
+        adapter.setNotes(addiction.dailyNotes)
     }
 }
