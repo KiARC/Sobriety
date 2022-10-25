@@ -192,6 +192,11 @@ class Main : AppCompatActivity() {
             override fun run() {
                 //Skip the refresh, when a delete was initiated < 1 second ago, to not reset delete animation
                 if (!deleting) {
+                    for (addiction in addictions) {
+                        if (addiction.history.isEmpty() && addiction.lastRelapse.epochSecond < Instant.now().epochSecond) { //if the future time has just elapsed
+                            addiction.history[addiction.lastRelapse.toEpochMilli()] = 0
+                        }
+                    }
                     adapterAddictions.notifyDataSetChanged()
                 } else {
                     cacheHandler.writeCache()
