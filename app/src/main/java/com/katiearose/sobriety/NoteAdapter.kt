@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.katiearose.sobriety.utils.getKeyValuePairAtIndex
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -47,7 +46,7 @@ class NoteAdapter: RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        val pair = notes.getKeyValuePairAtIndex(position)
+        val pair = notes.toList()[position]
         holder.date.text = dateFormat.format(pair.first)
         holder.note.text = pair.second
     }

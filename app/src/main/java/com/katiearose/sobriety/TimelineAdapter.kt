@@ -8,10 +8,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.katiearose.sobriety.utils.convertSecondsToString
-import com.katiearose.sobriety.utils.getKeyValuePairAtIndex
 import java.text.DateFormat
 import java.util.*
-import kotlin.collections.LinkedHashMap
 
 class TimelineAdapter(private val context: Context):
     RecyclerView.Adapter<TimelineAdapter.TimelineViewHolder>() {
@@ -33,7 +31,7 @@ class TimelineAdapter(private val context: Context):
 
     override fun onBindViewHolder(holder: TimelineViewHolder, position: Int) {
         holder.attemptNo.text = context.getString(R.string.attempt, position + 1)
-        val pair = history.getKeyValuePairAtIndex(position)
+        val pair = history.toList()[position]
         if (pair.second == 0L) {
             holder.dateRange.text = context.getString(R.string.time_started, dateFormat.format(Date(pair.first)))
             holder.abstainPeriod.text = context.getString(R.string.ongoing)

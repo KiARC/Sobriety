@@ -30,6 +30,7 @@ import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.showConfirmDialog
 import java.io.FileNotFoundException
 import java.time.Instant
+import java.time.LocalTime
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
@@ -58,7 +59,9 @@ class Main : AppCompatActivity() {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                     it.data?.extras?.getSerializable("priority", Addiction.Priority::class.java) as Addiction.Priority
                 else it.data?.extras?.getSerializable("priority") as Addiction.Priority
-            val addiction = Addiction(name, instant, false, 0, LinkedHashMap(), priority, LinkedHashMap())
+            val addiction = Addiction(name, instant, false, 0, LinkedHashMap(), priority, LinkedHashMap(),
+            LocalTime.of(0, 0), LinkedHashMap()
+            )
             if (!addiction.isFuture())
                 addiction.history[instant.toEpochMilli()] = 0
             addictions.add(addiction)
@@ -195,13 +198,18 @@ class Main : AppCompatActivity() {
                     )
                     dialog.dismiss()
                 }
+                dialogViewBinding.savings.setOnClickListener {
+                    startActivity(Intent(this@Main, Savings::class.java)
+                        .putExtra(EXTRA_ADDICTION_POSITION, pos)
+                    )
+                    dialog.dismiss()
+                }
                 dialog.setContentView(dialogViewBinding.root)
                 dialog.setOnDismissListener { dialogViewBinding = null }
                 dialog.show()
             }
         }
-        val layoutManager = LinearLayoutManager(this)
-        binding.recyclerAddictions.layoutManager = layoutManager
+        binding.recyclerAddictions.layoutManager = LinearLayoutManager(this)
         binding.recyclerAddictions.adapter = adapterAddictions
         //main handler to refresh all cards in sync
         val mainHandler = Handler(Looper.getMainLooper())

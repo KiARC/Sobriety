@@ -10,6 +10,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Sobriety">
         <activity
+            android:name=".activities.Savings"
+            android:exported="false"
+            android:label="@string/savings">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".activities.DailyNotes"
             android:exported="false"
             android:label="@string/daily_notes">

@@ -15,12 +15,13 @@ import com.katiearose.sobriety.databinding.ActivityDailyNotesBinding
 import com.katiearose.sobriety.databinding.DialogAddNoteBinding
 import com.katiearose.sobriety.internal.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
-import com.katiearose.sobriety.utils.getKeyValuePairAtIndex
+import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
+import com.katiearose.sobriety.utils.toggleVisibility
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Date
+import java.util.*
 
 class DailyNotes : AppCompatActivity() {
 
@@ -45,13 +46,13 @@ class DailyNotes : AppCompatActivity() {
             setOnButtonEditClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val pos = viewHolder.adapterPosition
-                showAddNoteDialog(true, addiction.dailyNotes.getKeyValuePairAtIndex(pos).first)
+                showAddNoteDialog(true, addiction.dailyNotes.toList()[pos].first)
             }
             setOnButtonExpandCollapseClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val actualViewHolder = viewHolder as NoteAdapter.NoteViewHolder
                 val card = actualViewHolder.card
-                card.visibility = if (card.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                card.toggleVisibility()
                 actualViewHolder.expandCollapseButton.apply {
                     setImageResource(if (card.visibility == View.VISIBLE) R.drawable.expand_less_24px else R.drawable.expand_more_24px)
                     contentDescription = if (card.visibility == View.VISIBLE) getString(R.string.collapse) else getString(R.string.expand)
@@ -63,10 +64,10 @@ class DailyNotes : AppCompatActivity() {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val pos = viewHolder.adapterPosition
                 val action: () -> Unit = {
-                    addiction.dailyNotes.remove(addiction.dailyNotes.getKeyValuePairAtIndex(pos).first)
+                    addiction.dailyNotes.remove(addiction.dailyNotes.toList()[pos].first)
                     updateNotesList()
                 }
-                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_note_confirm, dateFormat.format(addiction.dailyNotes.getKeyValuePairAtIndex(pos).first)), action)
+                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_note_confirm, dateFormat.format(addiction.dailyNotes.toList()[pos].first)), action)
             }
         }
         binding.notesList.layoutManager = LinearLayoutManager(this)
@@ -96,7 +97,7 @@ class DailyNotes : AppCompatActivity() {
             }
         }
         dialogViewBinding.btnSave.setOnClickListener {
-            if (dialogViewBinding!!.noteInput.text == null || dialogViewBinding!!.noteInput.text.toString().isEmpty()) {
+            if (dialogViewBinding!!.noteInput.isInputEmpty()) {
                 dialogViewBinding!!.noteInputLayout.error = getString(R.string.error_empty_note)
             } else {
                 addiction.dailyNotes[pickedDate] = dialogViewBinding!!.noteInput.text.toString()

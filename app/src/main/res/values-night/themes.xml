@@ -11,5 +11,6 @@
         <item name="colorTextOnCard">#FFC5FC</item>
         <item name="colorIconOnCard">#B164AD</item>
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 </resources>

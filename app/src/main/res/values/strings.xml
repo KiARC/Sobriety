@@ -64,4 +64,19 @@
     <string name="expand">Expand</string>
     <string name="collapse">Collapse</string>
     <string name="delete_note_confirm">Do you really want to delete the note for %s?\nThis action cannot be undone.</string>
+    <string name="savings">Savings</string>
+    <string name="time_saved_per_day">Time saved per day</string>
+    <string name="select_time_saved">Select amount of time saved</string>
+    <string name="hours_minutes">%d hours, %d minutes</string>
+    <string name="no_set">Not set</string>
+    <string name="other_savings">Other savings</string>
+    <string name="add_new_saving">Add new saving</string>
+    <string name="add_new_saving_hint">What are you saving by abstaining?</string>
+    <string name="saving_name">Savings name</string>
+    <string name="amount_saved">Amount saved per day</string>
+    <string name="unit">Unit</string>
+    <string name="error_empty_amount">Amount cannot be empty</string>
+    <string name="error_empty_unit">Unit cannot be empty</string>
+    <string name="other_saved_per_day">Amount saved per day: %.2f %s</string>
+    <string name="delete_saving_confirm">Do you really want to delete your %s saving?\nThis action cannot be undone.</string>
 </resources>

@@ -2,7 +2,9 @@ package com.katiearose.sobriety.utils
 
 import android.app.Activity
 import android.content.Context
+import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.katiearose.sobriety.R
@@ -66,6 +68,14 @@ fun Activity.applyThemes() {
     } else setTheme(R.style.Theme_Sobriety)
 }
 
+fun AppCompatEditText.isInputEmpty(): Boolean {
+    return text == null || text.toString().trim().isEmpty()
+}
+
+fun View.toggleVisibility() {
+    visibility = if (visibility == View.VISIBLE) View.GONE else View.VISIBLE
+}
+
 fun Instant.secondsFromNow(): Long = Instant.now().epochSecond - this.epochSecond
 
 /**
@@ -74,10 +84,4 @@ fun Instant.secondsFromNow(): Long = Instant.now().epochSecond - this.epochSecon
 fun <K, V> LinkedHashMap<K, V>.putLast(value: V) {
     val lastKey = keys.map { it }.last()
     put(lastKey, value)
-}
-
-fun <K, V> LinkedHashMap<K, V>.getKeyValuePairAtIndex(index: Int): Pair<K, V> {
-    val key = keys.map { it }[index]
-    val value = values.map { it }[index]
-    return Pair(key, value)
 }
