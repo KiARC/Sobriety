@@ -69,7 +69,7 @@ fun Activity.applyThemes() {
 }
 
 fun AppCompatEditText.isInputEmpty(): Boolean {
-    return text == null || text.toString().trim().isEmpty()
+    return text == null || text.toString().isBlank()
 }
 
 fun View.toggleVisibility() {

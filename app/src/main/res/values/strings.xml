@@ -79,4 +79,14 @@
     <string name="error_empty_unit">Unit cannot be empty</string>
     <string name="other_saved_per_day">Amount saved per day: %.2f %s</string>
     <string name="delete_saving_confirm">Do you really want to delete your %s saving?\nThis action cannot be undone.</string>
+    <string name="milestones">Milestones</string>
+    <string name="unit_hour">Hours</string>
+    <string name="unit_day">Days</string>
+    <string name="unit_week">Weeks</string>
+    <string name="unit_month">Months</string>
+    <string name="unit_year">Years</string>
+    <string name="number">Number</string>
+    <string name="completed">Completed</string>
+    <string name="delete_milestone_confirm">Do you really want to delete this milestone?\nThis action cannot be undone.</string>
+
 </resources>

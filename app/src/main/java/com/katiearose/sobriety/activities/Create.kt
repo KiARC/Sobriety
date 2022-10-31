@@ -117,12 +117,12 @@ class Create : AppCompatActivity() {
     }
 
     private fun create() {
-        val name = binding.etTitle.text.toString().trim()
+        val name = binding.etTitle.text.toString()
         val nameExists = names.contains(name)
 
         //Don't allow creating without a name, or with a duplicate name
-        if (name.isEmpty() || nameExists) {
-            binding.til.error = if (name.isEmpty()) getString(R.string.error_empty_name) else getString(
+        if (name.isBlank() || nameExists) {
+            binding.til.error = if (name.isBlank()) getString(R.string.error_empty_name) else getString(
                 R.string.error_duplicate_entry
             )
             return

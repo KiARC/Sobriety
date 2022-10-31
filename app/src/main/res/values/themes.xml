@@ -10,8 +10,9 @@
         <item name="cardColor">#FACFF8</item>
         <item name="colorTextOnCard">#1C1C1C</item>
         <item name="colorIconOnCard">#B39DDB</item>
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
         <item name="android:textColor">@android:color/black</item>
+        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
     </style>
 
     <style name="Theme.Sobriety.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark" />

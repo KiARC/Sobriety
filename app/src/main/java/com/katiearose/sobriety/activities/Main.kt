@@ -33,6 +33,7 @@ import java.time.Instant
 import java.time.LocalTime
 import java.util.*
 import kotlin.collections.LinkedHashMap
+import kotlin.collections.LinkedHashSet
 
 class Main : AppCompatActivity() {
 
@@ -60,7 +61,7 @@ class Main : AppCompatActivity() {
                     it.data?.extras?.getSerializable("priority", Addiction.Priority::class.java) as Addiction.Priority
                 else it.data?.extras?.getSerializable("priority") as Addiction.Priority
             val addiction = Addiction(name, instant, false, 0, LinkedHashMap(), priority, LinkedHashMap(),
-            LocalTime.of(0, 0), LinkedHashMap()
+            LocalTime.of(0, 0), LinkedHashMap(), LinkedHashSet()
             )
             if (!addiction.isFuture())
                 addiction.history[instant.toEpochMilli()] = 0
@@ -204,6 +205,12 @@ class Main : AppCompatActivity() {
                     )
                     dialog.dismiss()
                 }
+                dialogViewBinding.milestones.setOnClickListener {
+                    startActivity(Intent(this@Main, Milestones::class.java)
+                        .putExtra(EXTRA_ADDICTION_POSITION, pos)
+                    )
+                    dialog.dismiss()
+                }
                 dialog.setContentView(dialogViewBinding.root)
                 dialog.setOnDismissListener { dialogViewBinding = null }
                 dialog.show()
@@ -218,8 +225,8 @@ class Main : AppCompatActivity() {
             override fun run() {
                 //Skip the refresh, when a delete was initiated < 1 second ago, to not reset delete animation
                 if (!deleting) {
-                    //if the future time has just elapsed, insert that time into history.
-                    //Note that to handle cases where the time elapses while the app is closed,
+                    //if the future time has elapsed, insert that time into history.
+                    //Note that to handle cases where the time elapses while the app is open,
                     //i have to do this catch-all check. it's ugly, but it works.
                     for (addiction in addictions) {
                         if (addiction.history.isEmpty() && addiction.lastRelapse.epochSecond < Instant.now().epochSecond) {

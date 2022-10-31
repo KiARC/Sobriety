@@ -30,4 +30,12 @@
         <item>dark</item>
     </string-array>
 
+    <string-array name="time_units" translatable="false">
+        <item>@string/unit_hour</item>
+        <item>@string/unit_day</item>
+        <item>@string/unit_week</item>
+        <item>@string/unit_month</item>
+        <item>@string/unit_year</item>
+    </string-array>
+
 </resources>
