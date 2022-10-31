@@ -10,19 +10,22 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class NoteAdapter: RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
+class NoteAdapter(private val addiction: Addiction): RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
     private val dateFormat = DateTimeFormatter.ofPattern("MMMM dd yyyy")
-    private lateinit var notes: LinkedHashMap<LocalDate, String>
+    private var notes = addiction.dailyNotes.toList().sortedWith { n1, n2 ->
+        n1.first.compareTo(n2.first)
+    }
     private lateinit var onButtonEditClickListener: OnClickListener
     private lateinit var onButtonExpandCollapseClickListener: OnClickListener
     private lateinit var onButtonDeleteClickListener: OnClickListener
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setNotes(notes: LinkedHashMap<LocalDate, String>) {
-        this.notes = notes
+    fun update() {
+        notes = addiction.dailyNotes.toList().sortedWith { n1, n2 ->
+            n1.first.compareTo(n2.first)
+        }
         notifyDataSetChanged()
     }
 
@@ -46,7 +49,7 @@ class NoteAdapter: RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        val pair = notes.toList()[position]
+        val pair = notes[position]
         holder.date.text = dateFormat.format(pair.first)
         holder.note.text = pair.second
     }

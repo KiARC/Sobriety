@@ -1,6 +1,5 @@
 package com.katiearose.sobriety
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -11,17 +10,11 @@ import com.katiearose.sobriety.utils.convertSecondsToString
 import java.text.DateFormat
 import java.util.*
 
-class TimelineAdapter(private val context: Context):
+class TimelineAdapter(addiction: Addiction, private val context: Context):
     RecyclerView.Adapter<TimelineAdapter.TimelineViewHolder>() {
 
-    private lateinit var history: LinkedHashMap<Long, Long>
+    private var history = addiction.history.toList()
     private val dateFormat = DateFormat.getDateTimeInstance()
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setHistory(history: LinkedHashMap<Long, Long>) {
-        this.history = history
-        notifyDataSetChanged()
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineViewHolder {
         val itemView =
@@ -31,7 +24,7 @@ class TimelineAdapter(private val context: Context):
 
     override fun onBindViewHolder(holder: TimelineViewHolder, position: Int) {
         holder.attemptNo.text = context.getString(R.string.attempt, position + 1)
-        val pair = history.toList()[position]
+        val pair = history[position]
         if (pair.second == 0L) {
             holder.dateRange.text = context.getString(R.string.time_started, dateFormat.format(Date(pair.first)))
             holder.abstainPeriod.text = context.getString(R.string.ongoing)

@@ -70,9 +70,8 @@ class Savings : AppCompatActivity() {
             }
         }
 
-        adapter = SavingsAdapter(this)
+        adapter = SavingsAdapter(addiction, this)
         adapter.apply {
-            setSavings(addiction.savings)
             setOnButtonEditClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val pos = viewHolder.adapterPosition
@@ -83,7 +82,7 @@ class Savings : AppCompatActivity() {
                 val pos = viewHolder.adapterPosition
                 val action: () -> Unit = {
                     addiction.savings.remove(addiction.savings.toList()[pos].first)
-                    adapter.setSavings(addiction.savings)
+                    updateSavingsList()
                 }
                 showConfirmDialog(getString(R.string.delete), getString(R.string.delete_saving_confirm, addiction.savings.toList()[pos].first), action)
             }
@@ -110,16 +109,14 @@ class Savings : AppCompatActivity() {
             } else {
                 if (existingSaving != null) {
                     addiction.savings[existingSaving.first] = Pair(dialogViewBinding!!.savingsAmountInput.text.toString().toDouble(), dialogViewBinding!!.unitInput.text.toString())
-                    adapter.setSavings(addiction.savings)
-                    cacheHandler.writeCache()
+                    updateSavingsList()
                     dialog.dismiss()
                 } else {
                     if (dialogViewBinding!!.savingsNameInput.isInputEmpty()) {
                         dialogViewBinding!!.savingsNameInputLayout.error = getString(R.string.error_empty_name)
                     } else {
                         addiction.savings[dialogViewBinding!!.savingsNameInput.text.toString()] = Pair(dialogViewBinding!!.savingsAmountInput.text.toString().toDouble(), dialogViewBinding!!.unitInput.text.toString())
-                        adapter.setSavings(addiction.savings)
-                        cacheHandler.writeCache()
+                        updateSavingsList()
                         dialog.dismiss()
                     }
                 }
@@ -127,6 +124,11 @@ class Savings : AppCompatActivity() {
         }
         dialog.setOnDismissListener { dialogViewBinding = null }
         dialog.show()
+    }
+
+    private fun updateSavingsList() {
+        cacheHandler.writeCache()
+        adapter.update()
     }
 
     private fun updateSavedTimeDisplay() {

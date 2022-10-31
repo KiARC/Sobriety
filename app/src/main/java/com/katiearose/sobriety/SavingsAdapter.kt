@@ -10,10 +10,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 
-class SavingsAdapter(private val context: Context): Adapter<SavingsAdapter.SavingsViewHolder>() {
-    private lateinit var savings: LinkedHashMap<String, Pair<Double, String>>
+class SavingsAdapter(private val addiction: Addiction, private val context: Context): Adapter<SavingsAdapter.SavingsViewHolder>() {
+    private var savings = addiction.savings.toList()
     private lateinit var onButtonEditClickListener: View.OnClickListener
     private lateinit var onButtonDeleteClickListener: View.OnClickListener
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun update() {
+        savings = addiction.savings.toList()
+        notifyDataSetChanged()
+    }
 
     fun setOnButtonEditClickListener(onButtonEditClickListener: View.OnClickListener) {
         this.onButtonEditClickListener = onButtonEditClickListener
@@ -23,12 +29,6 @@ class SavingsAdapter(private val context: Context): Adapter<SavingsAdapter.Savin
         this.onButtonDeleteClickListener = onButtonDeleteClickListener
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun setSavings(savings: LinkedHashMap<String, Pair<Double, String>>) {
-        this.savings = savings
-        notifyDataSetChanged()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavingsViewHolder {
         val itemView =
             LayoutInflater.from(parent.context).inflate(R.layout.list_item_saving, parent, false)
@@ -36,7 +36,7 @@ class SavingsAdapter(private val context: Context): Adapter<SavingsAdapter.Savin
     }
 
     override fun onBindViewHolder(holder: SavingsViewHolder, position: Int) {
-        val pair = savings.toList()[position]
+        val pair = savings[position]
         holder.savingName.text = pair.first
         holder.savingsAmountPerDay.text = context.getString(R.string.other_saved_per_day, pair.second.first, pair.second.second)
     }

@@ -40,9 +40,8 @@ class DailyNotes : AppCompatActivity() {
 
         val pos = intent.extras!!.getInt(Main.EXTRA_ADDICTION_POSITION)
         addiction = Main.addictions[pos]
-        adapter = NoteAdapter()
+        adapter = NoteAdapter(addiction)
         adapter.apply {
-            setNotes(addiction.dailyNotes)
             setOnButtonEditClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val pos = viewHolder.adapterPosition
@@ -110,10 +109,7 @@ class DailyNotes : AppCompatActivity() {
     }
 
     private fun updateNotesList() {
-        val sorted = addiction.dailyNotes.toSortedMap()
-        addiction.dailyNotes.clear()
-        addiction.dailyNotes.putAll(sorted)
         cacheHandler.writeCache()
-        adapter.setNotes(addiction.dailyNotes)
+        adapter.update()
     }
 }
