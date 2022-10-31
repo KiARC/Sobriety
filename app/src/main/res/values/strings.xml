@@ -49,6 +49,11 @@
     <string name="system_theme">System theme</string>
     <string name="material_you">Material You</string>
     <string name="material_you_subtext">Android 12 users, rejoice!</string>
+    <string name="sort_order">Sort order</string>
+    <string name="asc">Ascending</string>
+    <string name="desc">Descending</string>
+    <string name="no_sort">No sorting</string>
+    <string name="hide_completed_milestones">Hide completed milestones</string>
     <string name="future_time_notice">You have selected a future date/time. The app will only start tracking this addiction after this time.</string>
     <string name="time_until_tracked">Will be tracked after %s</string>
     <string name="not_tracked_yet">\"%s\" has not been tracked yet. If you want to track it now, press the Relapse button.</string>

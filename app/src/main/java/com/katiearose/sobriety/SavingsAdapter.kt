@@ -21,6 +21,10 @@ class SavingsAdapter(private val addiction: Addiction, private val context: Cont
         notifyDataSetChanged()
     }
 
+    fun getCurrentList(): List<Pair<String, Pair<Double, String>>> {
+        return savings
+    }
+
     fun setOnButtonEditClickListener(onButtonEditClickListener: View.OnClickListener) {
         this.onButtonEditClickListener = onButtonEditClickListener
     }

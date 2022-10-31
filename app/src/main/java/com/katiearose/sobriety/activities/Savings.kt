@@ -15,6 +15,7 @@ import com.katiearose.sobriety.SavingsAdapter
 import com.katiearose.sobriety.databinding.ActivitySavingsBinding
 import com.katiearose.sobriety.databinding.DialogAddSavingBinding
 import com.katiearose.sobriety.internal.CacheHandler
+import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
 import com.katiearose.sobriety.utils.toggleVisibility
@@ -28,6 +29,7 @@ class Savings : AppCompatActivity() {
     private lateinit var adapter: SavingsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        applyThemes()
         super.onCreate(savedInstanceState)
         binding = ActivitySavingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -75,13 +77,13 @@ class Savings : AppCompatActivity() {
             setOnButtonEditClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val pos = viewHolder.adapterPosition
-                showAddSavingDialog(addiction.savings.toList()[pos])
+                showAddSavingDialog(adapter.getCurrentList()[pos])
             }
             setOnButtonDeleteClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val pos = viewHolder.adapterPosition
                 val action: () -> Unit = {
-                    addiction.savings.remove(addiction.savings.toList()[pos].first)
+                    addiction.savings.remove(adapter.getCurrentList()[pos].first)
                     updateSavingsList()
                 }
                 showConfirmDialog(getString(R.string.delete), getString(R.string.delete_saving_confirm, addiction.savings.toList()[pos].first), action)

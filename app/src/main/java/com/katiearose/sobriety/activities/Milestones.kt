@@ -11,6 +11,7 @@ import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityMilestonesBinding
 import com.katiearose.sobriety.databinding.DialogAddMilestoneBinding
 import com.katiearose.sobriety.internal.CacheHandler
+import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
 import java.time.temporal.ChronoUnit
@@ -22,6 +23,7 @@ class Milestones : AppCompatActivity() {
     private lateinit var cacheHandler: CacheHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        applyThemes()
         super.onCreate(savedInstanceState)
         binding = ActivityMilestonesBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -30,11 +32,12 @@ class Milestones : AppCompatActivity() {
         val pos = intent.extras!!.getInt(Main.EXTRA_ADDICTION_POSITION)
         addiction = Main.addictions[pos]
         val adapter = MilestoneAdapter(addiction, this)
+        adapter.update()
         adapter.setOnButtonDeleteClickListener {
             val viewHolder = it.tag as RecyclerView.ViewHolder
             val pos = viewHolder.adapterPosition
             val action: () -> Unit = {
-                addiction.milestones.remove(addiction.milestones.map { it }[pos])
+                addiction.milestones.remove(adapter.getCurrentList()[pos])
                 cacheHandler.writeCache()
                 adapter.update()
             }

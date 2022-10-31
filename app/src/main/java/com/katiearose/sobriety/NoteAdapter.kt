@@ -1,6 +1,7 @@
 package com.katiearose.sobriety
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -10,23 +11,35 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.katiearose.sobriety.utils.getSharedPref
+import com.katiearose.sobriety.utils.getSortNotesPref
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class NoteAdapter(private val addiction: Addiction): RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
+class NoteAdapter(private val addiction: Addiction, context: Context): RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
     private val dateFormat = DateTimeFormatter.ofPattern("MMMM dd yyyy")
-    private var notes = addiction.dailyNotes.toList().sortedWith { n1, n2 ->
-        n1.first.compareTo(n2.first)
-    }
+    private lateinit var notes: List<Pair<LocalDate, String>>
+    private val preferences = context.getSharedPref()
     private lateinit var onButtonEditClickListener: OnClickListener
     private lateinit var onButtonExpandCollapseClickListener: OnClickListener
     private lateinit var onButtonDeleteClickListener: OnClickListener
 
     @SuppressLint("NotifyDataSetChanged")
     fun update() {
-        notes = addiction.dailyNotes.toList().sortedWith { n1, n2 ->
-            n1.first.compareTo(n2.first)
+        notes = when (preferences.getSortNotesPref()) {
+            "asc" -> addiction.dailyNotes.toList().sortedWith { n1, n2 ->
+                n1.first.compareTo(n2.first)
+            }
+            "desc" -> addiction.dailyNotes.toList().sortedWith { n1, n2 ->
+                n2.first.compareTo(n1.first)
+            }
+            else -> addiction.dailyNotes.toList()
         }
         notifyDataSetChanged()
+    }
+
+    fun getCurrentList(): List<Pair<LocalDate, String>> {
+        return notes
     }
 
     fun setOnButtonEditClickListener(onButtonEditClickListener: OnClickListener) {

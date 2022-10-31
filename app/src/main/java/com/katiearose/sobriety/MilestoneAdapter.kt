@@ -10,6 +10,9 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.katiearose.sobriety.utils.getHideCompletedMilestonesPref
+import com.katiearose.sobriety.utils.getSharedPref
+import com.katiearose.sobriety.utils.getSortMilestonesPref
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -18,17 +21,30 @@ import java.util.*
 class MilestoneAdapter(private val addiction: Addiction, private val context: Context) :
     RecyclerView.Adapter<MilestoneAdapter.MilestoneViewHolder>() {
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd MMM yyyy")
-    private var milestones = addiction.milestones.map { it }.sortedWith { m1, m2 ->
-        (m1.first * m1.second.duration.toMillis()).compareTo(m2.first * m2.second.duration.toMillis())
-    }
+    private lateinit var milestones: List<Pair<Int, ChronoUnit>>
+    private val preferences = context.getSharedPref()
     private lateinit var onButtonDeleteClickListener: View.OnClickListener
 
     @SuppressLint("NotifyDataSetChanged")
     fun update() {
-        milestones = addiction.milestones.map { it }.sortedWith { m1, m2 ->
-            (m1.first * m1.second.duration.toMillis()).compareTo(m2.first * m2.second.duration.toMillis())
+        milestones = when (preferences.getSortMilestonesPref()) {
+            "asc" -> addiction.milestones.map { it }.sortedWith { m1, m2 ->
+                (m1.first * m1.second.duration.toMillis()).compareTo(m2.first * m2.second.duration.toMillis())
+            }
+            "desc" -> addiction.milestones.map { it }.sortedWith { m1, m2 ->
+                (m2.first * m2.second.duration.toMillis()).compareTo(m1.first * m1.second.duration.toMillis())
+            }
+            else -> addiction.milestones.map { it }
         }
+        if (preferences.getHideCompletedMilestonesPref())
+            milestones = milestones.filter {
+                System.currentTimeMillis() < addiction.lastRelapse.toEpochMilli() + it.first * it.second.duration.toMillis()
+            }
         notifyDataSetChanged()
+    }
+
+    fun getCurrentList(): List<Pair<Int, ChronoUnit>> {
+        return milestones
     }
 
     fun setOnButtonDeleteClickListener(onButtonDeleteClickListener: View.OnClickListener) {

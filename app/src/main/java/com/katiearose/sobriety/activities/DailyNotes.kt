@@ -40,12 +40,13 @@ class DailyNotes : AppCompatActivity() {
 
         val pos = intent.extras!!.getInt(Main.EXTRA_ADDICTION_POSITION)
         addiction = Main.addictions[pos]
-        adapter = NoteAdapter(addiction)
+        adapter = NoteAdapter(addiction, this)
         adapter.apply {
+            update()
             setOnButtonEditClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val pos = viewHolder.adapterPosition
-                showAddNoteDialog(true, addiction.dailyNotes.toList()[pos].first)
+                showAddNoteDialog(true, adapter.getCurrentList()[pos].first)
             }
             setOnButtonExpandCollapseClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
@@ -63,7 +64,7 @@ class DailyNotes : AppCompatActivity() {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val pos = viewHolder.adapterPosition
                 val action: () -> Unit = {
-                    addiction.dailyNotes.remove(addiction.dailyNotes.toList()[pos].first)
+                    addiction.dailyNotes.remove(adapter.getCurrentList()[pos].first)
                     updateNotesList()
                 }
                 showConfirmDialog(getString(R.string.delete), getString(R.string.delete_note_confirm, dateFormat.format(addiction.dailyNotes.toList()[pos].first)), action)
