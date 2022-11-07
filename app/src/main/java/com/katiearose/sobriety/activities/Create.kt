@@ -13,6 +13,7 @@ import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityCreateBinding
 import com.katiearose.sobriety.utils.applyThemes
+import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -88,7 +89,7 @@ class Create : AppCompatActivity() {
             .build()
         datePicker.addOnPositiveButtonClickListener {
             startDateTime = ZonedDateTime.of(
-                Date(it).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate(),
                 startDateTime.toLocalTime(),
                 ZoneId.systemDefault()
             )

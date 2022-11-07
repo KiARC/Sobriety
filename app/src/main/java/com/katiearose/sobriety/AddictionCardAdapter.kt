@@ -3,13 +3,12 @@ package com.katiearose.sobriety
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.katiearose.sobriety.activities.Main
+import com.katiearose.sobriety.databinding.CardAddictionBinding
 import com.katiearose.sobriety.utils.convertSecondsToString
 import com.katiearose.sobriety.utils.secondsFromNow
 import java.text.DateFormat
@@ -19,47 +18,45 @@ import kotlin.math.absoluteValue
 class AddictionCardAdapter(private val context: Context) :
     RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>() {
 
-    private lateinit var onButtonDeleteClickListener: OnClickListener
-    private lateinit var onButtonRelapseClickListener: OnClickListener
-    private lateinit var onButtonStopClickListener: OnClickListener
-    private lateinit var onTimelineButtonClickListener: OnClickListener
-    private lateinit var onPriorityTextViewClickListener: OnClickListener
-    private lateinit var onMiscButtonClickListener: OnClickListener
+    private lateinit var deleteButtonAction: (Int) -> Unit
+    private lateinit var relapseButtonAction: (Int) -> Unit
+    private lateinit var stopButtonAction: (Int) -> Unit
+    private lateinit var timelineButtonAction: (Int) -> Unit
+    private lateinit var priorityTextViewAction: (Int) -> Unit
+    private lateinit var miscButtonAction: (Int) -> Unit
     private val dateFormat = DateFormat.getDateTimeInstance()
 
-    fun setOnButtonDeleteClickListener(onButtonDeleteClickListener: OnClickListener) {
-        this.onButtonDeleteClickListener = onButtonDeleteClickListener
+    fun setDeleteButtonAction(deleteButtonAction: (Int) -> Unit) {
+        this.deleteButtonAction = deleteButtonAction
     }
 
-    fun setOnButtonRelapseClickListener(onButtonRelapseClickListener: OnClickListener) {
-        this.onButtonRelapseClickListener = onButtonRelapseClickListener
+    fun setRelapseButtonAction(relapseButtonAction: (Int) -> Unit) {
+        this.relapseButtonAction = relapseButtonAction
     }
 
-    fun setOnButtonStopClickListener(onButtonStopClickListener: OnClickListener) {
-        this.onButtonStopClickListener = onButtonStopClickListener
+    fun setStopButtonAction(stopButtonAction: (Int) -> Unit) {
+        this.stopButtonAction = stopButtonAction
     }
 
-    fun setOnTimelineButtonClickListener(onTimelineButtonClickListener: OnClickListener) {
-        this.onTimelineButtonClickListener = onTimelineButtonClickListener
+    fun setTimelineButtonAction(timelineButtonAction: (Int) -> Unit) {
+        this.timelineButtonAction = timelineButtonAction
     }
 
-    fun setOnPriorityTextViewClickListener(onPriorityTextViewClickListener: OnClickListener) {
-        this.onPriorityTextViewClickListener = onPriorityTextViewClickListener
+    fun setPriorityTextViewAction(priorityTextViewAction: (Int) -> Unit) {
+        this.priorityTextViewAction = priorityTextViewAction
     }
 
-    fun setOnMiscButtonClickListener(onMiscButtonClickListener: OnClickListener) {
-        this.onMiscButtonClickListener = onMiscButtonClickListener
+    fun setMiscButtonAction(miscButtonAction: (Int) -> Unit) {
+        this.miscButtonAction = miscButtonAction
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): AddictionCardViewHolder {
-        val itemView =
-            LayoutInflater.from(parent.context).inflate(R.layout.card_addiction, parent, false)
-        return AddictionCardViewHolder(itemView, onButtonDeleteClickListener, onButtonRelapseClickListener,
-        onButtonStopClickListener, onTimelineButtonClickListener, onPriorityTextViewClickListener,
-        onMiscButtonClickListener)
+        val binding = CardAddictionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return AddictionCardViewHolder(binding, deleteButtonAction, relapseButtonAction,
+            stopButtonAction, timelineButtonAction, priorityTextViewAction, miscButtonAction)
     }
 
     override fun onBindViewHolder(
@@ -96,42 +93,24 @@ class AddictionCardAdapter(private val context: Context) :
 
     override fun getItemCount() = Main.addictions.size
 
-    class AddictionCardViewHolder(itemView: View, onButtonDeleteClickListener: OnClickListener,
-                                  onButtonRelapseClickListener: OnClickListener,
-                                  onButtonStopClickListener: OnClickListener,
-                                  onTimelineButtonClickListener: OnClickListener,
-                                  onPriorityTextViewClickListener: OnClickListener,
-                                  onMiscButtonClickListener: OnClickListener
-    ) : RecyclerView.ViewHolder(itemView) {
-        val textViewName: TextView = itemView.findViewById(R.id.textViewAddictionName)
-        val textViewPriority: TextView = itemView.findViewById(R.id.textViewPriority)
-        val textViewTime: TextView = itemView.findViewById(R.id.textViewTime)
-        val textViewAverage: TextView = itemView.findViewById(R.id.textViewAverage)
+    class AddictionCardViewHolder(binding: CardAddictionBinding, deleteButtonAction: (Int) -> Unit,
+                                  relapseButtonAction: (Int) -> Unit,
+                                  stopButtonAction: (Int) -> Unit,
+                                  timelineButtonAction: (Int) -> Unit,
+                                  priorityTextViewAction: (Int) -> Unit,
+                                  miscButtonAction: (Int) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+        val textViewName: TextView = binding.textViewAddictionName
+        val textViewPriority: TextView = binding.textViewPriority
+        val textViewTime: TextView = binding.textViewTime
+        val textViewAverage: TextView = binding.textViewAverage
         init {
-            itemView.findViewById<ImageView>(R.id.imageDelete).apply {
-                tag = this@AddictionCardViewHolder
-                setOnClickListener(onButtonDeleteClickListener)
-            }
-            itemView.findViewById<ImageView>(R.id.imageReset).apply {
-                tag = this@AddictionCardViewHolder
-                setOnClickListener(onButtonRelapseClickListener)
-            }
-            itemView.findViewById<ImageView>(R.id.imageStop).apply {
-                tag = this@AddictionCardViewHolder
-                setOnClickListener(onButtonStopClickListener)
-            }
-            itemView.findViewById<ImageView>(R.id.imageTimeline).apply {
-                tag = this@AddictionCardViewHolder
-                setOnClickListener(onTimelineButtonClickListener)
-            }
-            textViewPriority.apply {
-                tag = this@AddictionCardViewHolder
-                setOnClickListener(onPriorityTextViewClickListener)
-            }
-            itemView.findViewById<ImageView>(R.id.imageMisc).apply {
-                tag = this@AddictionCardViewHolder
-                setOnClickListener(onMiscButtonClickListener)
-            }
+            binding.imageDelete.setOnClickListener { deleteButtonAction(adapterPosition) }
+            binding.imageReset.setOnClickListener { relapseButtonAction(adapterPosition) }
+            binding.imageStop.setOnClickListener { stopButtonAction(adapterPosition) }
+            binding.imageTimeline.setOnClickListener { timelineButtonAction(adapterPosition) }
+            textViewPriority.setOnClickListener { priorityTextViewAction(adapterPosition) }
+            binding.imageMisc.setOnClickListener { miscButtonAction(adapterPosition) }
         }
     }
 }

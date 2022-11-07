@@ -3,7 +3,6 @@ package com.katiearose.sobriety.activities
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.MilestoneAdapter
@@ -31,17 +30,15 @@ class Milestones : AppCompatActivity() {
 
         val pos = intent.extras!!.getInt(Main.EXTRA_ADDICTION_POSITION)
         addiction = Main.addictions[pos]
-        val adapter = MilestoneAdapter(addiction, this)
-        adapter.update()
-        adapter.setOnButtonDeleteClickListener {
-            val viewHolder = it.tag as RecyclerView.ViewHolder
-            val pos = viewHolder.adapterPosition
-            val action: () -> Unit = {
-                addiction.milestones.remove(adapter.getCurrentList()[pos])
-                cacheHandler.writeCache()
-                adapter.update()
+        val adapter = MilestoneAdapter(addiction, this).apply {
+            setDeleteButtonAction {
+                val action: () -> Unit = {
+                    addiction.milestones.remove(currentList[it])
+                    cacheHandler.writeCache()
+                    update()
+                }
+                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_milestone_confirm), action)
             }
-            showConfirmDialog(getString(R.string.delete), getString(R.string.delete_milestone_confirm), action)
         }
         binding.milestoneList.layoutManager = LinearLayoutManager(this)
         binding.milestoneList.setHasFixedSize(true)

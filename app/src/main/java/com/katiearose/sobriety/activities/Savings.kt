@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat.CLOCK_24H
@@ -72,18 +71,11 @@ class Savings : AppCompatActivity() {
             }
         }
 
-        adapter = SavingsAdapter(addiction, this)
-        adapter.apply {
-            setOnButtonEditClickListener {
-                val viewHolder = it.tag as RecyclerView.ViewHolder
-                val pos = viewHolder.adapterPosition
-                showAddSavingDialog(adapter.getCurrentList()[pos])
-            }
-            setOnButtonDeleteClickListener {
-                val viewHolder = it.tag as RecyclerView.ViewHolder
-                val pos = viewHolder.adapterPosition
+        adapter = SavingsAdapter(addiction, this).apply {
+            setEditButtonAction { showAddSavingDialog(adapter.currentList[it]) }
+            setDeleteButtonAction {
                 val action: () -> Unit = {
-                    addiction.savings.remove(adapter.getCurrentList()[pos].first)
+                    addiction.savings.remove(adapter.currentList[it].first)
                     updateSavingsList()
                 }
                 showConfirmDialog(getString(R.string.delete), getString(R.string.delete_saving_confirm, addiction.savings.toList()[pos].first), action)

@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -32,8 +31,6 @@ import java.io.FileNotFoundException
 import java.time.Instant
 import java.time.LocalTime
 import java.util.*
-import kotlin.collections.LinkedHashMap
-import kotlin.collections.LinkedHashSet
 
 class Main : AppCompatActivity() {
 
@@ -84,7 +81,7 @@ class Main : AppCompatActivity() {
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         if (preferences.getString("theme", "system") == "system" &&
                 Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-            preferences.edit { putString("theme", "light") }
+            preferences.edit(commit = true) { putString("theme", "light") }
         }
         preferences.registerOnSharedPreferenceChangeListener(materialYouSettingListener)
         applyThemes()
@@ -107,27 +104,23 @@ class Main : AppCompatActivity() {
         //Create adapter, and layout manager for recyclerview and attach them
         adapterAddictions = AddictionCardAdapter(this)
         adapterAddictions.apply {
-            setOnButtonDeleteClickListener {
-                val viewHolder = it.tag as RecyclerView.ViewHolder
-                val pos = viewHolder.adapterPosition
-                val selectedAddiction = addictions[pos]
+            setDeleteButtonAction {
+                val selectedAddiction = addictions[it]
                 val action: () -> Unit = {
                     addictions.remove(selectedAddiction)
                     updatePromptVisibility()
-                    this.notifyItemRemoved(pos)
+                    this.notifyItemRemoved(it)
                     deleting = true
                     cacheHandler.writeCache()
                 }
                 showConfirmDialog(getString(R.string.delete), getString(R.string.delete_confirm, selectedAddiction.name), action)
             }
-            setOnButtonRelapseClickListener {
-                val viewHolder = it.tag as RecyclerView.ViewHolder
-                val pos = viewHolder.adapterPosition
-                val selectedAddiction = addictions[pos]
+            setRelapseButtonAction {
+                val selectedAddiction = addictions[it]
                 if (!selectedAddiction.isFuture()) {
                     val action: () -> Unit = {
                         selectedAddiction.relapse()
-                        this.notifyItemChanged(pos)
+                        this.notifyItemChanged(it)
                         cacheHandler.writeCache()
                     }
                     showConfirmDialog(getString(R.string.relapse), getString(R.string.relapse_confirm, selectedAddiction.name), action)
@@ -135,43 +128,37 @@ class Main : AppCompatActivity() {
                     val action: () -> Unit = {
                         selectedAddiction.lastRelapse = Instant.now()
                         selectedAddiction.history[System.currentTimeMillis()] = 0
-                        this.notifyItemChanged(pos)
+                        this.notifyItemChanged(it)
                         cacheHandler.writeCache()
                     }
                     showConfirmDialog(getString(R.string.track_now), getString(R.string.start_tracking_now, selectedAddiction.name), action)
                 }
             }
-            setOnButtonStopClickListener {
-                val viewHolder = it.tag as RecyclerView.ViewHolder
-                val pos = viewHolder.adapterPosition
-                val selectedAddiction = addictions[pos]
+            setStopButtonAction {
+                val selectedAddiction = addictions[it]
                 if (!selectedAddiction.isFuture()) {
                     if (selectedAddiction.isStopped)
                         Snackbar.make(binding.root, getString(R.string.already_stopped, selectedAddiction.name), BaseTransientBottomBar.LENGTH_SHORT).show()
                     else {
                         val action: () -> Unit = {
                             selectedAddiction.stopAbstaining()
-                            this.notifyItemChanged(pos)
+                            this.notifyItemChanged(it)
                             cacheHandler.writeCache()
                         }
                         showConfirmDialog(getString(R.string.stop), getString(R.string.stop_confirm, selectedAddiction.name), action)
                     }
                 } else Snackbar.make(binding.root, getString(R.string.not_tracked_yet, selectedAddiction.name), BaseTransientBottomBar.LENGTH_SHORT).show()
             }
-            setOnTimelineButtonClickListener {
-                val viewHolder = it.tag as RecyclerView.ViewHolder
-                val pos = viewHolder.adapterPosition
-                val selectedAddiction = addictions[pos]
+            setTimelineButtonAction {
+                val selectedAddiction = addictions[it]
                 if (!selectedAddiction.isFuture()) {
                     val intent = Intent(this@Main, Timeline::class.java)
-                        .putExtra(EXTRA_ADDICTION_POSITION, pos)
+                        .putExtra(EXTRA_ADDICTION_POSITION, it)
                     startActivity(intent)
                 } else Snackbar.make(binding.root, getString(R.string.not_tracked_yet, selectedAddiction.name), BaseTransientBottomBar.LENGTH_SHORT).show()
             }
-            setOnPriorityTextViewClickListener {
-                val viewHolder = it.tag as RecyclerView.ViewHolder
-                val pos = viewHolder.adapterPosition
-                val selectedAddiction = addictions[pos]
+            setPriorityTextViewAction {
+                val selectedAddiction = addictions[it]
                 var choice = selectedAddiction.priority.ordinal
                 MaterialAlertDialogBuilder(this@Main)
                     .setTitle(R.string.edit_priority)
@@ -188,26 +175,24 @@ class Main : AppCompatActivity() {
                     .setNegativeButton(android.R.string.cancel, null)
                     .show()
             }
-            setOnMiscButtonClickListener {
-                val viewHolder = it.tag as RecyclerView.ViewHolder
-                val pos = viewHolder.adapterPosition
+            setMiscButtonAction { int ->
                 var dialogViewBinding: DialogMiscBinding? = DialogMiscBinding.inflate(layoutInflater)
                 val dialog = BottomSheetDialog(this@Main)
                 dialogViewBinding!!.dailyNotes.setOnClickListener {
                     startActivity(Intent(this@Main, DailyNotes::class.java)
-                        .putExtra(EXTRA_ADDICTION_POSITION, pos)
+                        .putExtra(EXTRA_ADDICTION_POSITION, int)
                     )
                     dialog.dismiss()
                 }
                 dialogViewBinding.savings.setOnClickListener {
                     startActivity(Intent(this@Main, Savings::class.java)
-                        .putExtra(EXTRA_ADDICTION_POSITION, pos)
+                        .putExtra(EXTRA_ADDICTION_POSITION, int)
                     )
                     dialog.dismiss()
                 }
                 dialogViewBinding.milestones.setOnClickListener {
                     startActivity(Intent(this@Main, Milestones::class.java)
-                        .putExtra(EXTRA_ADDICTION_POSITION, pos)
+                        .putExtra(EXTRA_ADDICTION_POSITION, int)
                     )
                     dialog.dismiss()
                 }

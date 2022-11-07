@@ -18,10 +18,10 @@ import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
 import com.katiearose.sobriety.utils.toggleVisibility
+import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class DailyNotes : AppCompatActivity() {
 
@@ -40,14 +40,8 @@ class DailyNotes : AppCompatActivity() {
 
         val pos = intent.extras!!.getInt(Main.EXTRA_ADDICTION_POSITION)
         addiction = Main.addictions[pos]
-        adapter = NoteAdapter(addiction, this)
-        adapter.apply {
-            update()
-            setOnButtonEditClickListener {
-                val viewHolder = it.tag as RecyclerView.ViewHolder
-                val pos = viewHolder.adapterPosition
-                showAddNoteDialog(true, adapter.getCurrentList()[pos].first)
-            }
+        adapter = NoteAdapter(addiction, this).apply {
+            setEditButtonAction { showAddNoteDialog(true, adapter.currentList[it].first) }
             setOnButtonExpandCollapseClickListener {
                 val viewHolder = it.tag as RecyclerView.ViewHolder
                 val actualViewHolder = viewHolder as NoteAdapter.NoteViewHolder
@@ -60,14 +54,12 @@ class DailyNotes : AppCompatActivity() {
                         tooltipText = if (card.visibility == View.VISIBLE) getString(R.string.collapse) else getString(R.string.expand)
                 }
             }
-            setOnButtonDeleteClickListener {
-                val viewHolder = it.tag as RecyclerView.ViewHolder
-                val pos = viewHolder.adapterPosition
+            setDeleteButtonAction {
                 val action: () -> Unit = {
-                    addiction.dailyNotes.remove(adapter.getCurrentList()[pos].first)
+                    addiction.dailyNotes.remove(adapter.currentList[it].first)
                     updateNotesList()
                 }
-                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_note_confirm, dateFormat.format(addiction.dailyNotes.toList()[pos].first)), action)
+                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_note_confirm, dateFormat.format(adapter.currentList[it].first)), action)
             }
         }
         binding.notesList.layoutManager = LinearLayoutManager(this)
@@ -90,7 +82,7 @@ class DailyNotes : AppCompatActivity() {
             dialogViewBinding.noteDate.setOnClickListener {
                 val datePicker = MaterialDatePicker.Builder.datePicker().build()
                 datePicker.addOnPositiveButtonClickListener {
-                    pickedDate = Date(it).toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                    pickedDate = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
                     dialogViewBinding!!.noteDate.text = dateFormat.format(pickedDate)
                 }
                 datePicker.show(supportFragmentManager, null)

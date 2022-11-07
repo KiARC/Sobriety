@@ -1,33 +1,44 @@
 package com.katiearose.sobriety
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.katiearose.sobriety.databinding.ListItemMilestoneBinding
 import com.katiearose.sobriety.utils.getHideCompletedMilestonesPref
 import com.katiearose.sobriety.utils.getSharedPref
 import com.katiearose.sobriety.utils.getSortMilestonesPref
+import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.*
 
 class MilestoneAdapter(private val addiction: Addiction, private val context: Context) :
-    RecyclerView.Adapter<MilestoneAdapter.MilestoneViewHolder>() {
-    private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd MMM yyyy")
-    private lateinit var milestones: List<Pair<Int, ChronoUnit>>
-    private val preferences = context.getSharedPref()
-    private lateinit var onButtonDeleteClickListener: View.OnClickListener
+    ListAdapter<Pair<Int, ChronoUnit>, MilestoneAdapter.MilestoneViewHolder>(object : DiffUtil.ItemCallback<Pair<Int, ChronoUnit>>() {
+        override fun areItemsTheSame(
+            oldItem: Pair<Int, ChronoUnit>,
+            newItem: Pair<Int, ChronoUnit>
+        ): Boolean {
+            return oldItem.first == newItem.first
+        }
 
-    @SuppressLint("NotifyDataSetChanged")
+        override fun areContentsTheSame(
+            oldItem: Pair<Int, ChronoUnit>,
+            newItem: Pair<Int, ChronoUnit>
+        ): Boolean {
+            return oldItem.second == newItem.second
+        }
+
+    }) {
+    private val preferences = context.getSharedPref()
+    init { update() }
+    private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd MMM yyyy")
+    private lateinit var deleteButtonAction: (Int) -> Unit
+
     fun update() {
-        milestones = when (preferences.getSortMilestonesPref()) {
+        var milestones = when (preferences.getSortMilestonesPref()) {
             "asc" -> addiction.milestones.map { it }.sortedWith { m1, m2 ->
                 (m1.first * m1.second.duration.toMillis()).compareTo(m2.first * m2.second.duration.toMillis())
             }
@@ -40,25 +51,20 @@ class MilestoneAdapter(private val addiction: Addiction, private val context: Co
             milestones = milestones.filter {
                 System.currentTimeMillis() < addiction.lastRelapse.toEpochMilli() + it.first * it.second.duration.toMillis()
             }
-        notifyDataSetChanged()
+        submitList(milestones)
     }
 
-    fun getCurrentList(): List<Pair<Int, ChronoUnit>> {
-        return milestones
-    }
-
-    fun setOnButtonDeleteClickListener(onButtonDeleteClickListener: View.OnClickListener) {
-        this.onButtonDeleteClickListener = onButtonDeleteClickListener
+    fun setDeleteButtonAction(deleteButtonAction: (Int) -> Unit) {
+        this.deleteButtonAction = deleteButtonAction
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MilestoneViewHolder {
-        val itemView =
-            LayoutInflater.from(parent.context).inflate(R.layout.list_item_milestone, parent, false)
-        return MilestoneViewHolder(itemView, onButtonDeleteClickListener)
+        val binding = ListItemMilestoneBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MilestoneViewHolder(binding, deleteButtonAction)
     }
 
     override fun onBindViewHolder(holder: MilestoneViewHolder, position: Int) {
-        val milestone = milestones[position]
+        val milestone = currentList[position]
         holder.milestone.text = StringBuilder(milestone.first.toString()).append(" ").append(
             when (milestone.second) {
                 ChronoUnit.HOURS -> context.getString(R.string.unit_hour)
@@ -78,25 +84,18 @@ class MilestoneAdapter(private val addiction: Addiction, private val context: Co
             holder.milestoneTime.text = context.getString(R.string.completed)
         } else {
             holder.milestoneTime.text =
-                dateTimeFormatter.format(Date(goal).toInstant().atZone(ZoneId.systemDefault()))
+                dateTimeFormatter.format(Instant.ofEpochMilli(goal).atZone(ZoneId.systemDefault()))
         }
     }
 
-    override fun getItemCount(): Int {
-        return milestones.size
-    }
-
-    class MilestoneViewHolder(itemView: View, onButtonDeleteClickListener: View.OnClickListener) :
-        ViewHolder(itemView) {
-        val milestone: TextView = itemView.findViewById(R.id.milestone)
-        val milestoneTime: TextView = itemView.findViewById(R.id.milestone_time)
-        val milestoneProgressBar: ProgressBar = itemView.findViewById(R.id.milestone_progress)
+    class MilestoneViewHolder(binding: ListItemMilestoneBinding, deleteButtonAction: (Int) -> Unit) :
+        ViewHolder(binding.root) {
+        val milestone = binding.milestone
+        val milestoneTime = binding.milestoneTime
+        val milestoneProgressBar = binding.milestoneProgress
 
         init {
-            itemView.findViewById<ImageView>(R.id.btn_delete_milestone).apply {
-                tag = this@MilestoneViewHolder
-                setOnClickListener(onButtonDeleteClickListener)
-            }
+            binding.btnDeleteMilestone.setOnClickListener { deleteButtonAction(adapterPosition) }
         }
     }
 }
