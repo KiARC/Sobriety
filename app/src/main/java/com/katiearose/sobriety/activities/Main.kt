@@ -103,6 +103,7 @@ class Main : AppCompatActivity() {
         //Create adapter, and layout manager for recyclerview and attach them
         adapterAddictions = AddictionCardAdapter(this, {
             val action: () -> Unit = {
+                adapterAddictions.notifyItemRemoved(addictions.indexOf(it))
                 addictions.remove(it)
                 updatePromptVisibility()
                 deleting = true
@@ -113,6 +114,7 @@ class Main : AppCompatActivity() {
             if (!it.isFuture()) {
                 val action: () -> Unit = {
                     it.relapse()
+                    adapterAddictions.notifyItemChanged(addictions.indexOf(it))
                     cacheHandler.writeCache()
                 }
                 showConfirmDialog(getString(R.string.relapse), getString(R.string.relapse_confirm, it.name), action)
@@ -120,6 +122,7 @@ class Main : AppCompatActivity() {
                 val action: () -> Unit = {
                     it.lastRelapse = Instant.now()
                     it.history[System.currentTimeMillis()] = 0
+                    adapterAddictions.notifyItemChanged(addictions.indexOf(it))
                     cacheHandler.writeCache()
                 }
                 showConfirmDialog(getString(R.string.track_now), getString(R.string.start_tracking_now, it.name), action)
@@ -131,6 +134,7 @@ class Main : AppCompatActivity() {
                 else {
                     val action: () -> Unit = {
                         it.stopAbstaining()
+                        adapterAddictions.notifyItemChanged(addictions.indexOf(it))
                         cacheHandler.writeCache()
                     }
                     showConfirmDialog(getString(R.string.stop), getString(R.string.stop_confirm, it.name), action)
