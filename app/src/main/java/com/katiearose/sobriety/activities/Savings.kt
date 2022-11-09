@@ -34,8 +34,7 @@ class Savings : AppCompatActivity() {
         setContentView(binding.root)
         cacheHandler = CacheHandler(this)
 
-        val pos = intent.extras!!.getInt(Main.EXTRA_ADDICTION_POSITION)
-        addiction = Main.addictions[pos]
+        addiction = intent.extras!!.getSerializable(Main.EXTRA_ADDICTION) as Addiction
         updateSavedTimeDisplay()
 
         binding.btnEditTime.setOnClickListener {
@@ -54,9 +53,15 @@ class Savings : AppCompatActivity() {
             binding.timeSavedCard.toggleVisibility()
             binding.btnExpandCollapseTime.apply {
                 setImageResource(if (binding.timeSavedCard.visibility == View.VISIBLE) R.drawable.expand_less_24px else R.drawable.expand_more_24px)
-                contentDescription = if (binding.timeSavedCard.visibility == View.VISIBLE) getString(R.string.collapse) else getString(R.string.expand)
+                contentDescription =
+                    if (binding.timeSavedCard.visibility == View.VISIBLE) getString(R.string.collapse) else getString(
+                        R.string.expand
+                    )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    tooltipText = if (binding.timeSavedCard.visibility == View.VISIBLE) getString(R.string.collapse) else getString(R.string.expand)
+                    tooltipText =
+                        if (binding.timeSavedCard.visibility == View.VISIBLE) getString(R.string.collapse) else getString(
+                            R.string.expand
+                        )
             }
         }
 
@@ -65,22 +70,23 @@ class Savings : AppCompatActivity() {
             binding.otherSavingsList.toggleVisibility()
             binding.btnExpandCollapseOther.apply {
                 setImageResource(if (binding.otherSavingsList.visibility == View.VISIBLE) R.drawable.expand_less_24px else R.drawable.expand_more_24px)
-                contentDescription = if (binding.otherSavingsList.visibility == View.VISIBLE) getString(R.string.collapse) else getString(R.string.expand)
+                contentDescription = if (binding.otherSavingsList.visibility == View.VISIBLE) getString(R.string.collapse) else getString(
+                        R.string.expand
+                    )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    tooltipText = if (binding.otherSavingsList.visibility == View.VISIBLE) getString(R.string.collapse) else getString(R.string.expand)
+                    tooltipText = if (binding.otherSavingsList.visibility == View.VISIBLE) getString(R.string.collapse) else getString(
+                            R.string.expand
+                        )
             }
         }
 
-        adapter = SavingsAdapter(addiction, this).apply {
-            setEditButtonAction { showAddSavingDialog(adapter.currentList[it]) }
-            setDeleteButtonAction {
-                val action: () -> Unit = {
-                    addiction.savings.remove(adapter.currentList[it].first)
-                    updateSavingsList()
-                }
-                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_saving_confirm, addiction.savings.toList()[pos].first), action)
+        adapter = SavingsAdapter(addiction, this, { showAddSavingDialog(it) }, {
+            val action: () -> Unit = {
+                addiction.savings.remove(it.first)
+                update()
             }
-        }
+            showConfirmDialog(getString(R.string.delete), getString(R.string.delete_saving_confirm, it.first), action)
+        })
         binding.otherSavingsList.layoutManager = LinearLayoutManager(this)
         binding.otherSavingsList.adapter = adapter
     }
@@ -102,15 +108,20 @@ class Savings : AppCompatActivity() {
                 dialogViewBinding!!.unitInputLayout.error = getString(R.string.error_empty_unit)
             } else {
                 if (existingSaving != null) {
-                    addiction.savings[existingSaving.first] = Pair(dialogViewBinding!!.savingsAmountInput.text.toString().toDouble(), dialogViewBinding!!.unitInput.text.toString())
-                    updateSavingsList()
+                    addiction.savings[existingSaving.first] = Pair(
+                        dialogViewBinding!!.savingsAmountInput.text.toString().toDouble(),
+                        dialogViewBinding!!.unitInput.text.toString())
+                    update()
                     dialog.dismiss()
                 } else {
                     if (dialogViewBinding!!.savingsNameInput.isInputEmpty()) {
                         dialogViewBinding!!.savingsNameInputLayout.error = getString(R.string.error_empty_name)
                     } else {
-                        addiction.savings[dialogViewBinding!!.savingsNameInput.text.toString()] = Pair(dialogViewBinding!!.savingsAmountInput.text.toString().toDouble(), dialogViewBinding!!.unitInput.text.toString())
-                        updateSavingsList()
+                        addiction.savings[dialogViewBinding!!.savingsNameInput.text.toString()] =
+                            Pair(
+                                dialogViewBinding!!.savingsAmountInput.text.toString().toDouble(),
+                                dialogViewBinding!!.unitInput.text.toString())
+                        update()
                         dialog.dismiss()
                     }
                 }
@@ -120,13 +131,18 @@ class Savings : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun updateSavingsList() {
+    private fun update() {
         cacheHandler.writeCache()
         adapter.update()
     }
 
     private fun updateSavedTimeDisplay() {
-        binding.timeSaved.text = if (addiction.timeSaving.hour == 0 && addiction.timeSaving.minute == 0) getString(R.string.no_set)
-            else getString(R.string.hours_minutes, addiction.timeSaving.hour, addiction.timeSaving.minute)
+        binding.timeSaved.text =
+            if (addiction.timeSaving.hour == 0 && addiction.timeSaving.minute == 0) getString(R.string.no_set)
+            else getString(
+                R.string.hours_minutes,
+                addiction.timeSaving.hour,
+                addiction.timeSaving.minute
+            )
     }
 }

@@ -1,11 +1,9 @@
 package com.katiearose.sobriety.activities
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.katiearose.sobriety.Addiction
@@ -17,7 +15,6 @@ import com.katiearose.sobriety.internal.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
-import com.katiearose.sobriety.utils.toggleVisibility
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -38,30 +35,15 @@ class DailyNotes : AppCompatActivity() {
         setContentView(binding.root)
         cacheHandler = CacheHandler(this)
 
-        val pos = intent.extras!!.getInt(Main.EXTRA_ADDICTION_POSITION)
-        addiction = Main.addictions[pos]
-        adapter = NoteAdapter(addiction, this).apply {
-            setEditButtonAction { showAddNoteDialog(true, adapter.currentList[it].first) }
-            setOnButtonExpandCollapseClickListener {
-                val viewHolder = it.tag as RecyclerView.ViewHolder
-                val actualViewHolder = viewHolder as NoteAdapter.NoteViewHolder
-                val card = actualViewHolder.card
-                card.toggleVisibility()
-                actualViewHolder.expandCollapseButton.apply {
-                    setImageResource(if (card.visibility == View.VISIBLE) R.drawable.expand_less_24px else R.drawable.expand_more_24px)
-                    contentDescription = if (card.visibility == View.VISIBLE) getString(R.string.collapse) else getString(R.string.expand)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                        tooltipText = if (card.visibility == View.VISIBLE) getString(R.string.collapse) else getString(R.string.expand)
-                }
-            }
-            setDeleteButtonAction {
+        addiction = intent.extras!!.getSerializable(Main.EXTRA_ADDICTION) as Addiction
+        adapter = NoteAdapter(addiction, this, { showAddNoteDialog(true, it.first) },
+            {
                 val action: () -> Unit = {
-                    addiction.dailyNotes.remove(adapter.currentList[it].first)
+                    addiction.dailyNotes.remove(it.first)
                     updateNotesList()
                 }
-                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_note_confirm, dateFormat.format(adapter.currentList[it].first)), action)
-            }
-        }
+                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_note_confirm, dateFormat.format(it.first)), action)
+            })
         binding.notesList.layoutManager = LinearLayoutManager(this)
         binding.notesList.adapter = adapter
 
@@ -82,7 +64,8 @@ class DailyNotes : AppCompatActivity() {
             dialogViewBinding.noteDate.setOnClickListener {
                 val datePicker = MaterialDatePicker.Builder.datePicker().build()
                 datePicker.addOnPositiveButtonClickListener {
-                    pickedDate = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+                    pickedDate =
+                        Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
                     dialogViewBinding!!.noteDate.text = dateFormat.format(pickedDate)
                 }
                 datePicker.show(supportFragmentManager, null)

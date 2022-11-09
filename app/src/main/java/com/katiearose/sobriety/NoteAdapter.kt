@@ -1,8 +1,9 @@
 package com.katiearose.sobriety
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
-import android.view.View.OnClickListener
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -10,33 +11,32 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.katiearose.sobriety.databinding.ListItemNoteBinding
 import com.katiearose.sobriety.utils.getSharedPref
 import com.katiearose.sobriety.utils.getSortNotesPref
+import com.katiearose.sobriety.utils.toggleVisibility
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class NoteAdapter(private val addiction: Addiction, context: Context):
-    ListAdapter<Pair<LocalDate, String>, NoteAdapter.NoteViewHolder>(object : DiffUtil.ItemCallback<Pair<LocalDate, String>>() {
+class NoteAdapter(
+    private val addiction: Addiction, context: Context,
+    private val editButtonAction: (Pair<LocalDate, String>) -> Unit,
+    private val deleteButtonAction: (Pair<LocalDate, String>) -> Unit
+) :
+    ListAdapter<Pair<LocalDate, String>, NoteAdapter.NoteViewHolder>(object :
+        DiffUtil.ItemCallback<Pair<LocalDate, String>>() {
         override fun areItemsTheSame(
             oldItem: Pair<LocalDate, String>,
             newItem: Pair<LocalDate, String>
-        ): Boolean {
-            return oldItem.first == newItem.first
-        }
+        ): Boolean = oldItem.first == newItem.first
 
         override fun areContentsTheSame(
             oldItem: Pair<LocalDate, String>,
             newItem: Pair<LocalDate, String>
-        ): Boolean {
-            return oldItem.second == newItem.second
-        }
-
+        ): Boolean = oldItem.second == newItem.second
     }) {
     private val preferences = context.getSharedPref()
-    init { update() }
-    private val dateFormat = DateTimeFormatter.ofPattern("MMMM dd yyyy")
 
-    private lateinit var editButtonAction: (Int) -> Unit
-    private lateinit var onButtonExpandCollapseClickListener: OnClickListener
-    private lateinit var deleteButtonAction: (Int) -> Unit
+    init { update() }
+
+    private val dateFormat = DateTimeFormatter.ofPattern("MMMM dd yyyy")
 
     fun update() {
         submitList(when (preferences.getSortNotesPref()) {
@@ -50,22 +50,12 @@ class NoteAdapter(private val addiction: Addiction, context: Context):
         })
     }
 
-    fun setEditButtonAction(editButtonAction: (Int) -> Unit) {
-        this.editButtonAction = editButtonAction
-    }
-
-    fun setOnButtonExpandCollapseClickListener(onButtonExpandCollapseClickListener: OnClickListener) {
-        this.onButtonExpandCollapseClickListener = onButtonExpandCollapseClickListener
-    }
-
-    fun setDeleteButtonAction(deleteButtonAction: (Int) -> Unit) {
-        this.deleteButtonAction = deleteButtonAction
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-        val binding = ListItemNoteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return NoteViewHolder(binding, editButtonAction, onButtonExpandCollapseClickListener,
-            deleteButtonAction)
+        val binding =
+            ListItemNoteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return NoteViewHolder(binding,
+            { editButtonAction(currentList[it]) },
+            { deleteButtonAction(currentList[it]) })
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
@@ -74,19 +64,25 @@ class NoteAdapter(private val addiction: Addiction, context: Context):
         holder.note.text = pair.second
     }
 
-    class NoteViewHolder(binding: ListItemNoteBinding, editButtonAction: (Int) -> Unit,
-                         onButtonExpandCollapseClickListener: OnClickListener,
-                         deleteButtonAction: (Int) -> Unit): ViewHolder(binding.root) {
+    class NoteViewHolder(
+        binding: ListItemNoteBinding, editButtonAction: (Int) -> Unit,
+        deleteButtonAction: (Int) -> Unit
+    ) : ViewHolder(binding.root) {
         val date = binding.date
         val note = binding.note
-        val card = binding.noteCard
-        val expandCollapseButton = binding.btnExpandCollapse.apply {
-            tag = this@NoteViewHolder
-            setOnClickListener(onButtonExpandCollapseClickListener)
-        }
+
         init {
             binding.btnEdit.setOnClickListener { editButtonAction(adapterPosition) }
             binding.btnDelete.setOnClickListener { deleteButtonAction(adapterPosition) }
+            binding.btnExpandCollapse.setOnClickListener {
+                binding.noteCard.toggleVisibility()
+                binding.btnExpandCollapse.setImageResource(if (binding.noteCard.visibility == View.VISIBLE) R.drawable.expand_less_24px else R.drawable.expand_more_24px)
+                binding.btnExpandCollapse.contentDescription =
+                    if (binding.noteCard.visibility == View.VISIBLE) it.context.getString(R.string.collapse) else it.context.getString(R.string.expand)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    binding.btnExpandCollapse.tooltipText =
+                        if (binding.noteCard.visibility == View.VISIBLE) it.context.getString(R.string.collapse) else it.context.getString(R.string.expand)
+            }
         }
     }
 }

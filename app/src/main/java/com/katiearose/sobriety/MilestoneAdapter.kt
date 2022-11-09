@@ -15,27 +15,29 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-class MilestoneAdapter(private val addiction: Addiction, private val context: Context) :
-    ListAdapter<Pair<Int, ChronoUnit>, MilestoneAdapter.MilestoneViewHolder>(object : DiffUtil.ItemCallback<Pair<Int, ChronoUnit>>() {
+class MilestoneAdapter(
+    private val addiction: Addiction, private val context: Context,
+    private val deleteButtonAction: (Pair<Int, ChronoUnit>) -> Unit
+) :
+    ListAdapter<Pair<Int, ChronoUnit>, MilestoneAdapter.MilestoneViewHolder>(object :
+        DiffUtil.ItemCallback<Pair<Int, ChronoUnit>>() {
         override fun areItemsTheSame(
             oldItem: Pair<Int, ChronoUnit>,
             newItem: Pair<Int, ChronoUnit>
-        ): Boolean {
-            return oldItem.first == newItem.first
-        }
+        ): Boolean = oldItem.first == newItem.first
 
         override fun areContentsTheSame(
             oldItem: Pair<Int, ChronoUnit>,
             newItem: Pair<Int, ChronoUnit>
-        ): Boolean {
-            return oldItem.second == newItem.second
-        }
-
+        ): Boolean = oldItem.second == newItem.second
     }) {
     private val preferences = context.getSharedPref()
-    init { update() }
+
+    init {
+        update()
+    }
+
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd MMM yyyy")
-    private lateinit var deleteButtonAction: (Int) -> Unit
 
     fun update() {
         var milestones = when (preferences.getSortMilestonesPref()) {
@@ -54,13 +56,10 @@ class MilestoneAdapter(private val addiction: Addiction, private val context: Co
         submitList(milestones)
     }
 
-    fun setDeleteButtonAction(deleteButtonAction: (Int) -> Unit) {
-        this.deleteButtonAction = deleteButtonAction
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MilestoneViewHolder {
-        val binding = ListItemMilestoneBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return MilestoneViewHolder(binding, deleteButtonAction)
+        val binding =
+            ListItemMilestoneBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MilestoneViewHolder(binding) { deleteButtonAction(currentList[it]) }
     }
 
     override fun onBindViewHolder(holder: MilestoneViewHolder, position: Int) {
@@ -88,7 +87,10 @@ class MilestoneAdapter(private val addiction: Addiction, private val context: Co
         }
     }
 
-    class MilestoneViewHolder(binding: ListItemMilestoneBinding, deleteButtonAction: (Int) -> Unit) :
+    class MilestoneViewHolder(
+        binding: ListItemMilestoneBinding,
+        deleteButtonAction: (Int) -> Unit
+    ) :
         ViewHolder(binding.root) {
         val milestone = binding.milestone
         val milestoneTime = binding.milestoneTime

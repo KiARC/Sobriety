@@ -20,6 +20,7 @@ class Milestones : AppCompatActivity() {
     private lateinit var binding: ActivityMilestonesBinding
     private lateinit var addiction: Addiction
     private lateinit var cacheHandler: CacheHandler
+    private lateinit var adapter: MilestoneAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         applyThemes()
@@ -28,32 +29,33 @@ class Milestones : AppCompatActivity() {
         setContentView(binding.root)
         cacheHandler = CacheHandler(this)
 
-        val pos = intent.extras!!.getInt(Main.EXTRA_ADDICTION_POSITION)
-        addiction = Main.addictions[pos]
-        val adapter = MilestoneAdapter(addiction, this).apply {
-            setDeleteButtonAction {
-                val action: () -> Unit = {
-                    addiction.milestones.remove(currentList[it])
-                    cacheHandler.writeCache()
-                    update()
-                }
-                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_milestone_confirm), action)
+        addiction = intent.extras!!.getSerializable(Main.EXTRA_ADDICTION) as Addiction
+        adapter = MilestoneAdapter(addiction, this) {
+            val action: () -> Unit = {
+                addiction.milestones.remove(it)
+                cacheHandler.writeCache()
+                update()
             }
+            showConfirmDialog(getString(R.string.delete), getString(R.string.delete_milestone_confirm), action)
         }
         binding.milestoneList.layoutManager = LinearLayoutManager(this)
         binding.milestoneList.setHasFixedSize(true)
         binding.milestoneList.adapter = adapter
 
         binding.addMilestoneFab.setOnClickListener {
-            var dialogViewBinding: DialogAddMilestoneBinding? = DialogAddMilestoneBinding.inflate(layoutInflater)
+            var dialogViewBinding: DialogAddMilestoneBinding? =
+                DialogAddMilestoneBinding.inflate(layoutInflater)
             val dialog = BottomSheetDialog(this)
             dialog.setContentView(dialogViewBinding!!.root)
             val units = resources.getStringArray(R.array.time_units)
             dialogViewBinding.btnSaveMilestone.setOnClickListener {
-                if (dialogViewBinding!!.milestoneNumberInput.isInputEmpty() || dialogViewBinding!!.milestoneNumberInput.text.toString().toInt() == 0) {
-                    dialogViewBinding!!.milestoneNumberInputLayout.error = getString(R.string.error_empty_amount)
+                if (dialogViewBinding!!.milestoneNumberInput.isInputEmpty() ||
+                    dialogViewBinding!!.milestoneNumberInput.text.toString().toInt() == 0) {
+                    dialogViewBinding!!.milestoneNumberInputLayout.error =
+                        getString(R.string.error_empty_amount)
                 } else if (dialogViewBinding!!.unitInput.text.toString().isEmpty()) {
-                    dialogViewBinding!!.milestoneTimeUnitInputLayout.error = getString(R.string.error_empty_unit)
+                    dialogViewBinding!!.milestoneTimeUnitInputLayout.error =
+                        getString(R.string.error_empty_unit)
                 } else {
                     val num = dialogViewBinding!!.milestoneNumberInput.text.toString().toInt()
                     when (dialogViewBinding!!.unitInput.text.toString()) {
@@ -71,5 +73,10 @@ class Milestones : AppCompatActivity() {
             dialog.setOnDismissListener { dialogViewBinding = null }
             dialog.show()
         }
+    }
+
+    private fun update() {
+        cacheHandler.writeCache()
+        adapter.update()
     }
 }

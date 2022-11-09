@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.katiearose.sobriety.databinding.ListItemSavingBinding
 
-class SavingsAdapter(private val addiction: Addiction, private val context: Context):
+class SavingsAdapter(private val addiction: Addiction, private val context: Context,
+private val editButtonAction: (Pair<String, Pair<Double, String>>) -> Unit,
+private val deleteButtonAction: (Pair<String, Pair<Double, String>>) -> Unit):
     ListAdapter<Pair<String, Pair<Double, String>>, SavingsAdapter.SavingsViewHolder>(object :
         DiffUtil.ItemCallback<Pair<String, Pair<Double, String>>>() {
         override fun areItemsTheSame(
@@ -27,22 +29,14 @@ class SavingsAdapter(private val addiction: Addiction, private val context: Cont
 
     }) {
     init { update() }
-    private lateinit var editButtonAction: (Int) -> Unit
-    private lateinit var deleteButtonAction: (Int) -> Unit
 
     fun update() = submitList(addiction.savings.toList())
 
-    fun setEditButtonAction(editButtonAction: (Int) -> Unit) {
-        this.editButtonAction = editButtonAction
-    }
-
-    fun setDeleteButtonAction(deleteButtonAction: (Int) -> Unit) {
-        this.deleteButtonAction = deleteButtonAction
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavingsViewHolder {
         val binding = ListItemSavingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return SavingsViewHolder(binding, editButtonAction, deleteButtonAction)
+        return SavingsViewHolder(binding,
+            { editButtonAction(currentList[it]) },
+            { deleteButtonAction(currentList[it]) })
     }
 
     override fun onBindViewHolder(holder: SavingsViewHolder, position: Int) {

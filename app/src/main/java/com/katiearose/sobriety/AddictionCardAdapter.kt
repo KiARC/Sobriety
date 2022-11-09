@@ -15,48 +15,32 @@ import java.text.DateFormat
 import java.util.*
 import kotlin.math.absoluteValue
 
-class AddictionCardAdapter(private val context: Context) :
+class AddictionCardAdapter(
+    private val context: Context,
+    private val deleteButtonAction: (Addiction) -> Unit,
+    private val relapseButtonAction: (Addiction) -> Unit,
+    private val stopButtonAction: (Addiction) -> Unit,
+    private val timelineButtonAction: (Addiction) -> Unit,
+    private val priorityTextViewAction: (Addiction) -> Unit,
+    private val miscButtonAction: (Addiction) -> Unit
+) :
     RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>() {
 
-    private lateinit var deleteButtonAction: (Int) -> Unit
-    private lateinit var relapseButtonAction: (Int) -> Unit
-    private lateinit var stopButtonAction: (Int) -> Unit
-    private lateinit var timelineButtonAction: (Int) -> Unit
-    private lateinit var priorityTextViewAction: (Int) -> Unit
-    private lateinit var miscButtonAction: (Int) -> Unit
     private val dateFormat = DateFormat.getDateTimeInstance()
-
-    fun setDeleteButtonAction(deleteButtonAction: (Int) -> Unit) {
-        this.deleteButtonAction = deleteButtonAction
-    }
-
-    fun setRelapseButtonAction(relapseButtonAction: (Int) -> Unit) {
-        this.relapseButtonAction = relapseButtonAction
-    }
-
-    fun setStopButtonAction(stopButtonAction: (Int) -> Unit) {
-        this.stopButtonAction = stopButtonAction
-    }
-
-    fun setTimelineButtonAction(timelineButtonAction: (Int) -> Unit) {
-        this.timelineButtonAction = timelineButtonAction
-    }
-
-    fun setPriorityTextViewAction(priorityTextViewAction: (Int) -> Unit) {
-        this.priorityTextViewAction = priorityTextViewAction
-    }
-
-    fun setMiscButtonAction(miscButtonAction: (Int) -> Unit) {
-        this.miscButtonAction = miscButtonAction
-    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): AddictionCardViewHolder {
-        val binding = CardAddictionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return AddictionCardViewHolder(binding, deleteButtonAction, relapseButtonAction,
-            stopButtonAction, timelineButtonAction, priorityTextViewAction, miscButtonAction)
+        val binding =
+            CardAddictionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return AddictionCardViewHolder(binding,
+            { deleteButtonAction(Main.addictions[it]) },
+            { relapseButtonAction(Main.addictions[it]) },
+            { stopButtonAction(Main.addictions[it]) },
+            { timelineButtonAction(Main.addictions[it]) },
+            { priorityTextViewAction(Main.addictions[it]) },
+            { miscButtonAction(Main.addictions[it]) })
     }
 
     override fun onBindViewHolder(
@@ -72,38 +56,63 @@ class AddictionCardAdapter(private val context: Context) :
             Addiction.Priority.MEDIUM -> stringBuilder.append(context.getString(R.string.medium))
             Addiction.Priority.LOW -> stringBuilder.append(context.getString(R.string.low))
         }
-        holder.textViewPriority.setTextColor(when (addiction.priority) {
-            Addiction.Priority.HIGH -> ResourcesCompat.getColor(context.resources, R.color.red, context.theme)
-            Addiction.Priority.MEDIUM -> ResourcesCompat.getColor(context.resources, R.color.orange, context.theme)
-            Addiction.Priority.LOW -> ResourcesCompat.getColor(context.resources, R.color.green, context.theme)
-        })
+        holder.textViewPriority.setTextColor(
+            when (addiction.priority) {
+                Addiction.Priority.HIGH -> ResourcesCompat.getColor(
+                    context.resources,
+                    R.color.red,
+                    context.theme
+                )
+                Addiction.Priority.MEDIUM -> ResourcesCompat.getColor(
+                    context.resources,
+                    R.color.orange,
+                    context.theme
+                )
+                Addiction.Priority.LOW -> ResourcesCompat.getColor(
+                    context.resources,
+                    R.color.green,
+                    context.theme
+                )
+            }
+        )
         if (addiction.isFuture()) {
-            holder.textViewTime.text = context.getString(R.string.time_until_tracked,
-                context.convertSecondsToString(addiction.lastRelapse.secondsFromNow().absoluteValue))
+            holder.textViewTime.text = context.getString(
+                R.string.time_until_tracked,
+                context.convertSecondsToString(addiction.lastRelapse.secondsFromNow().absoluteValue)
+            )
         } else {
-            holder.textViewTime.text = if (!addiction.isStopped) context.convertSecondsToString(addiction.lastRelapse.secondsFromNow())
-            else context.getString(R.string.stop_notice,
-                dateFormat.format(Date(addiction.timeStopped)),
-                context.convertSecondsToString((addiction.timeStopped - addiction.lastRelapse.toEpochMilli()) / 1000))
+            holder.textViewTime.text =
+                if (!addiction.isStopped) context.convertSecondsToString(addiction.lastRelapse.secondsFromNow())
+                else context.getString(
+                    R.string.stop_notice,
+                    dateFormat.format(Date(addiction.timeStopped)),
+                    context.convertSecondsToString((addiction.timeStopped - addiction.lastRelapse.toEpochMilli()) / 1000)
+                )
         }
-        holder.textViewAverage.visibility = if (addiction.averageRelapseDuration == -1L) View.GONE else View.VISIBLE
+        holder.textViewAverage.visibility =
+            if (addiction.averageRelapseDuration == -1L) View.GONE else View.VISIBLE
         holder.textViewAverage.text =
-            context.getString(R.string.recent_avg, context.convertSecondsToString(addiction.averageRelapseDuration))
+            context.getString(
+                R.string.recent_avg,
+                context.convertSecondsToString(addiction.averageRelapseDuration)
+            )
     }
 
     override fun getItemCount() = Main.addictions.size
 
-    class AddictionCardViewHolder(binding: CardAddictionBinding, deleteButtonAction: (Int) -> Unit,
-                                  relapseButtonAction: (Int) -> Unit,
-                                  stopButtonAction: (Int) -> Unit,
-                                  timelineButtonAction: (Int) -> Unit,
-                                  priorityTextViewAction: (Int) -> Unit,
-                                  miscButtonAction: (Int) -> Unit
+    class AddictionCardViewHolder(
+        binding: CardAddictionBinding, deleteButtonAction: (Int) -> Unit,
+        relapseButtonAction: (Int) -> Unit,
+        stopButtonAction: (Int) -> Unit,
+        timelineButtonAction: (Int) -> Unit,
+        priorityTextViewAction: (Int) -> Unit,
+        miscButtonAction: (Int) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         val textViewName: TextView = binding.textViewAddictionName
         val textViewPriority: TextView = binding.textViewPriority
         val textViewTime: TextView = binding.textViewTime
         val textViewAverage: TextView = binding.textViewAverage
+
         init {
             binding.imageDelete.setOnClickListener { deleteButtonAction(adapterPosition) }
             binding.imageReset.setOnClickListener { relapseButtonAction(adapterPosition) }
