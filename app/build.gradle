@@ -11,8 +11,8 @@ android {
         applicationId "com.katiearose.sobriety"
         minSdk 21
         targetSdk 33
-        versionCode 16
-        versionName "v6.1.1"
+        versionCode 17
+        versionName "v6.2.1"
         setProperty("archivesBaseName", "Sobriety $versionName")
     }
 
