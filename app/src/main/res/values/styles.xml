@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Needed for dialog-based preferences to follow MD3 theme -->
+    <style name="AlertDialogTheme.Material3" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="dialogCornerRadius">36dp</item>
+    </style>
+
+    <!-- Needed for switch preferences to follow MD3 theme -->
+    <style name="Preference.MaterialSwitchPreference" parent="Preference.SwitchPreferenceCompat.Material">
+        <item name="android:widgetLayout">@layout/preferences_material_switch</item>
+    </style>
+</resources>

@@ -7,12 +7,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.TimelineAdapter
 import com.katiearose.sobriety.databinding.ActivityTimelineBinding
+import com.katiearose.sobriety.utils.applyThemes
 
 class Timeline : AppCompatActivity() {
 
     private lateinit var binding: ActivityTimelineBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        applyThemes()
         super.onCreate(savedInstanceState)
         binding = ActivityTimelineBinding.inflate(layoutInflater)
         setContentView(binding.root)

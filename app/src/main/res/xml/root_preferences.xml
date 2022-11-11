@@ -1,0 +1,24 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/appearance"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            app:key="theme"
+            app:title="@string/theme"
+            app:entryValues="@array/theme_entry_values"
+            app:entries="@array/theme_entries"
+            app:defaultValue="system"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true"/>
+
+        <SwitchPreferenceCompat
+            app:key="material_you"
+            app:title="@string/material_you"
+            app:summary="@string/material_you_subtext"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
