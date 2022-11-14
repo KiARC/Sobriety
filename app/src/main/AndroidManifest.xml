@@ -10,6 +10,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Sobriety">
         <activity
+            android:name=".activities.Settings"
+            android:exported="false"
+            android:label="@string/settings">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".activities.Timeline"
             android:exported="false"
             android:label="@string/timeline">

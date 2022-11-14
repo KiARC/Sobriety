@@ -2,13 +2,18 @@ package com.katiearose.sobriety.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -19,6 +24,7 @@ import com.katiearose.sobriety.AddictionCardAdapter
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityMainBinding
 import com.katiearose.sobriety.internal.CacheHandler
+import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.showConfirmDialog
 import java.io.FileNotFoundException
 import java.time.Instant
@@ -59,8 +65,21 @@ class Main : AppCompatActivity() {
             adapterAddictions.notifyDataSetChanged()
         }
     }
+    //needed for this activity to apply md3 theme after user backs away from settings
+    private val materialYouSettingListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == "material_you") recreate()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        if (preferences.getString("theme", "system") == "system" &&
+                Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            preferences.edit { putString("theme", "light") }
+        }
+        preferences.registerOnSharedPreferenceChangeListener(materialYouSettingListener)
+        applyThemes()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -183,5 +202,20 @@ class Main : AppCompatActivity() {
     override fun onResume() {
         updatePromptVisibility()
         super.onResume()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (id == R.id.go_to_settings) {
+            val intent = Intent(this, Settings::class.java)
+            startActivity(intent)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

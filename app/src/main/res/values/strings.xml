@@ -43,4 +43,12 @@
     <string name="time_range">Time started: %s\nↆ\nTime ended: %s</string>
     <string name="duration">Duration: %s</string>
     <string name="ongoing">Ongoing… Keep it up!</string>
+    <string name="settings">Settings</string>
+    <string name="appearance">Appearance</string>
+    <string name="theme">Theme</string>
+    <string name="light_theme">Light theme</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="system_theme">System theme</string>
+    <string name="material_you">Material You</string>
+    <string name="material_you_subtext">Android 12 users, rejoice!</string>
 </resources>

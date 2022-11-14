@@ -13,6 +13,7 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityCreateBinding
+import com.katiearose.sobriety.utils.applyThemes
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -27,6 +28,7 @@ class Create : AppCompatActivity() {
     private lateinit var binding: ActivityCreateBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        applyThemes()
         super.onCreate(savedInstanceState)
         binding = ActivityCreateBinding.inflate(layoutInflater)
         setContentView(binding.root)
