@@ -77,6 +77,21 @@
             />
 
         <ImageView
+            android:id="@+id/imageMisc"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:foreground="@drawable/ripple"
+            android:layout_marginTop="5dp"
+            android:contentDescription="@string/misc"
+            android:tooltipText="@string/misc"
+            app:tint="?attr/colorIconOnCard"
+            android:src="@drawable/more_horiz_24px"
+            app:layout_constraintStart_toEndOf="@id/imageDelete"
+            app:layout_constraintTop_toBottomOf="@+id/textViewAverage"
+            />
+
+        <ImageView
             android:id="@+id/imageReset"
             android:layout_width="48dp"
             android:layout_height="48dp"

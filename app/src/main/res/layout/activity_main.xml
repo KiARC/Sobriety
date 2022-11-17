@@ -16,14 +16,10 @@
         android:id="@+id/addCardButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:translationX="-30dp"
-        android:translationY="-30dp"
-        app:layout_anchorGravity="end|bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add"
-        app:tint="@android:color/white"
+        app:srcCompat="@drawable/add_24px"
+        android:layout_margin="@dimen/fab_margin"
         android:contentDescription="@string/add_new_addiction"
         android:tooltipText="@string/add_new_addiction"/>
 

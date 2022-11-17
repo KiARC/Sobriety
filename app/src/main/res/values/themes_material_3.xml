@@ -7,6 +7,7 @@
         <item name="colorIconOnCard">#B39DDB</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme.Material3</item>
         <item name="switchPreferenceCompatStyle">@style/Preference.MaterialSwitchPreference</item>
+        <item name="android:textColor">@android:color/black</item>
     </style>
 
 </resources>

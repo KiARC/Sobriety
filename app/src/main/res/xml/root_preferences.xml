@@ -21,4 +21,38 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/daily_notes"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            app:key="sort_notes"
+            app:title="@string/sort_order"
+            app:entries="@array/sort_entries"
+            app:entryValues="@array/sort_entry_values"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"
+            app:defaultValue="asc"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/milestones"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            app:key="sort_milestones"
+            app:title="@string/sort_order"
+            app:entries="@array/sort_entries"
+            app:entryValues="@array/sort_entry_values"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"
+            app:defaultValue="asc"/>
+
+        <SwitchPreferenceCompat
+            app:key="hide_completed_milestones"
+            app:title="@string/hide_completed_milestones"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
 </PreferenceScreen>
