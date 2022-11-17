@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".activities.Savings"
+    tools:ignore="UnusedAttribute">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="6dp"
+        android:text="@string/time"
+        android:gravity="center_vertical"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:ignore="RelativeOverlap" />
+
+    <ImageView
+        android:id="@+id/btn_expand_collapse_time"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:layout_alignParentEnd="true"
+        android:foreground="@drawable/ripple"
+        android:src="@drawable/expand_less_24px"
+        android:contentDescription="@string/collapse"
+        android:tooltipText="@string/collapse" />
+
+    <ImageView
+        android:id="@+id/btn_edit_time"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:layout_toStartOf="@id/btn_expand_collapse_time"
+        android:foreground="@drawable/ripple"
+        android:src="@drawable/edit_note_24px"
+        android:contentDescription="@string/collapse"
+        android:tooltipText="@string/collapse" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/time_saved_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_expand_collapse_time"
+        android:layout_margin="6dp"
+        app:contentPadding="6dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/time_saved_per_day"/>
+
+            <TextView
+                android:id="@+id/time_saved"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="6dp"
+        android:layout_below="@id/time_saved_card"
+        android:text="@string/other_savings"
+        android:gravity="center_vertical"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:ignore="RelativeOverlap" />
+
+    <ImageView
+        android:id="@+id/btn_expand_collapse_other"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:layout_below="@id/time_saved_card"
+        android:layout_alignParentEnd="true"
+        android:foreground="@drawable/ripple"
+        android:src="@drawable/expand_less_24px"
+        android:contentDescription="@string/collapse"
+        android:tooltipText="@string/collapse" />
+
+    <ImageView
+        android:id="@+id/btn_add_other"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:layout_below="@id/time_saved_card"
+        android:layout_toStartOf="@id/btn_expand_collapse_other"
+        android:foreground="@drawable/ripple"
+        android:src="@drawable/add_24px"
+        android:contentDescription="@string/add_new_saving"
+        android:tooltipText="@string/add_new_saving" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/other_savings_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_expand_collapse_other"/>
+
+</RelativeLayout>

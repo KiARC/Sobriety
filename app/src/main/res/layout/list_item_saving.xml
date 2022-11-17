@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="6dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/savings_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Money"
+            android:textSize="@dimen/text_size_medium"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/savings_amount_per_day"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            tools:text="Amount saved per day: 100 $"
+            app:layout_constraintTop_toBottomOf="@id/savings_name" />
+
+        <ImageView
+            android:id="@+id/btn_edit_saving"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:padding="12dp"
+            android:foreground="@drawable/ripple"
+            android:src="@drawable/edit_note_24px"
+            android:contentDescription="@string/edit"
+            android:tooltipText="@string/edit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/savings_amount_per_day" />
+
+        <ImageView
+            android:id="@+id/btn_delete_saving"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:padding="12dp"
+            android:foreground="@drawable/ripple"
+            android:src="@drawable/ic_baseline_delete_24"
+            android:contentDescription="@string/delete"
+            android:tooltipText="@string/delete"
+            app:layout_constraintEnd_toStartOf="@id/btn_edit_saving"
+            app:layout_constraintTop_toBottomOf="@+id/savings_amount_per_day" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
