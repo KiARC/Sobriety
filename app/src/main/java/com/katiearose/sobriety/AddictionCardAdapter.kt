@@ -9,9 +9,12 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.katiearose.sobriety.activities.Main
 import com.katiearose.sobriety.databinding.CardAddictionBinding
+import com.katiearose.sobriety.shared.Addiction
+import com.katiearose.sobriety.shared.secondsFromNow
 import com.katiearose.sobriety.utils.convertSecondsToString
-import com.katiearose.sobriety.utils.secondsFromNow
-import kotlinx.coroutines.*
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.util.*
 import kotlin.math.absoluteValue
@@ -119,7 +122,7 @@ class AddictionCardAdapter(
                     else binding.root.context.getString(
                         R.string.stop_notice,
                         dateFormat.format(Date(addiction.timeStopped)),
-                        binding.root.context.convertSecondsToString((addiction.timeStopped - addiction.lastRelapse.toEpochMilli()) / 1000)
+                        binding.root.context.convertSecondsToString((addiction.timeStopped - addiction.lastRelapse.toEpochMilliseconds()) / 1000)
                     )
             }
         }

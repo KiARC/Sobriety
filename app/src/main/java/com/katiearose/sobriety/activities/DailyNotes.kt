@@ -6,18 +6,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.NoteAdapter
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityDailyNotesBinding
 import com.katiearose.sobriety.databinding.DialogAddNoteBinding
-import com.katiearose.sobriety.internal.CacheHandler
+import com.katiearose.sobriety.shared.Addiction
+import com.katiearose.sobriety.shared.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
+import com.katiearose.sobriety.utils.write
+import kotlinx.datetime.*
 import java.time.format.DateTimeFormatter
 
 class DailyNotes : AppCompatActivity() {
@@ -35,19 +34,20 @@ class DailyNotes : AppCompatActivity() {
         setContentView(binding.root)
         cacheHandler = CacheHandler(this)
 
-        addiction = intent.extras!!.getSerializable(Main.EXTRA_ADDICTION) as Addiction
+        addiction = Main.addictions[intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, 0)]
         adapter = NoteAdapter(addiction, this, { showAddNoteDialog(true, it.first) },
             {
                 val action: () -> Unit = {
                     addiction.dailyNotes.remove(it.first)
                     updateNotesList()
                 }
-                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_note_confirm, dateFormat.format(it.first)), action)
+                showConfirmDialog(getString(R.string.delete), getString(R.string.delete_note_confirm, dateFormat.format(it.first.toJavaLocalDate())), action)
             })
         binding.notesList.layoutManager = LinearLayoutManager(this)
         binding.notesList.adapter = adapter
 
-        binding.addNoteFab.setOnClickListener { showAddNoteDialog(false, LocalDate.now()) }
+        binding.addNoteFab.setOnClickListener { showAddNoteDialog(false, Clock.System.now().toLocalDateTime(
+            TimeZone.currentSystemDefault()).date) }
     }
 
     private fun showAddNoteDialog(isEdit: Boolean, date: LocalDate) {
@@ -60,13 +60,13 @@ class DailyNotes : AppCompatActivity() {
             dialogViewBinding.noteDate.visibility = View.GONE
             dialogViewBinding.noteInput.setText(addiction.dailyNotes[date])
         } else {
-            dialogViewBinding.noteDate.text = dateFormat.format(pickedDate)
+            dialogViewBinding.noteDate.text = dateFormat.format(pickedDate.toJavaLocalDate())
             dialogViewBinding.noteDate.setOnClickListener {
                 val datePicker = MaterialDatePicker.Builder.datePicker().build()
                 datePicker.addOnPositiveButtonClickListener {
                     pickedDate =
-                        Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
-                    dialogViewBinding!!.noteDate.text = dateFormat.format(pickedDate)
+                        Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.currentSystemDefault()).date
+                    dialogViewBinding!!.noteDate.text = dateFormat.format(pickedDate.toJavaLocalDate())
                 }
                 datePicker.show(supportFragmentManager, null)
             }
@@ -85,7 +85,7 @@ class DailyNotes : AppCompatActivity() {
     }
 
     private fun updateNotesList() {
-        cacheHandler.writeCache()
+        cacheHandler.write()
         adapter.update()
     }
 }

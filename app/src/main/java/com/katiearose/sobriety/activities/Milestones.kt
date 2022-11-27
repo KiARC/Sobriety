@@ -4,16 +4,17 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.MilestoneAdapter
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityMilestonesBinding
 import com.katiearose.sobriety.databinding.DialogAddMilestoneBinding
-import com.katiearose.sobriety.internal.CacheHandler
+import com.katiearose.sobriety.shared.Addiction
+import com.katiearose.sobriety.shared.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
-import java.time.temporal.ChronoUnit
+import com.katiearose.sobriety.utils.write
+import kotlinx.datetime.DateTimeUnit
 
 class Milestones : AppCompatActivity() {
 
@@ -29,11 +30,11 @@ class Milestones : AppCompatActivity() {
         setContentView(binding.root)
         cacheHandler = CacheHandler(this)
 
-        addiction = intent.extras!!.getSerializable(Main.EXTRA_ADDICTION) as Addiction
+        addiction = Main.addictions[intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, 0)]
         adapter = MilestoneAdapter(addiction, this) {
             val action: () -> Unit = {
                 addiction.milestones.remove(it)
-                cacheHandler.writeCache()
+                cacheHandler.write()
                 update()
             }
             showConfirmDialog(getString(R.string.delete), getString(R.string.delete_milestone_confirm), action)
@@ -59,13 +60,13 @@ class Milestones : AppCompatActivity() {
                 } else {
                     val num = dialogViewBinding!!.milestoneNumberInput.text.toString().toInt()
                     when (dialogViewBinding!!.unitInput.text.toString()) {
-                        units[0] -> addiction.milestones.add(Pair(num, ChronoUnit.HOURS))
-                        units[1] -> addiction.milestones.add(Pair(num, ChronoUnit.DAYS))
-                        units[2] -> addiction.milestones.add(Pair(num, ChronoUnit.WEEKS))
-                        units[3] -> addiction.milestones.add(Pair(num, ChronoUnit.MONTHS))
-                        units[4] -> addiction.milestones.add(Pair(num, ChronoUnit.YEARS))
+                        units[0] -> addiction.milestones.add(Pair(num, DateTimeUnit.HOUR))
+                        units[1] -> addiction.milestones.add(Pair(num, DateTimeUnit.DAY))
+                        units[2] -> addiction.milestones.add(Pair(num, DateTimeUnit.WEEK))
+                        units[3] -> addiction.milestones.add(Pair(num, DateTimeUnit.MONTH))
+                        units[4] -> addiction.milestones.add(Pair(num, DateTimeUnit.YEAR))
                     }
-                    cacheHandler.writeCache()
+                    cacheHandler.write()
                     adapter.update()
                     dialog.dismiss()
                 }
@@ -76,7 +77,7 @@ class Milestones : AppCompatActivity() {
     }
 
     private fun update() {
-        cacheHandler.writeCache()
+        cacheHandler.write()
         adapter.update()
     }
 }

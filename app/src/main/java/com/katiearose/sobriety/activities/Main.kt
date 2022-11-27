@@ -19,24 +19,25 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.AddictionCardAdapter
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityMainBinding
 import com.katiearose.sobriety.databinding.DialogMiscBinding
-import com.katiearose.sobriety.internal.CacheHandler
+import com.katiearose.sobriety.shared.Addiction
+import com.katiearose.sobriety.shared.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.showConfirmDialog
+import com.katiearose.sobriety.utils.write
+import kotlinx.datetime.Clock
 import java.io.FileNotFoundException
 import java.time.Instant
-import java.time.LocalTime
 import java.util.*
 
 class Main : AppCompatActivity() {
 
     companion object {
         const val EXTRA_NAMES = "com.katiearose.sobriety.EXTRA_NAMES"
-        const val EXTRA_ADDICTION = "com.katiearose.sobriety.EXTRA_ADDICTION"
+        const val EXTRA_ADDICTION_POSITION = "com.katiearose.sobriety.EXTRA_ADDICTION_POSITION"
         val addictions = ArrayList<Addiction>()
     }
 
@@ -49,27 +50,16 @@ class Main : AppCompatActivity() {
     private val addNewAddiction =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
-                val name = it.data?.extras?.getString("name") as String
-                val instant =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                        it.data?.extras?.getSerializable("instant", Instant::class.java) as Instant
-                    else it.data?.extras?.getSerializable("instant") as Instant
+                val name = it.data?.extras?.getString("name")!!
+                val instant = it.data?.extras?.getLong("instant")!!
                 val priority =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                        it.data?.extras?.getSerializable(
-                            "priority",
-                            Addiction.Priority::class.java
-                        ) as Addiction.Priority
-                    else it.data?.extras?.getSerializable("priority") as Addiction.Priority
-                val addiction = Addiction(
-                    name, instant, false, 0, LinkedHashMap(),
-                    priority, LinkedHashMap(), LocalTime.of(0, 0), LinkedHashMap(), LinkedHashSet()
-                )
+                    Addiction.Priority.values()[it.data?.extras?.getInt("priority") ?: 0]
+                val addiction = Addiction.newInstance(name, instant, priority)
                 if (!addiction.isFuture())
-                    addiction.history[instant.toEpochMilli()] = 0
+                    addiction.history[instant] = 0
                 addictions.add(addiction)
                 addictions.sortWith { a1, a2 -> a1.priority.compareTo(a2.priority) }
-                cacheHandler.writeCache()
+                cacheHandler.write()
                 adapterAddictions.notifyDataSetChanged()
             }
         }
@@ -112,7 +102,7 @@ class Main : AppCompatActivity() {
                 adapterAddictions.notifyItemRemoved(addictions.indexOf(it))
                 addictions.remove(it)
                 updatePromptVisibility()
-                cacheHandler.writeCache()
+                cacheHandler.write()
             }
             showConfirmDialog(
                 getString(R.string.delete),
@@ -124,7 +114,7 @@ class Main : AppCompatActivity() {
                 val action: () -> Unit = {
                     it.relapse()
                     adapterAddictions.notifyItemChanged(addictions.indexOf(it))
-                    cacheHandler.writeCache()
+                    cacheHandler.write()
                 }
                 showConfirmDialog(
                     getString(R.string.relapse),
@@ -133,10 +123,10 @@ class Main : AppCompatActivity() {
                 )
             } else {
                 val action: () -> Unit = {
-                    it.lastRelapse = Instant.now()
+                    it.lastRelapse = Clock.System.now()
                     it.history[System.currentTimeMillis()] = 0
                     adapterAddictions.notifyItemChanged(addictions.indexOf(it))
-                    cacheHandler.writeCache()
+                    cacheHandler.write()
                 }
                 showConfirmDialog(
                     getString(R.string.track_now),
@@ -156,7 +146,7 @@ class Main : AppCompatActivity() {
                     val action: () -> Unit = {
                         it.stopAbstaining()
                         adapterAddictions.notifyItemChanged(addictions.indexOf(it))
-                        cacheHandler.writeCache()
+                        cacheHandler.write()
                     }
                     showConfirmDialog(
                         getString(R.string.stop),
@@ -173,7 +163,7 @@ class Main : AppCompatActivity() {
             if (!it.isFuture()) {
                 startActivity(
                     Intent(this@Main, Timeline::class.java)
-                        .putExtra(EXTRA_ADDICTION, it)
+                        .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(it))
                 )
             } else Snackbar.make(
                 binding.root,
@@ -191,7 +181,7 @@ class Main : AppCompatActivity() {
                 .setPositiveButton(R.string.edit) { _, _ ->
                     it.priority = Addiction.Priority.values()[choice]
                     addictions.sortWith { a1, a2 -> a1.priority.compareTo(a2.priority) }
-                    cacheHandler.writeCache()
+                    cacheHandler.write()
                     adapterAddictions.notifyDataSetChanged()
                     Snackbar.make(
                         binding.root,
@@ -207,21 +197,21 @@ class Main : AppCompatActivity() {
             dialogViewBinding!!.dailyNotes.setOnClickListener {
                 startActivity(
                     Intent(this@Main, DailyNotes::class.java)
-                        .putExtra(EXTRA_ADDICTION, a)
+                        .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(a))
                 )
                 dialog.dismiss()
             }
             dialogViewBinding.savings.setOnClickListener {
                 startActivity(
                     Intent(this@Main, Savings::class.java)
-                        .putExtra(EXTRA_ADDICTION, a)
+                        .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(a))
                 )
                 dialog.dismiss()
             }
             dialogViewBinding.milestones.setOnClickListener {
                 startActivity(
                     Intent(this@Main, Milestones::class.java)
-                        .putExtra(EXTRA_ADDICTION, a)
+                        .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(a))
                 )
                 dialog.dismiss()
             }
@@ -239,8 +229,8 @@ class Main : AppCompatActivity() {
                 //Note that to handle cases where the time elapses while the app is open,
                 //i have to do this catch-all check. it's ugly, but it works.
                 for (addiction in addictions) {
-                    if (addiction.history.isEmpty() && addiction.lastRelapse.epochSecond < Instant.now().epochSecond) {
-                        addiction.history[addiction.lastRelapse.toEpochMilli()] = 0
+                    if (addiction.history.isEmpty() && addiction.lastRelapse.epochSeconds < Instant.now().epochSecond) {
+                        addiction.history[addiction.lastRelapse.toEpochMilliseconds()] = 0
                     }
                 }
                 mainHandler.postDelayed(this, 1000L)

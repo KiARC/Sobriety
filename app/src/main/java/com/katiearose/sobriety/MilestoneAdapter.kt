@@ -7,28 +7,31 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.katiearose.sobriety.databinding.ListItemMilestoneBinding
+import com.katiearose.sobriety.shared.Addiction
+import com.katiearose.sobriety.shared.SortMode
+import com.katiearose.sobriety.shared.toMillis
 import com.katiearose.sobriety.utils.getHideCompletedMilestonesPref
 import com.katiearose.sobriety.utils.getSharedPref
 import com.katiearose.sobriety.utils.getSortMilestonesPref
+import kotlinx.datetime.DateTimeUnit
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 class MilestoneAdapter(
     private val addiction: Addiction, private val context: Context,
-    private val deleteButtonAction: (Pair<Int, ChronoUnit>) -> Unit
+    private val deleteButtonAction: (Pair<Int, DateTimeUnit>) -> Unit
 ) :
-    ListAdapter<Pair<Int, ChronoUnit>, MilestoneAdapter.MilestoneViewHolder>(object :
-        DiffUtil.ItemCallback<Pair<Int, ChronoUnit>>() {
+    ListAdapter<Pair<Int, DateTimeUnit>, MilestoneAdapter.MilestoneViewHolder>(object :
+        DiffUtil.ItemCallback<Pair<Int, DateTimeUnit>>() {
         override fun areItemsTheSame(
-            oldItem: Pair<Int, ChronoUnit>,
-            newItem: Pair<Int, ChronoUnit>
+            oldItem: Pair<Int, DateTimeUnit>,
+            newItem: Pair<Int, DateTimeUnit>
         ): Boolean = oldItem.first == newItem.first
 
         override fun areContentsTheSame(
-            oldItem: Pair<Int, ChronoUnit>,
-            newItem: Pair<Int, ChronoUnit>
+            oldItem: Pair<Int, DateTimeUnit>,
+            newItem: Pair<Int, DateTimeUnit>
         ): Boolean = oldItem.second == newItem.second
     }) {
     private val preferences = context.getSharedPref()
@@ -40,20 +43,11 @@ class MilestoneAdapter(
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd MMM yyyy")
 
     fun update() {
-        var milestones = when (preferences.getSortMilestonesPref()) {
-            "asc" -> addiction.milestones.map { it }.sortedWith { m1, m2 ->
-                (m1.first * m1.second.duration.toMillis()).compareTo(m2.first * m2.second.duration.toMillis())
-            }
-            "desc" -> addiction.milestones.map { it }.sortedWith { m1, m2 ->
-                (m2.first * m2.second.duration.toMillis()).compareTo(m1.first * m1.second.duration.toMillis())
-            }
-            else -> addiction.milestones.map { it }
-        }
-        if (preferences.getHideCompletedMilestonesPref())
-            milestones = milestones.filter {
-                System.currentTimeMillis() < addiction.lastRelapse.toEpochMilli() + it.first * it.second.duration.toMillis()
-            }
-        submitList(milestones)
+        submitList(when (preferences.getSortMilestonesPref()) {
+            "asc" -> addiction.getMilestonesList(SortMode.ASC, preferences.getHideCompletedMilestonesPref())
+            "desc" -> addiction.getMilestonesList(SortMode.DESC, preferences.getHideCompletedMilestonesPref())
+            else -> addiction.getMilestonesList(SortMode.NONE, preferences.getHideCompletedMilestonesPref())
+        })
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MilestoneViewHolder {
@@ -65,20 +59,20 @@ class MilestoneAdapter(
     override fun onBindViewHolder(holder: MilestoneViewHolder, position: Int) {
         val milestone = currentList[position]
         holder.milestone.text = StringBuilder(milestone.first.toString()).append(" ").append(
-            when (milestone.second) {
-                ChronoUnit.HOURS -> context.getString(R.string.unit_hour)
-                ChronoUnit.DAYS -> context.getString(R.string.unit_day)
-                ChronoUnit.WEEKS -> context.getString(R.string.unit_week)
-                ChronoUnit.MONTHS -> context.getString(R.string.unit_month)
-                ChronoUnit.YEARS -> context.getString(R.string.unit_year)
+            when {
+                milestone.second == DateTimeUnit.HOUR -> context.getString(R.string.unit_hour)
+                milestone.second == DateTimeUnit.DAY -> context.getString(R.string.unit_day)
+                milestone.second == DateTimeUnit.WEEK -> context.getString(R.string.unit_week)
+                milestone.second == DateTimeUnit.MONTH -> context.getString(R.string.unit_month)
+                milestone.second == DateTimeUnit.YEAR -> context.getString(R.string.unit_year)
                 else -> "Unsupported"
             }
         ).toString()
         val goal =
-            addiction.lastRelapse.toEpochMilli() + milestone.first * milestone.second.duration.toMillis()
+            addiction.lastRelapse.toEpochMilliseconds() + milestone.first * milestone.second.toMillis()
         holder.milestoneProgressBar.progress =
-            (((System.currentTimeMillis() - addiction.lastRelapse.toEpochMilli()).toFloat() /
-                    (goal - addiction.lastRelapse.toEpochMilli())) * 100).toInt()
+            (((System.currentTimeMillis() - addiction.lastRelapse.toEpochMilliseconds()).toFloat() /
+                    (goal - addiction.lastRelapse.toEpochMilliseconds())) * 100).toInt()
         if (holder.milestoneProgressBar.progress == 100) {
             holder.milestoneTime.text = context.getString(R.string.completed)
         } else {

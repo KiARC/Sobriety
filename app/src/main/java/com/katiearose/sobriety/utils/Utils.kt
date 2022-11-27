@@ -8,7 +8,8 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.katiearose.sobriety.R
-import java.time.Instant
+import com.katiearose.sobriety.activities.Main
+import com.katiearose.sobriety.shared.CacheHandler
 
 private const val MINUTE = 60
 private const val HOUR = MINUTE * 60
@@ -68,20 +69,10 @@ fun Activity.applyThemes() {
     } else setTheme(R.style.Theme_Sobriety)
 }
 
-fun AppCompatEditText.isInputEmpty(): Boolean {
-    return text == null || text.toString().isBlank()
-}
+fun AppCompatEditText.isInputEmpty(): Boolean = text == null || text.toString().isBlank()
 
 fun View.toggleVisibility() {
     visibility = if (visibility == View.VISIBLE) View.GONE else View.VISIBLE
 }
 
-fun Instant.secondsFromNow(): Long = Instant.now().epochSecond - this.epochSecond
-
-/**
- * Puts the specified value to the last key in this map.
- */
-fun <K, V> LinkedHashMap<K, V>.putLast(value: V) {
-    val lastKey = keys.map { it }.last()
-    put(lastKey, value)
-}
+fun CacheHandler.write() = writeCache(Main.addictions)

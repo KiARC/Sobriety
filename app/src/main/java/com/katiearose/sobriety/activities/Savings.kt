@@ -8,17 +8,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat.CLOCK_24H
-import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.SavingsAdapter
 import com.katiearose.sobriety.databinding.ActivitySavingsBinding
 import com.katiearose.sobriety.databinding.DialogAddSavingBinding
-import com.katiearose.sobriety.internal.CacheHandler
-import com.katiearose.sobriety.utils.applyThemes
-import com.katiearose.sobriety.utils.isInputEmpty
-import com.katiearose.sobriety.utils.showConfirmDialog
-import com.katiearose.sobriety.utils.toggleVisibility
-import java.time.LocalTime
+import com.katiearose.sobriety.shared.Addiction
+import com.katiearose.sobriety.shared.CacheHandler
+import com.katiearose.sobriety.utils.*
+import kotlinx.datetime.LocalTime
 
 class Savings : AppCompatActivity() {
 
@@ -34,7 +31,7 @@ class Savings : AppCompatActivity() {
         setContentView(binding.root)
         cacheHandler = CacheHandler(this)
 
-        addiction = intent.extras!!.getSerializable(Main.EXTRA_ADDICTION) as Addiction
+        addiction = Main.addictions[intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, 0)]
         updateSavedTimeDisplay()
 
         binding.btnEditTime.setOnClickListener {
@@ -43,8 +40,8 @@ class Savings : AppCompatActivity() {
                 .setTimeFormat(CLOCK_24H)
                 .build()
             timePicker.addOnPositiveButtonClickListener {
-                addiction.timeSaving = LocalTime.of(timePicker.hour, timePicker.minute)
-                cacheHandler.writeCache()
+                addiction.timeSaving = LocalTime(timePicker.hour, timePicker.minute)
+                cacheHandler.write()
                 updateSavedTimeDisplay()
             }
             timePicker.show(supportFragmentManager, null)
@@ -132,7 +129,7 @@ class Savings : AppCompatActivity() {
     }
 
     private fun update() {
-        cacheHandler.writeCache()
+        cacheHandler.write()
         adapter.update()
     }
 
