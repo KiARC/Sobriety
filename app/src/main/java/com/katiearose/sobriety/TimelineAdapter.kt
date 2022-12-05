@@ -1,39 +1,48 @@
 package com.katiearose.sobriety
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.katiearose.sobriety.databinding.ListItemTimelineBinding
+import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.utils.convertSecondsToString
-import com.katiearose.sobriety.utils.getKeyValuePairAtIndex
 import java.text.DateFormat
 import java.util.*
-import kotlin.collections.LinkedHashMap
 
-class TimelineAdapter(private val context: Context):
-    RecyclerView.Adapter<TimelineAdapter.TimelineViewHolder>() {
+class TimelineAdapter(addiction: Addiction, private val context: Context):
+    ListAdapter<Pair<Long, Long>, TimelineAdapter.TimelineViewHolder>(object : DiffUtil.ItemCallback<Pair<Long, Long>>() {
+        override fun areItemsTheSame(
+            oldItem: Pair<Long, Long>,
+            newItem: Pair<Long, Long>
+        ): Boolean {
+            return oldItem.first == newItem.first
+        }
 
-    private lateinit var history: LinkedHashMap<Long, Long>
+        override fun areContentsTheSame(
+            oldItem: Pair<Long, Long>,
+            newItem: Pair<Long, Long>
+        ): Boolean {
+            return oldItem.second == newItem.second
+        }
+
+    }) {
+
+    init { submitList(addiction.history.toList()) }
+
     private val dateFormat = DateFormat.getDateTimeInstance()
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun setHistory(history: LinkedHashMap<Long, Long>) {
-        this.history = history
-        notifyDataSetChanged()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineViewHolder {
-        val itemView =
-            LayoutInflater.from(parent.context).inflate(R.layout.list_item_timeline, parent, false)
-        return TimelineViewHolder(itemView)
+        val binding = ListItemTimelineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return TimelineViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: TimelineViewHolder, position: Int) {
         holder.attemptNo.text = context.getString(R.string.attempt, position + 1)
-        val pair = history.getKeyValuePairAtIndex(position)
+        val pair = currentList[position]
         if (pair.second == 0L) {
             holder.dateRange.text = context.getString(R.string.time_started, dateFormat.format(Date(pair.first)))
             holder.abstainPeriod.text = context.getString(R.string.ongoing)
@@ -43,11 +52,7 @@ class TimelineAdapter(private val context: Context):
         }
     }
 
-    override fun getItemCount(): Int {
-        return history.size
-    }
-
-    class TimelineViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    class TimelineViewHolder(binding: ListItemTimelineBinding): RecyclerView.ViewHolder(binding.root) {
         val attemptNo: TextView = itemView.findViewById(R.id.attempt_no)
         val dateRange: TextView = itemView.findViewById(R.id.date_range)
         val abstainPeriod: TextView = itemView.findViewById(R.id.abstain_period)

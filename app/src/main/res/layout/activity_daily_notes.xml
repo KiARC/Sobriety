@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.DailyNotes"
+    tools:ignore="UnusedAttribute">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/notes_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_note_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/add_24px"
+        android:contentDescription="@string/add_note"
+        android:tooltipText="@string/add_note" />
+
+</RelativeLayout>

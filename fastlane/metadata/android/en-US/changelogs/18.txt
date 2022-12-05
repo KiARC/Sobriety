@@ -1,0 +1,3 @@
+v7.0.0 Upgrade Time
+
+In v7.0.0, the incredible <i>unbiaseduser</i> has implemented a whole host of new features to bring Sobriety closer to being a rue I Am Sober competitor. Among these are daily notes, milestones and savings, as well as beautiful menus for each.

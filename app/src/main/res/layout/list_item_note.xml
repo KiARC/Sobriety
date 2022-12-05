@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:ignore="UnusedAttribute">
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="6dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center_vertical"
+        tools:ignore="RelativeOverlap" />
+
+    <ImageView
+        android:id="@+id/btn_expand_collapse"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:src="@drawable/expand_less_24px"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/collapse"
+        android:tooltipText="@string/collapse"
+        android:foreground="@drawable/ripple"/>
+
+    <ImageView
+        android:id="@+id/btn_edit"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:src="@drawable/edit_note_24px"
+        android:layout_toStartOf="@id/btn_expand_collapse"
+        android:contentDescription="@string/edit"
+        android:tooltipText="@string/edit"
+        android:foreground="@drawable/ripple"/>
+
+    <ImageView
+        android:id="@+id/btn_delete"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:src="@drawable/ic_baseline_delete_24"
+        android:layout_toStartOf="@id/btn_edit"
+        android:contentDescription="@string/delete"
+        android:tooltipText="@string/delete"
+        android:foreground="@drawable/ripple"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/note_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_expand_collapse"
+        android:layout_margin="6dp"
+        app:contentPadding="6dp">
+
+        <TextView
+            android:id="@+id/note"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</RelativeLayout>

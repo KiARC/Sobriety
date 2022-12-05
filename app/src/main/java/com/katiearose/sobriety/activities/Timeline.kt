@@ -19,11 +19,9 @@ class Timeline : AppCompatActivity() {
         binding = ActivityTimelineBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val pos = intent.extras!!.getInt(Main.EXTRA_ADDICTION_POSITION)
-        val addiction = Main.addictions[pos]
+        val addiction = Main.addictions[intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, 0)]
         binding.timelineNotice.text = getString(R.string.showing_timeline, addiction.name)
-        val adapter = TimelineAdapter(this)
-        adapter.setHistory(addiction.history)
+        val adapter = TimelineAdapter(addiction, this)
         binding.timelineList.layoutManager = LinearLayoutManager(this)
         binding.timelineList.setHasFixedSize(true)
         binding.timelineList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))

@@ -1,8 +1,9 @@
-package com.katiearose.sobriety.internal
+package com.katiearose.sobriety.shared
 
-import java.io.Serializable
+import kotlinx.serialization.Serializable
 
-class CircularBuffer<T>(size: Int) : Serializable {
+@Serializable
+class CircularBuffer<T>(private val size: Int) {
     private val buffer: ArrayList<T?> = ArrayList(size)
 
     init {
