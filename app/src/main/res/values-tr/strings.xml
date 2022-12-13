@@ -28,8 +28,8 @@
     <string name="recent_avg">Son ortalama: %s</string>
     <string name="delete">Sil</string>
     <string name="delete_confirm">Girişi gerçekten silmek istiyor musunuz? \"%s\"?\nBu işlem geri alınamaz.</string>
-    <string name="relapse">Tekrarla</string>
-    <string name="relapse_confirm">Günlük tekrar \"%s\"?</string>
+    <string name="relapse">Bağımlılık</string>
+    <string name="relapse_confirm">Bağımlılık onay\"%s\"?</string>
     <string name="stop">Dur</string>
     <string name="stop_confirm">Sakınmayı bırak \"%s\"?</string>
     <string name="stop_notice">Şu noktada durduruldu: %s\n Denemeniz sürdü %s</string>
