@@ -67,11 +67,11 @@
     <string name="error_empty_note">Not boş olamaz</string>
     <string name="save">Kaydet</string>
     <string name="expand">Genişlet</string>
-    <string name="collapse">Collapse</string>
-    <string name="delete_note_confirm">Do you really want to delete the note for %s?\nThis action cannot be undone.</string>
-    <string name="savings">Savings</string>
-    <string name="time_saved_per_day">Time saved per day</string>
-    <string name="select_time_saved">Select amount of time saved</string>
+    <string name="collapse">Katla</string>
+    <string name="delete_note_confirm">%s için notu gerçekten silmek istiyor musunuz?\nBu işlem geri alınamaz.</string>
+    <string name="savings">Tasarruf</string>
+    <string name="time_saved_per_day">Günlük tasarruf süresi</string>
+    <string name="select_time_saved">Kaydedilen süreyi seçin</string>
     <string name="hours_minutes">%d hours, %d minutes</string>
     <string name="no_set">Not set</string>
     <string name="other_savings">Other savings</string>
