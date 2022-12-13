@@ -27,7 +27,7 @@
     <string name="seconds">%d Saniye</string>
     <string name="recent_avg">Son ortalama: %s</string>
     <string name="delete">Sil</string>
-    <string name="delete_confirm">Girişi gerçekten silmek istiyor musunuz? \"%s\"?\nThis action cannot be undone.</string>
+    <string name="delete_confirm">Girişi gerçekten silmek istiyor musunuz? \"%s\"?\nBu işlem geri alınamaz.</string>
     <string name="relapse">Tekrarla</string>
     <string name="relapse_confirm">Günlük tekrar \"%s\"?</string>
     <string name="stop">Dur</string>
@@ -54,7 +54,7 @@
     <string name="desc">Azalan</string>
     <string name="no_sort">Sıralama yok</string>
     <string name="hide_completed_milestones">Tamamlanan kilometre taşlarını gizle</string>
-    <string name="future_time_notice">İleri bir tarih seçtiniz/time. Uygulama, ancak bu süreden sonra bu bağımlılığı izlemeye başlayacaktır.</string>
+    <string name="future_time_notice">İleri bir tarih seçtiniz/zaman. Uygulama, ancak bu süreden sonra bu bağımlılığı izlemeye başlayacaktır.</string>
     <string name="time_until_tracked">Sonra izlenecek %s</string>
     <string name="not_tracked_yet">\"%s\" henüz takip edilmedi.  Şimdi izlemek istiyorsanız, Tekrarla düğmesine basın.</string>
     <string name="track_now">Şimdi takip et</string>
@@ -87,7 +87,7 @@
     <string name="milestones">Kilometre taşı</string>
     <string name="unit_hour">Saatler</string>
     <string name="unit_day">Günler</string>
-    <string name="unit_week">Weeks</string>
+    <string name="unit_week">Haftalar</string>
     <string name="unit_month">Aylar</string>
     <string name="unit_year">Yıllar</string>
     <string name="number">Sayı</string>
