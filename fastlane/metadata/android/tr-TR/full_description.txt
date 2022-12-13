@@ -1,0 +1,3 @@
+Track your addictions and maintain sobriety!
+
+<i>Sobriety</i>, the free and open source addiction tracker, is designed to be simple: You input a starting date and time, as well as a name for the addiction, and it tells you how long it's been since you last logged a relapse. You can keep notes on your recovery, track milestones, log how much time or money (or anything else) you're saving by staying sober, and view your relapse history all from one easy to use app.
