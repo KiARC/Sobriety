@@ -4,9 +4,9 @@
     <string name="add_new_addiction">Yeni bağımlılık ekle</string>
     <string name="addiction_name">Bağımlılık adı</string>
     <string name="date">Tarih</string>
-    <string name="pick_starting_date">Başlangıç ​​tarihi seçin</string>
+    <string name="pick_starting_date">Başlangıç tarihi seçin</string>
     <string name="time">Zaman</string>
-    <string name="pick_starting_time">Başlangıç ​​zamanını seçin</string>
+    <string name="pick_starting_time">Başlangıç zamanını seçin</string>
     <string name="priority">Öncelik</string>
     <string name="edit_priority">Öncelik düzenle</string>
     <string name="edit">Düzenle</string>
