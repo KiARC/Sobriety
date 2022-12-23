@@ -29,7 +29,9 @@ class Milestones : AppCompatActivity() {
         setContentView(binding.root)
         cacheHandler = CacheHandler(this)
 
-        addiction = intent.extras!!.getSerializable(Main.EXTRA_ADDICTION) as Addiction
+        val addictionPosition = intent.extras!!.getSerializable(Main.EXTRA_ADDICTION_POSITION) as Int
+        addiction = Main.addictions[addictionPosition]
+
         adapter = MilestoneAdapter(addiction, this) {
             val action: () -> Unit = {
                 addiction.milestones.remove(it)

@@ -36,7 +36,10 @@ class Main : AppCompatActivity() {
 
     companion object {
         const val EXTRA_NAMES = "com.katiearose.sobriety.EXTRA_NAMES"
+        // Use this to get a copy of the addiction
         const val EXTRA_ADDICTION = "com.katiearose.sobriety.EXTRA_ADDICTION"
+        // Use this when the addiction needs to be modified
+        const val EXTRA_ADDICTION_POSITION = "com.katiearose.sobriety.EXTRA_ADDICTION_POSITION"
         val addictions = ArrayList<Addiction>()
     }
 
@@ -207,21 +210,21 @@ class Main : AppCompatActivity() {
             dialogViewBinding!!.dailyNotes.setOnClickListener {
                 startActivity(
                     Intent(this@Main, DailyNotes::class.java)
-                        .putExtra(EXTRA_ADDICTION, a)
+                        .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(a))
                 )
                 dialog.dismiss()
             }
             dialogViewBinding.savings.setOnClickListener {
                 startActivity(
                     Intent(this@Main, Savings::class.java)
-                        .putExtra(EXTRA_ADDICTION, a)
+                        .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(a))
                 )
                 dialog.dismiss()
             }
             dialogViewBinding.milestones.setOnClickListener {
                 startActivity(
                     Intent(this@Main, Milestones::class.java)
-                        .putExtra(EXTRA_ADDICTION, a)
+                        .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(a))
                 )
                 dialog.dismiss()
             }
