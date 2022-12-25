@@ -20,9 +20,7 @@ class Timeline : AppCompatActivity() {
         binding = ActivityTimelineBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val addictionPosition = intent.extras!!.getSerializable(Main.EXTRA_ADDICTION_POSITION) as Int
-        val addiction = Main.addictions[addictionPosition]
-
+        val addiction = Main.addictions[intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, 0)]
         binding.timelineNotice.text = getString(R.string.showing_timeline, addiction.name)
         val adapter = TimelineAdapter(addiction, this)
         binding.timelineList.layoutManager = LinearLayoutManager(this)
