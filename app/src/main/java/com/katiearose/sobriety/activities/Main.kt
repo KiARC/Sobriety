@@ -36,9 +36,7 @@ class Main : AppCompatActivity() {
 
     companion object {
         const val EXTRA_NAMES = "com.katiearose.sobriety.EXTRA_NAMES"
-        // Use this to get a copy of the addiction
-        const val EXTRA_ADDICTION = "com.katiearose.sobriety.EXTRA_ADDICTION"
-        // Use this when the addiction needs to be modified
+        // Pass the position of the addiction so that it can be modified
         const val EXTRA_ADDICTION_POSITION = "com.katiearose.sobriety.EXTRA_ADDICTION_POSITION"
         val addictions = ArrayList<Addiction>()
     }
@@ -176,7 +174,7 @@ class Main : AppCompatActivity() {
             if (!it.isFuture()) {
                 startActivity(
                     Intent(this@Main, Timeline::class.java)
-                        .putExtra(EXTRA_ADDICTION, it)
+                        .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(it))
                 )
             } else Snackbar.make(
                 binding.root,
