@@ -18,7 +18,7 @@ private const val MINUTE = 60
 private const val HOUR = MINUTE * 60
 private const val DAY = HOUR * 24
 private const val WEEK = DAY * 7
-private const val YEAR = DAY * 365
+private const val YEAR = (DAY * 365.25).toInt()
 private const val MONTH = YEAR / 12
 
 
