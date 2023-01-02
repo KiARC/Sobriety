@@ -14,15 +14,12 @@ import com.katiearose.sobriety.databinding.ActivityTimelineBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.convertSecondsToString
-import java.text.DateFormat
-import java.util.Date
 
 class Timeline : AppCompatActivity() {
 
     private lateinit var binding: ActivityTimelineBinding
     private lateinit var adapter: TimelineAdapter
     private lateinit var addiction: Addiction
-    private val dateFormat by lazy { DateFormat.getDateTimeInstance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         applyThemes()
