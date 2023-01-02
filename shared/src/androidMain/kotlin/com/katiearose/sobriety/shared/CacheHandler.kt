@@ -1,6 +1,8 @@
 package com.katiearose.sobriety.shared
 
 import android.content.Context
+import android.net.Uri
+import android.widget.Toast
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -25,5 +27,20 @@ class CacheHandler(private val context: Context) {
         BufferedWriter(FileWriter(File(context.filesDir, "Sobriety.cache"))).use {
             it.write(Json.encodeToString(listSerializer, addictions))
         }
+    }
+
+    fun exportData(addictions: List<Addiction>, output: Uri) {
+        BufferedWriter(OutputStreamWriter(context.contentResolver.openOutputStream(output))).use {
+            it.write(Json.encodeToString(listSerializer, addictions))
+        }
+    }
+
+    fun importData(input: Uri, resultConsumer: (List<Addiction>) -> Unit) {
+        val stream = context.contentResolver.openInputStream(input)
+        if (stream == null) {
+            Toast.makeText(context, R.string.cant_import_data, Toast.LENGTH_SHORT).show()
+            return
+        }
+        resultConsumer(readCache(stream))
     }
 }
