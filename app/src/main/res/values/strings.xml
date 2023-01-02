@@ -93,5 +93,9 @@
     <string name="number">Number</string>
     <string name="completed">Completed</string>
     <string name="delete_milestone_confirm">Do you really want to delete this milestone?\nThis action cannot be undone.</string>
-
+    <string name="calc_avg_durations">Calculate average durations</string>
+    <string name="only_one_attempt">There\'s only one attempt</string>
+    <string name="avg_duration">Average of attempt</string>
+    <string name="nothing_is_chosen">Nothing is chosen</string>
+    <string name="only_one_attempt_is_chosen">Only one attempt is chosen</string>
 </resources>

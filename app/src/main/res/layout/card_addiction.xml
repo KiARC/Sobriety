@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="?attr/colorTextOnCard"
-            android:foreground="?attr/selectableItemBackground"
+            android:background="?attr/selectableItemBackground"
             tools:text="Priority: Medium"
             app:layout_constraintTop_toBottomOf="@id/textViewAddictionName"
             app:layout_constraintBottom_toTopOf="@id/textViewTime"/>
@@ -49,54 +49,40 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewPriority" />
 
-        <TextView
-            android:id="@+id/textViewAverage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Average: 3d 20h 10m 5s"
-            android:visibility="visible"
-            android:textColor="?attr/colorTextOnCard"
-            android:textSize="@dimen/text_size_small"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewTime" />
-
         <ImageView
             android:id="@+id/imageDelete"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"
-            android:foreground="@drawable/ripple"
+            android:background="@drawable/ripple"
             android:layout_marginTop="5dp"
             android:contentDescription="@string/delete"
             android:tooltipText="@string/delete"
             app:tint="?attr/colorIconOnCard"
             android:src="@drawable/ic_baseline_delete_24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewAverage"
-            />
+            app:layout_constraintTop_toBottomOf="@id/textViewTime" />
 
         <ImageView
             android:id="@+id/imageMisc"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"
-            android:foreground="@drawable/ripple"
+            android:background="@drawable/ripple"
             android:layout_marginTop="5dp"
             android:contentDescription="@string/misc"
             android:tooltipText="@string/misc"
             app:tint="?attr/colorIconOnCard"
             android:src="@drawable/more_horiz_24px"
             app:layout_constraintStart_toEndOf="@id/imageDelete"
-            app:layout_constraintTop_toBottomOf="@+id/textViewAverage"
-            />
+            app:layout_constraintTop_toBottomOf="@id/textViewTime" />
 
         <ImageView
             android:id="@+id/imageReset"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"
-            android:foreground="@drawable/ripple"
+            android:background="@drawable/ripple"
             android:src="@drawable/ic_reset"
             android:contentDescription="@string/relapse"
             android:tooltipText="@string/relapse"
@@ -109,7 +95,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"
-            android:foreground="@drawable/ripple"
+            android:background="@drawable/ripple"
             android:src="@drawable/ic_baseline_stop_24"
             android:contentDescription="@string/stop"
             android:tooltipText="@string/stop"
@@ -122,7 +108,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"
-            android:foreground="@drawable/ripple"
+            android:background="@drawable/ripple"
             android:src="@drawable/view_timeline_24"
             android:contentDescription="@string/timeline"
             android:tooltipText="@string/timeline"
