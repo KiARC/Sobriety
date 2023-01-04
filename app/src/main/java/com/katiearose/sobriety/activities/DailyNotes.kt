@@ -53,9 +53,9 @@ class DailyNotes : AppCompatActivity() {
 
     private fun showAddNoteDialog(isEdit: Boolean, date: LocalDate) {
         var pickedDate = date
-        var dialogViewBinding: DialogAddNoteBinding? = DialogAddNoteBinding.inflate(layoutInflater)
+        val dialogViewBinding = DialogAddNoteBinding.inflate(layoutInflater)
         val dialog = BottomSheetDialog(this)
-        dialog.setContentView(dialogViewBinding!!.root)
+        dialog.setContentView(dialogViewBinding.root)
         if (isEdit) {
             dialogViewBinding.dateStr.visibility = View.GONE
             dialogViewBinding.noteDate.visibility = View.GONE
@@ -63,25 +63,25 @@ class DailyNotes : AppCompatActivity() {
         } else {
             dialogViewBinding.noteDate.text = dateFormat.format(pickedDate.toJavaLocalDate())
             dialogViewBinding.noteDate.setOnClickListener {
-                val datePicker = MaterialDatePicker.Builder.datePicker().build()
-                datePicker.addOnPositiveButtonClickListener {
-                    pickedDate =
-                        Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.currentSystemDefault()).date
-                    dialogViewBinding!!.noteDate.text = dateFormat.format(pickedDate.toJavaLocalDate())
+                with(MaterialDatePicker.Builder.datePicker().build()) {
+                    addOnPositiveButtonClickListener {
+                        pickedDate =
+                            Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.currentSystemDefault()).date
+                        dialogViewBinding.noteDate.text = dateFormat.format(pickedDate.toJavaLocalDate())
+                    }
+                    show(supportFragmentManager, null)
                 }
-                datePicker.show(supportFragmentManager, null)
             }
         }
         dialogViewBinding.btnSave.setOnClickListener {
-            if (dialogViewBinding!!.noteInput.isInputEmpty()) {
-                dialogViewBinding!!.noteInputLayout.error = getString(R.string.error_empty_note)
+            if (dialogViewBinding.noteInput.isInputEmpty()) {
+                dialogViewBinding.noteInputLayout.error = getString(R.string.error_empty_note)
             } else {
-                addiction.dailyNotes[pickedDate] = dialogViewBinding!!.noteInput.text.toString()
+                addiction.dailyNotes[pickedDate] = dialogViewBinding.noteInput.text.toString()
                 updateNotesList()
                 dialog.dismiss()
             }
         }
-        dialog.setOnDismissListener { dialogViewBinding = null }
         dialog.show()
     }
 

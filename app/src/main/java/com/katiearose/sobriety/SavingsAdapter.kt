@@ -17,17 +17,12 @@ class SavingsAdapter(private val addiction: Addiction, private val context: Cont
         override fun areItemsTheSame(
             oldItem: Pair<String, Pair<Double, String>>,
             newItem: Pair<String, Pair<Double, String>>
-        ): Boolean {
-            return oldItem.first == newItem.first
-        }
+        ): Boolean = oldItem.first == newItem.first
 
         override fun areContentsTheSame(
             oldItem: Pair<String, Pair<Double, String>>,
             newItem: Pair<String, Pair<Double, String>>
-        ): Boolean {
-            return oldItem.second == newItem.second
-        }
-
+        ): Boolean = oldItem.second == newItem.second
     }) {
     init { update() }
 

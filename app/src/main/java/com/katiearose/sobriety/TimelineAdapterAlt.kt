@@ -9,6 +9,7 @@ import com.github.vipulasri.timelineview.TimelineView
 import com.katiearose.sobriety.databinding.ListItemTimelineAltBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.utils.convertSecondsToString
+import com.katiearose.sobriety.utils.textResource
 import java.text.DateFormat
 import java.util.Date
 
@@ -47,7 +48,7 @@ class TimelineAdapterAlt(addiction: Addiction) : ListAdapter<Long, TimelineAdapt
                 holder.binding.attempt.text = context.getString(R.string.attempt_ended, position / 2 + 1,
                     context.convertSecondsToString((getItem(position) - getItem(position - 1)) / 1000))
             } else {
-                holder.binding.attempt.text = context.getString(R.string.ongoing)
+                holder.binding.attempt.textResource = R.string.ongoing
             }
         }
     }

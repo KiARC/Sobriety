@@ -45,15 +45,15 @@ class Main : AppCompatActivity() {
     private lateinit var cacheHandler: CacheHandler
     private lateinit var binding: ActivityMainBinding
 
-    @Suppress("DEPRECATION") //google, why did you deprecate a function that's literally the only way on android 12 and lower
     @SuppressLint("NotifyDataSetChanged")
     private val addNewAddiction =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
-                val name = it.data?.extras?.getString("name")!!
-                val instant = it.data?.extras?.getLong("instant")!!
+                val data = requireNotNull(requireNotNull(it.data) { "Something is wrong in the Create activity, go check the create() function" }.extras) { "Something is wrong in the Create activity, go check the create() function" }
+                val name = data.getString("name")!!
+                val instant = data.getLong("instant")
                 val priority =
-                    Addiction.Priority.values()[it.data?.extras?.getInt("priority") ?: 0]
+                    Addiction.Priority.values()[data.getInt("priority")]
                 val addiction = Addiction.newInstance(name, instant, priority)
                 if (!addiction.isFuture())
                     addiction.history[instant] = 0
@@ -76,7 +76,7 @@ class Main : AppCompatActivity() {
         if (preferences.getString("theme", "system") == "system" &&
             Build.VERSION.SDK_INT <= Build.VERSION_CODES.P
         ) {
-            preferences.edit(commit = true) { putString("theme", "light") }
+            preferences.edit { putString("theme", "light") }
         }
         preferences.registerOnSharedPreferenceChangeListener(materialYouSettingListener)
         applyThemes()
@@ -192,9 +192,9 @@ class Main : AppCompatActivity() {
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
         }, { a ->
-            var dialogViewBinding: DialogMiscBinding? = DialogMiscBinding.inflate(layoutInflater)
+            val dialogViewBinding = DialogMiscBinding.inflate(layoutInflater)
             val dialog = BottomSheetDialog(this@Main)
-            dialogViewBinding!!.dailyNotes.setOnClickListener {
+            dialogViewBinding.dailyNotes.setOnClickListener {
                 startActivity(
                     Intent(this@Main, DailyNotes::class.java)
                         .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(a))
@@ -216,7 +216,6 @@ class Main : AppCompatActivity() {
                 dialog.dismiss()
             }
             dialog.setContentView(dialogViewBinding.root)
-            dialog.setOnDismissListener { dialogViewBinding = null }
             dialog.show()
         })
         binding.recyclerAddictions.layoutManager = LinearLayoutManager(this)
@@ -244,10 +243,8 @@ class Main : AppCompatActivity() {
 
     private fun newCardDialog() {
         //Pass current addiction names to create activity, to prevent creation of elements with identical keys
-        val addictionNames = arrayListOf<String>()
-        addictions.forEach { addictionNames.add(it.name) }
         val intent = Intent(this, Create::class.java)
-            .putStringArrayListExtra(EXTRA_NAMES, addictionNames)
+            .putStringArrayListExtra(EXTRA_NAMES, addictions.mapTo(arrayListOf()) { it.name })
         addNewAddiction.launch(intent)
     }
 

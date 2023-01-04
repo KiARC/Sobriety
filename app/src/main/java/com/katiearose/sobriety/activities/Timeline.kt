@@ -3,7 +3,6 @@ package com.katiearose.sobriety.activities
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +17,7 @@ import com.katiearose.sobriety.utils.checkValidIntentData
 import com.katiearose.sobriety.utils.convertSecondsToString
 import com.katiearose.sobriety.utils.getAltTimelinePref
 import com.katiearose.sobriety.utils.getSharedPref
+import com.katiearose.sobriety.utils.toast
 
 class Timeline : AppCompatActivity() {
 
@@ -32,13 +32,14 @@ class Timeline : AppCompatActivity() {
         val useAltTimelinePref = getSharedPref().getAltTimelinePref()
         addiction = Main.addictions[checkValidIntentData()]
         binding.timelineNotice.text = getString(R.string.showing_timeline, addiction.name)
-        binding.timelineList.layoutManager = LinearLayoutManager(this)
-        binding.timelineList.setHasFixedSize(true)
-        if (!useAltTimelinePref)
-            binding.timelineList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-
-        binding.timelineList.adapter = if (useAltTimelinePref) TimelineAdapterAlt(addiction)
-        else TimelineAdapter(addiction, this)
+        with(binding.timelineList) {
+            layoutManager = LinearLayoutManager(this@Timeline)
+            setHasFixedSize(true)
+            if (!useAltTimelinePref)
+                addItemDecoration(DividerItemDecoration(this@Timeline, DividerItemDecoration.VERTICAL))
+            adapter = if (useAltTimelinePref) TimelineAdapterAlt(addiction)
+            else TimelineAdapter(addiction, this@Timeline)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -58,7 +59,7 @@ class Timeline : AppCompatActivity() {
         val id = item.itemId
         if (id == R.id.calc_avg_duration) {
             if (addiction.history.size == 1 || (addiction.history.size == 2 && addiction.history.toList()[1].second == 0L)) {
-                Toast.makeText(this, R.string.only_one_attempt, Toast.LENGTH_SHORT).show()
+                toast(R.string.only_one_attempt)
             } else {
                 val checked = BooleanArray(addiction.history.size - 1)
                 val items = List(checked.size) { index -> getString(R.string.attempt, index + 1) }.toTypedArray()
@@ -71,12 +72,12 @@ class Timeline : AppCompatActivity() {
                             if (b) index else -1
                         }.filter { it != -1 }
                         when {
-                            indices.isEmpty() -> Toast.makeText(this, R.string.nothing_is_chosen, Toast.LENGTH_SHORT).show()
-                            indices.size == 1 -> Toast.makeText(this, R.string.only_one_attempt_is_chosen, Toast.LENGTH_SHORT).show()
+                            indices.isEmpty() -> toast(R.string.nothing_is_chosen)
+                            indices.size == 1 -> toast(R.string.only_one_attempt_is_chosen)
                             else -> binding.avgDuration.text = StringBuilder(getString(R.string.avg_duration))
                                 .append(" ${indices[0] + 1}")
                                 .append(buildNonZeroIndicesAsString(indices))
-                                .append(": ${convertSecondsToString(addiction.calculateAvgRelapseDuration(indices) / 1000L)}")
+                                .append(": ${convertSecondsToString(addiction.calculateAvgRelapseDuration(indices) / 1000)}")
                         }
                     }
                     .show()

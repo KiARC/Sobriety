@@ -27,7 +27,7 @@ data class Addiction(
     fun isFuture(): Boolean = lastRelapse > Clock.System.now()
 
     /**
-     * @param whichAttempts array of map indices
+     * @param whichAttempts list of map indices
      */
     fun calculateAvgRelapseDuration(whichAttempts: List<Int>): Long {
         var totalDuration = 0L
@@ -36,6 +36,16 @@ data class Addiction(
             totalDuration += (list[attemptIndex].second - list[attemptIndex].first)
         }
         return totalDuration / whichAttempts.size
+    }
+
+    /**
+     * @return - the goal point in milliseconds
+     * - the progress as an int in range 0..100
+     */
+    fun calculateMilestoneProgressionPercentage(milestone: Pair<Int, DateTimeUnit>): Pair<Long, Int> {
+        val goal = lastRelapse.toEpochMilliseconds() + milestone.first * milestone.second.toMillis()
+        return Pair(goal, (((Clock.System.now().toEpochMilliseconds() - lastRelapse.toEpochMilliseconds()).toFloat() /
+                (goal - lastRelapse.toEpochMilliseconds())) * 100).toInt())
     }
 
     fun stopAbstaining() {
