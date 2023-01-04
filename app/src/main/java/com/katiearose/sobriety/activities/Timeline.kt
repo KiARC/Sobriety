@@ -13,6 +13,7 @@ import com.katiearose.sobriety.TimelineAdapter
 import com.katiearose.sobriety.databinding.ActivityTimelineBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.utils.applyThemes
+import com.katiearose.sobriety.utils.checkValidIntentData
 import com.katiearose.sobriety.utils.convertSecondsToString
 
 class Timeline : AppCompatActivity() {
@@ -27,7 +28,7 @@ class Timeline : AppCompatActivity() {
         binding = ActivityTimelineBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        addiction = Main.addictions[intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, 0)]
+        addiction = Main.addictions[checkValidIntentData()]
         binding.timelineNotice.text = getString(R.string.showing_timeline, addiction.name)
         adapter = TimelineAdapter(addiction, this)
         binding.timelineList.layoutManager = LinearLayoutManager(this)

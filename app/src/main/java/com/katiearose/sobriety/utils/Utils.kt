@@ -69,6 +69,12 @@ fun Activity.applyThemes() {
     } else setTheme(R.style.Theme_Sobriety)
 }
 
+fun Activity.checkValidIntentData() : Int {
+    val index = intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, -1)
+    require(index != -1) { "Invalid intent data received" }
+    return index
+}
+
 fun AppCompatEditText.isInputEmpty(): Boolean = text == null || text.toString().isBlank()
 
 fun View.toggleVisibility() {

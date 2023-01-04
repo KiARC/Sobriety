@@ -31,7 +31,7 @@ class Savings : AppCompatActivity() {
         setContentView(binding.root)
         cacheHandler = CacheHandler(this)
 
-        addiction = Main.addictions[intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, 0)]
+        addiction = Main.addictions[checkValidIntentData()]
         updateSavedTimeDisplay()
 
         binding.btnEditTime.setOnClickListener {

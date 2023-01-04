@@ -26,17 +26,17 @@ class Settings : AppCompatActivity() {
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
-            val themePref = findPreference<ListPreference>("theme")
+            val themePref = requireNotNull(findPreference<ListPreference>("theme")) { "Wrong key passed for theme preference" }
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                themePref?.setEntries(R.array.theme_entries_p)
-                themePref?.setEntryValues(R.array.theme_entry_values_p)
+                themePref.setEntries(R.array.theme_entries_p)
+                themePref.setEntryValues(R.array.theme_entry_values_p)
             }
-            themePref?.setOnPreferenceChangeListener { _, _ ->
+            themePref.setOnPreferenceChangeListener { _, _ ->
                 requireActivity().recreate()
                 true
             }
-            val materialYouPref = findPreference<SwitchPreferenceCompat>("material_you")
-            materialYouPref?.setOnPreferenceChangeListener { _, _ ->
+            val materialYouPref = requireNotNull(findPreference<SwitchPreferenceCompat>("material_you")) { "Wrong key passed for M3 preference" }
+            materialYouPref.setOnPreferenceChangeListener { _, _ ->
                 requireActivity().recreate()
                 true
             }

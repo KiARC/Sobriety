@@ -11,6 +11,7 @@ import com.katiearose.sobriety.databinding.DialogAddMilestoneBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.shared.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
+import com.katiearose.sobriety.utils.checkValidIntentData
 import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
 import com.katiearose.sobriety.utils.write
@@ -30,7 +31,7 @@ class Milestones : AppCompatActivity() {
         setContentView(binding.root)
         cacheHandler = CacheHandler(this)
 
-        addiction = Main.addictions[intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, 0)]
+        addiction = Main.addictions[checkValidIntentData()]
         adapter = MilestoneAdapter(addiction, this) {
             val action: () -> Unit = {
                 addiction.milestones.remove(it)

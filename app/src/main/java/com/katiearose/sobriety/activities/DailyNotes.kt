@@ -13,6 +13,7 @@ import com.katiearose.sobriety.databinding.DialogAddNoteBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.shared.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
+import com.katiearose.sobriety.utils.checkValidIntentData
 import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
 import com.katiearose.sobriety.utils.write
@@ -34,7 +35,7 @@ class DailyNotes : AppCompatActivity() {
         setContentView(binding.root)
         cacheHandler = CacheHandler(this)
 
-        addiction = Main.addictions[intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, 0)]
+        addiction = Main.addictions[checkValidIntentData()]
         adapter = NoteAdapter(addiction, this, { showAddNoteDialog(true, it.first) },
             {
                 val action: () -> Unit = {
