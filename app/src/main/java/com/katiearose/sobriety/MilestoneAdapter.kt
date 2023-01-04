@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.katiearose.sobriety.databinding.ListItemMilestoneBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.shared.SortMode
+import com.katiearose.sobriety.utils.getDateFormatPattern
 import com.katiearose.sobriety.utils.getHideCompletedMilestonesPref
 import com.katiearose.sobriety.utils.getSharedPref
 import com.katiearose.sobriety.utils.getSortMilestonesPref
@@ -40,7 +41,7 @@ class MilestoneAdapter(
         update()
     }
 
-    private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd MMM yyyy")
+    private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm ${preferences.getDateFormatPattern()}")
 
     fun update() {
         submitList(when (preferences.getSortMilestonesPref()) {

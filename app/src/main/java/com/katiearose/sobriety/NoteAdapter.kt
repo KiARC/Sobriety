@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.katiearose.sobriety.databinding.ListItemNoteBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.shared.SortMode
+import com.katiearose.sobriety.utils.getDateFormatPattern
 import com.katiearose.sobriety.utils.getSharedPref
 import com.katiearose.sobriety.utils.getSortNotesPref
 import com.katiearose.sobriety.utils.toggleVisibility
@@ -39,7 +40,7 @@ class NoteAdapter(
 
     init { update() }
 
-    private val dateFormat = DateTimeFormatter.ofPattern("MMMM dd yyyy")
+    private val dateFormat = DateTimeFormatter.ofPattern(preferences.getDateFormatPattern())
 
     fun update() {
         submitList(when (preferences.getSortNotesPref()) {

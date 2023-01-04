@@ -21,6 +21,18 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/general"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            app:key="date_format"
+            app:title="@string/date_format"
+            app:entryValues="@array/date_format_patterns"
+            app:defaultValue="MMMM dd uuuu"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/timeline"
         app:iconSpaceReserved="false">
 

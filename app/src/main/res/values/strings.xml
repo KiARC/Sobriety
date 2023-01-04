@@ -102,4 +102,6 @@
     <string name="attempt_ended">Attempt %d ended\nDuration: %s</string>
     <string name="present">Present</string>
     <string name="use_alt_timeline_view">Use alternative timeline view</string>
+    <string name="general">General</string>
+    <string name="date_format">Date format</string>
 </resources>

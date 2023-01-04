@@ -8,6 +8,9 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.utils.applyThemes
+import java.time.LocalDate
+import java.time.Month
+import java.time.format.DateTimeFormatter
 
 class Settings : AppCompatActivity() {
 
@@ -24,6 +27,11 @@ class Settings : AppCompatActivity() {
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
+
+        companion object {
+            private val sampleDate = LocalDate.of(2023, Month.JANUARY, 1)
+        }
+
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
             val themePref = requireNotNull(findPreference<ListPreference>("theme")) { "Wrong key passed for theme preference" }
@@ -40,6 +48,10 @@ class Settings : AppCompatActivity() {
                 requireActivity().recreate()
                 true
             }
+            val dateFormatPref = requireNotNull(findPreference<ListPreference>("date_format")) { "Wrong key passed for date format preference" }
+            dateFormatPref.entries = dateFormatPref.entryValues.map {
+                DateTimeFormatter.ofPattern(it.toString()).format(sampleDate)
+            }.toTypedArray()
         }
     }
 }

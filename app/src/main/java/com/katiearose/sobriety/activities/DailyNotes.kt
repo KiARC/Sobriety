@@ -14,6 +14,8 @@ import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.shared.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.checkValidIntentData
+import com.katiearose.sobriety.utils.getDateFormatPattern
+import com.katiearose.sobriety.utils.getSharedPref
 import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
 import com.katiearose.sobriety.utils.write
@@ -24,7 +26,7 @@ class DailyNotes : AppCompatActivity() {
 
     private lateinit var binding: ActivityDailyNotesBinding
     private lateinit var adapter: NoteAdapter
-    private val dateFormat = DateTimeFormatter.ofPattern("MMMM dd yyyy")
+    private lateinit var dateFormat: DateTimeFormatter
     private lateinit var addiction: Addiction
     private lateinit var cacheHandler: CacheHandler
 
@@ -33,6 +35,7 @@ class DailyNotes : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDailyNotesBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        dateFormat = DateTimeFormatter.ofPattern(getSharedPref().getDateFormatPattern())
         cacheHandler = CacheHandler(this)
 
         addiction = Main.addictions[checkValidIntentData()]
