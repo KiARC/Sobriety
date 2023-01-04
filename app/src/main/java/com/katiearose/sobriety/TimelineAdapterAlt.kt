@@ -1,5 +1,6 @@
 package com.katiearose.sobriety
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -9,16 +10,21 @@ import com.github.vipulasri.timelineview.TimelineView
 import com.katiearose.sobriety.databinding.ListItemTimelineAltBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.utils.convertSecondsToString
+import com.katiearose.sobriety.utils.getDateFormatPattern
+import com.katiearose.sobriety.utils.getSharedPref
 import com.katiearose.sobriety.utils.textResource
-import java.text.DateFormat
-import java.util.Date
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
-class TimelineAdapterAlt(addiction: Addiction) : ListAdapter<Long, TimelineAdapterAlt.TimelineAltViewHolder>(
+class TimelineAdapterAlt(context: Context, addiction: Addiction) : ListAdapter<Long, TimelineAdapterAlt.TimelineAltViewHolder>(
     object : DiffUtil.ItemCallback<Long>() {
         override fun areItemsTheSame(oldItem: Long, newItem: Long): Boolean = oldItem == newItem
         override fun areContentsTheSame(oldItem: Long, newItem: Long): Boolean = oldItem == newItem
     }
 ) {
+
+    private val preferences = context.getSharedPref()
 
     init {
         val result = mutableListOf<Long>()
@@ -30,7 +36,7 @@ class TimelineAdapterAlt(addiction: Addiction) : ListAdapter<Long, TimelineAdapt
         submitList(result)
     }
 
-    private val dateFormat = DateFormat.getDateTimeInstance()
+    private val dateFormat = DateTimeFormatter.ofPattern("HH:mm:ss ${preferences.getDateFormatPattern()}")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineAltViewHolder {
         val binding = ListItemTimelineAltBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -39,8 +45,8 @@ class TimelineAdapterAlt(addiction: Addiction) : ListAdapter<Long, TimelineAdapt
 
     override fun onBindViewHolder(holder: TimelineAltViewHolder, position: Int) {
         val context = holder.binding.root.context
-        holder.binding.date.text = if (getItem(position) != 0L) dateFormat.format(Date(getItem(position)))
-        else context.getString(R.string.present)
+        holder.binding.date.text = if (getItem(position) != 0L) dateFormat.format(Instant.ofEpochMilli(getItem(position)).atZone(
+            ZoneId.systemDefault())) else context.getString(R.string.present)
         if (position % 2 == 0) {
             holder.binding.attempt.text = context.getString(R.string.attempt_started, position / 2 + 1)
         } else {

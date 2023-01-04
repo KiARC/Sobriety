@@ -37,7 +37,7 @@ class Timeline : AppCompatActivity() {
             setHasFixedSize(true)
             if (!useAltTimelinePref)
                 addItemDecoration(DividerItemDecoration(this@Timeline, DividerItemDecoration.VERTICAL))
-            adapter = if (useAltTimelinePref) TimelineAdapterAlt(addiction)
+            adapter = if (useAltTimelinePref) TimelineAdapterAlt(this@Timeline, addiction)
             else TimelineAdapter(addiction, this@Timeline)
         }
     }
