@@ -21,6 +21,17 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/timeline"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            app:key="alt_timeline_view"
+            app:title="@string/use_alt_timeline_view"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/daily_notes"
         app:iconSpaceReserved="false">
 

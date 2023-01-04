@@ -10,16 +10,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.TimelineAdapter
+import com.katiearose.sobriety.TimelineAdapterAlt
 import com.katiearose.sobriety.databinding.ActivityTimelineBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.checkValidIntentData
 import com.katiearose.sobriety.utils.convertSecondsToString
+import com.katiearose.sobriety.utils.getAltTimelinePref
+import com.katiearose.sobriety.utils.getSharedPref
 
 class Timeline : AppCompatActivity() {
 
     private lateinit var binding: ActivityTimelineBinding
-    private lateinit var adapter: TimelineAdapter
     private lateinit var addiction: Addiction
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,14 +29,16 @@ class Timeline : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTimelineBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        val useAltTimelinePref = getSharedPref().getAltTimelinePref()
         addiction = Main.addictions[checkValidIntentData()]
         binding.timelineNotice.text = getString(R.string.showing_timeline, addiction.name)
-        adapter = TimelineAdapter(addiction, this)
         binding.timelineList.layoutManager = LinearLayoutManager(this)
         binding.timelineList.setHasFixedSize(true)
-        binding.timelineList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-        binding.timelineList.adapter = adapter
+        if (!useAltTimelinePref)
+            binding.timelineList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+
+        binding.timelineList.adapter = if (useAltTimelinePref) TimelineAdapterAlt(addiction)
+        else TimelineAdapter(addiction, this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -53,10 +57,10 @@ class Timeline : AppCompatActivity() {
 
         val id = item.itemId
         if (id == R.id.calc_avg_duration) {
-            if (adapter.itemCount == 1 || (adapter.itemCount == 2 && adapter.currentList[1].second == 0L)) {
+            if (addiction.history.size == 1 || (addiction.history.size == 2 && addiction.history.toList()[1].second == 0L)) {
                 Toast.makeText(this, R.string.only_one_attempt, Toast.LENGTH_SHORT).show()
             } else {
-                val checked = BooleanArray(adapter.itemCount - 1)
+                val checked = BooleanArray(addiction.history.size - 1)
                 val items = List(checked.size) { index -> getString(R.string.attempt, index + 1) }.toTypedArray()
                 MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.calc_avg_durations)

@@ -98,4 +98,8 @@
     <string name="avg_duration">Average of attempt</string>
     <string name="nothing_is_chosen">Nothing is chosen</string>
     <string name="only_one_attempt_is_chosen">Only one attempt is chosen</string>
+    <string name="attempt_started">Attempt %d started</string>
+    <string name="attempt_ended">Attempt %d ended\nDuration: %s</string>
+    <string name="present">Present</string>
+    <string name="use_alt_timeline_view">Use alternative timeline view</string>
 </resources>

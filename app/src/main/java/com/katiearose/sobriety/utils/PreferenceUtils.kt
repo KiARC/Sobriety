@@ -6,6 +6,8 @@ import androidx.preference.PreferenceManager
 
 fun Context.getSharedPref(): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
+fun SharedPreferences.getAltTimelinePref(): Boolean = getBoolean("alt_timeline_view", false)
+
 fun SharedPreferences.getSortNotesPref(): String = getString("sort_notes", "asc")!!
 
 fun SharedPreferences.getSortMilestonesPref(): String = getString("sort_milestones", "asc")!!
