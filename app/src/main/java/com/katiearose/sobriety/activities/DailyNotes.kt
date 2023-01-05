@@ -35,7 +35,7 @@ class DailyNotes : AppCompatActivity() {
         setContentView(binding.root)
         cacheHandler = CacheHandler(this)
 
-        addiction = intent.extras!!.getSerializable(Main.EXTRA_ADDICTION) as Addiction
+        addiction = Main.addictions[intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, 0)]
         adapter = NoteAdapter(addiction, this, { showAddNoteDialog(true, it.first) },
             {
                 val action: () -> Unit = {

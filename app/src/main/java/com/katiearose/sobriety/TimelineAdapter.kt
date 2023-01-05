@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.katiearose.sobriety.databinding.ListItemTimelineBinding
-import com.katiearose.sobriety.utils.convertSecondsToString
+import com.katiearose.sobriety.utils.convertRangeToString
 import java.text.DateFormat
 import java.util.*
 
@@ -47,7 +47,7 @@ class TimelineAdapter(addiction: Addiction, private val context: Context):
             holder.abstainPeriod.text = context.getString(R.string.ongoing)
         } else {
             holder.dateRange.text = context.getString(R.string.time_range, dateFormat.format(Date(pair.first)), dateFormat.format(Date(pair.second)))
-            holder.abstainPeriod.text = context.getString(R.string.duration, context.convertSecondsToString((pair.second - pair.first) / 1000))
+            holder.abstainPeriod.text = context.getString(R.string.duration, context.convertRangeToString(pair.first, pair.second))
         }
     }
 

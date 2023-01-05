@@ -1,0 +1,3 @@
+Bağımlılıklarınızı takip edin ve sürdürün sobriety!
+
+<i>Sobriety</i>, ücretsiz ve açık kaynaklı bağımlılık izleyici, basit olacak şekilde tasarlanmıştır: Bir başlangıç tarihi ve saati girersiniz, bağımlılık için bir isim yanı sıra, ve size en son bir bağımlılık kaydettiğinizden bu yana ne kadar zaman geçtiğini söyler. İyileşmenizle ilgili notlar tutabilirsiniz, adımlarını takip et, takip ederek nekadar zaman veya para (veya başka bir şey) tasarrufu yaptığınızı kaydedin, ve bağımlılık geçmişinizi kullanımı kolay tek bir uygulamadan görüntüleyin.
