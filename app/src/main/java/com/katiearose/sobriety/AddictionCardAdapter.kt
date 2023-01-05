@@ -9,10 +9,12 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.katiearose.sobriety.activities.Main
 import com.katiearose.sobriety.databinding.CardAddictionBinding
+import com.katiearose.sobriety.utils.convertRangeToString
 import com.katiearose.sobriety.utils.convertSecondsToString
 import com.katiearose.sobriety.utils.secondsFromNow
 import kotlinx.coroutines.*
 import java.text.DateFormat
+import java.time.Instant
 import java.util.*
 import kotlin.math.absoluteValue
 
@@ -111,15 +113,15 @@ class AddictionCardAdapter(
             if (addiction.isFuture()) {
                 binding.textViewTime.text = binding.root.context.getString(
                     R.string.time_until_tracked,
-                    binding.root.context.convertSecondsToString(addiction.lastRelapse.secondsFromNow().absoluteValue)
+                    binding.root.context.convertRangeToString(Instant.now().toEpochMilli(), addiction.lastRelapse.toEpochMilli())
                 )
             } else {
                 binding.textViewTime.text =
-                    if (!addiction.isStopped) binding.root.context.convertSecondsToString(addiction.lastRelapse.secondsFromNow())
+                    if (!addiction.isStopped) binding.root.context.convertRangeToString(addiction.lastRelapse.toEpochMilli())
                     else binding.root.context.getString(
                         R.string.stop_notice,
                         dateFormat.format(Date(addiction.timeStopped)),
-                        binding.root.context.convertSecondsToString((addiction.timeStopped - addiction.lastRelapse.toEpochMilli()) / 1000)
+                        binding.root.context.convertRangeToString(addiction.lastRelapse.toEpochMilli(), addiction.timeStopped)
                     )
             }
         }
