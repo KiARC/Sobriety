@@ -31,6 +31,13 @@
             app:defaultValue="MMMM dd uuuu"
             app:iconSpaceReserved="false" />
 
+        <SwitchPreferenceCompat
+            app:key="add_note_after_relapse"
+            app:title="@string/add_note_after_relapse_pref"
+            app:summary="@string/add_note_after_relapse_pref_summary"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/timeline"

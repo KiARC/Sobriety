@@ -8,6 +8,9 @@ fun Context.getSharedPref(): SharedPreferences = PreferenceManager.getDefaultSha
 
 fun SharedPreferences.getDateFormatPattern(): String = getString("date_format", "MMMM dd uuuu")!!
 
+fun SharedPreferences.getAddNoteAfterRelapsePref(): Boolean =
+    getBoolean("add_note_after_relapse", true)
+
 fun SharedPreferences.getAltTimelinePref(): Boolean = getBoolean("alt_timeline_view", false)
 
 fun SharedPreferences.getSortNotesPref(): String = getString("sort_notes", "asc")!!

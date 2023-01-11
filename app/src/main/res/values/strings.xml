@@ -104,4 +104,9 @@
     <string name="use_alt_timeline_view">Use alternative timeline view</string>
     <string name="general">General</string>
     <string name="date_format">Date format</string>
+    <!--TODO think of a less awkward way to say this-->
+    <string name="add_note_after_relapse">Looks like you just relapsed.\nWould you like to write down what happened today?\nThis will be saved in the \"Daily notes\" section with today\'s date.</string>
+    <string name="dont_show_dialog_again">Don\'t show this dialog again</string>
+    <string name="add_note_after_relapse_pref">Add note after relapse</string>
+    <string name="add_note_after_relapse_pref_summary">When logging a relapse, offer to make (or edit, if it already exists) a note for that day</string>
 </resources>
