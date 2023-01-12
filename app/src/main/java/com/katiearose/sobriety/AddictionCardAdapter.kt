@@ -10,11 +10,13 @@ import com.katiearose.sobriety.activities.Main
 import com.katiearose.sobriety.databinding.CardAddictionBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.shared.secondsFromNow
+import com.katiearose.sobriety.utils.convertRangeToString
 import com.katiearose.sobriety.utils.convertSecondsToString
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.DateFormat
+import java.time.Instant
 import java.util.Date
 import kotlin.math.absoluteValue
 
@@ -105,11 +107,11 @@ class AddictionCardAdapter(
             if (addiction.isFuture()) {
                 binding.textViewTime.text = binding.root.context.getString(
                     R.string.time_until_tracked,
-                    binding.root.context.convertRangeToString(Instant.now().toEpochMilli(), addiction.lastRelapse.toEpochMilli())
+                    binding.root.context.convertRangeToString(Instant.now().toEpochMilli(), addiction.lastRelapse.toEpochMilliseconds())
                 )
             } else {
                 binding.textViewTime.text =
-                    if (!addiction.isStopped) binding.root.context.convertRangeToString(addiction.lastRelapse.toEpochMilli())
+                    if (!addiction.isStopped) binding.root.context.convertRangeToString(addiction.lastRelapse.toEpochMilliseconds())
                     else binding.root.context.getString(
                         R.string.stop_notice,
                         dateFormat.format(Date(addiction.timeStopped)),
