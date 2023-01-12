@@ -75,6 +75,17 @@ class Main : AppCompatActivity() {
             }
         }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private val goToSettings = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == RESULT_OK) {
+            if (it.data?.extras?.getBoolean("import") == true) {
+                addictions.sortWith { a1, a2 -> a1.priority.compareTo(a2.priority) }
+                cacheHandler.writeCache()
+                adapterAddictions.notifyDataSetChanged()
+            }
+        }
+    }
+
     //needed for this activity to apply md3 theme after user backs away from settings
     private val materialYouSettingListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -276,11 +287,12 @@ class Main : AppCompatActivity() {
         return true
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         if (id == R.id.go_to_settings) {
             val intent = Intent(this, Settings::class.java)
-            startActivity(intent)
+            goToSettings.launch(intent)
             return true
         }
         return super.onOptionsItemSelected(item)

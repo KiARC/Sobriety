@@ -8,6 +8,8 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.katiearose.sobriety.R
+import org.json.JSONArray
+import org.json.JSONObject
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.Period
@@ -123,4 +125,60 @@ fun Instant.secondsFromNow(): Long = Instant.now().epochSecond - this.epochSecon
 fun <K, V> LinkedHashMap<K, V>.putLast(value: V) {
     val lastKey = keys.map { it }.last()
     put(lastKey, value)
+}
+
+/**
+ * Returns JSONObject with keys and values keys as JSONArray
+ * This is because JSONObjects do not have guaranteed order
+ * process_key and process_value are optional functions to convert key and val to JSONObjects
+ */
+fun <K, V> Map<K, V>.toJSONObject(
+    process_key: ((K) -> Object)? = null,
+    process_value: ((V) -> Object)? = null
+): JSONObject {
+    var json = JSONObject()
+    json.put("keys", JSONArray())
+    json.put("values", JSONArray())
+    for ((k, v) in this) {
+        json.accumulate("keys",
+            if (process_key != null) {
+                process_key(k)
+            } else k
+        )
+        json.accumulate("values",
+            if (process_value != null) {
+                process_value(v)
+            } else v
+        )
+    }
+    return json
+}
+
+/**
+ * Returns a LinkedHashMap
+ * input JSONObject is structured as 2 JSONArrays "keys" and "values"
+ *  process_key and process_value are optional functions to convert Objects to keys and values
+ */
+fun <K, V> JSONObject.toLinkedHashMap(
+    process_key: ((Object) -> K)? = null,
+    process_value: ((Object) -> V)? = null
+): LinkedHashMap<K,V> {
+    var hash = LinkedHashMap<K, V>()
+
+    val keys = this.getJSONArray("keys")
+    val values = this.getJSONArray("values")
+
+    for (i in 0 until keys.length()) {
+        val key = if (process_key != null) {
+            process_key(keys.get(i) as Object)
+        } else keys.get(i) as K
+
+        val value = if (process_value != null) {
+            process_value(values.get(i) as Object)
+        } else values.get(i) as V
+
+        hash[key] = value
+    }
+
+    return hash
 }
