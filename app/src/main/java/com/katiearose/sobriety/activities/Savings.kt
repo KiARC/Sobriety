@@ -1,5 +1,6 @@
 package com.katiearose.sobriety.activities
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -8,17 +9,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat.CLOCK_24H
-import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.SavingsAdapter
 import com.katiearose.sobriety.databinding.ActivitySavingsBinding
 import com.katiearose.sobriety.databinding.DialogAddSavingBinding
-import com.katiearose.sobriety.internal.CacheHandler
-import com.katiearose.sobriety.utils.applyThemes
-import com.katiearose.sobriety.utils.isInputEmpty
-import com.katiearose.sobriety.utils.showConfirmDialog
-import com.katiearose.sobriety.utils.toggleVisibility
-import java.time.LocalTime
+import com.katiearose.sobriety.shared.Addiction
+import com.katiearose.sobriety.shared.CacheHandler
+import com.katiearose.sobriety.utils.*
+import kotlinx.datetime.LocalTime
 
 class Savings : AppCompatActivity() {
 
@@ -34,20 +32,21 @@ class Savings : AppCompatActivity() {
         setContentView(binding.root)
         cacheHandler = CacheHandler(this)
 
-        addiction = Main.addictions[intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, 0)]
+        addiction = Main.addictions[checkValidIntentData()]
         updateSavedTimeDisplay()
 
         binding.btnEditTime.setOnClickListener {
-            val timePicker = MaterialTimePicker.Builder()
+            with(MaterialTimePicker.Builder()
                 .setTitleText(R.string.select_time_saved)
                 .setTimeFormat(CLOCK_24H)
-                .build()
-            timePicker.addOnPositiveButtonClickListener {
-                addiction.timeSaving = LocalTime.of(timePicker.hour, timePicker.minute)
-                cacheHandler.writeCache()
-                updateSavedTimeDisplay()
+                .build()) {
+                addOnPositiveButtonClickListener {
+                    addiction.timeSaving = LocalTime(hour, minute)
+                    cacheHandler.write()
+                    updateSavedTimeDisplay()
+                }
+                show(supportFragmentManager, null)
             }
-            timePicker.show(supportFragmentManager, null)
         }
         binding.btnExpandCollapseTime.setOnClickListener {
             binding.timeSavedCard.toggleVisibility()
@@ -58,8 +57,7 @@ class Savings : AppCompatActivity() {
                         R.string.expand
                     )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    tooltipText =
-                        if (binding.timeSavedCard.visibility == View.VISIBLE) getString(R.string.collapse) else getString(
+                    tooltipText = if (binding.timeSavedCard.visibility == View.VISIBLE) getString(R.string.collapse) else getString(
                             R.string.expand
                         )
             }
@@ -92,9 +90,9 @@ class Savings : AppCompatActivity() {
     }
 
     private fun showAddSavingDialog(existingSaving: Pair<String, Pair<Double, String>>?) {
-        var dialogViewBinding: DialogAddSavingBinding? = DialogAddSavingBinding.inflate(layoutInflater)
+        val dialogViewBinding = DialogAddSavingBinding.inflate(layoutInflater)
         val dialog = BottomSheetDialog(this)
-        dialog.setContentView(dialogViewBinding!!.root)
+        dialog.setContentView(dialogViewBinding.root)
         if (existingSaving != null) {
             dialogViewBinding.nameStr.visibility = View.GONE
             dialogViewBinding.savingsNameInputLayout.visibility = View.GONE
@@ -102,40 +100,48 @@ class Savings : AppCompatActivity() {
             dialogViewBinding.unitInput.setText(existingSaving.second.second)
         }
         dialogViewBinding.btnSaveSaving.setOnClickListener {
-            if (dialogViewBinding!!.savingsAmountInput.isInputEmpty()) {
-                dialogViewBinding!!.savingsAmountInputLayout.error = getString(R.string.error_empty_amount)
-            } else if (dialogViewBinding!!.unitInput.isInputEmpty()) {
-                dialogViewBinding!!.unitInputLayout.error = getString(R.string.error_empty_unit)
-            } else {
-                if (existingSaving != null) {
-                    addiction.savings[existingSaving.first] = Pair(
-                        dialogViewBinding!!.savingsAmountInput.text.toString().toDouble(),
-                        dialogViewBinding!!.unitInput.text.toString())
-                    update()
-                    dialog.dismiss()
-                } else {
-                    if (dialogViewBinding!!.savingsNameInput.isInputEmpty()) {
-                        dialogViewBinding!!.savingsNameInputLayout.error = getString(R.string.error_empty_name)
-                    } else {
-                        addiction.savings[dialogViewBinding!!.savingsNameInput.text.toString()] =
-                            Pair(
-                                dialogViewBinding!!.savingsAmountInput.text.toString().toDouble(),
-                                dialogViewBinding!!.unitInput.text.toString())
+            val inputFields = listOf(dialogViewBinding.savingsAmountInputLayout, dialogViewBinding.unitInputLayout, dialogViewBinding.savingsNameInputLayout)
+            when {
+                dialogViewBinding.savingsAmountInput.isInputEmpty() -> {
+                    dialogViewBinding.savingsAmountInputLayout.error = getString(R.string.error_empty_amount)
+                    inputFields.forEach { if (it !== dialogViewBinding.savingsAmountInputLayout) it.error = null }
+                }
+                dialogViewBinding.unitInput.isInputEmpty() -> {
+                    dialogViewBinding.unitInputLayout.error = getString(R.string.error_empty_unit)
+                    inputFields.forEach { if (it !== dialogViewBinding.unitInputLayout) it.error = null }
+                }
+                else -> {
+                    if (existingSaving != null) {
+                        addiction.savings[existingSaving.first] = Pair(
+                            dialogViewBinding.savingsAmountInput.text.toString().toDouble(),
+                            dialogViewBinding.unitInput.text.toString())
                         update()
                         dialog.dismiss()
+                    } else {
+                        if (dialogViewBinding.savingsNameInput.isInputEmpty()) {
+                            dialogViewBinding.savingsNameInputLayout.error = getString(R.string.error_empty_name)
+                            inputFields.forEach { if (it !== dialogViewBinding.savingsNameInputLayout) it.error = null }
+                        } else {
+                            addiction.savings[dialogViewBinding.savingsNameInput.text.toString()] =
+                                Pair(
+                                    dialogViewBinding.savingsAmountInput.text.toString().toDouble(),
+                                    dialogViewBinding.unitInput.text.toString())
+                            update()
+                            dialog.dismiss()
+                        }
                     }
                 }
             }
         }
-        dialog.setOnDismissListener { dialogViewBinding = null }
         dialog.show()
     }
 
     private fun update() {
-        cacheHandler.writeCache()
+        cacheHandler.write()
         adapter.update()
     }
 
+    @SuppressLint("StringFormatMatches")
     private fun updateSavedTimeDisplay() {
         binding.timeSaved.text =
             if (addiction.timeSaving.hour == 0 && addiction.timeSaving.minute == 0) getString(R.string.no_set)
