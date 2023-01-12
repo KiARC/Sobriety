@@ -53,7 +53,7 @@ class Addiction(
     }
 
     private fun calculateAverageRelapseDuration(): Long {
-        return relapses.getAll().filterNotNull().sumOf { it } / 3L
+        return relapses.getAll().filterNotNull().average().toLong()
     }
 
     fun toCacheable(): HashMap<Int, Any> {
