@@ -1,5 +1,6 @@
 package com.katiearose.sobriety.activities
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -46,7 +47,7 @@ class Timeline : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_timeline, menu)
         return true
     }
-
+    @SuppressLint("StringFormatMatches")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         fun buildNonZeroIndicesAsString(list: List<Int>): StringBuilder = StringBuilder().apply {
             list.forEachIndexed { index, i ->

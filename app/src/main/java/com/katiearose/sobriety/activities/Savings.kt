@@ -1,5 +1,6 @@
 package com.katiearose.sobriety.activities
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -140,6 +141,7 @@ class Savings : AppCompatActivity() {
         adapter.update()
     }
 
+    @SuppressLint("StringFormatMatches")
     private fun updateSavedTimeDisplay() {
         binding.timeSaved.text =
             if (addiction.timeSaving.hour == 0 && addiction.timeSaving.minute == 0) getString(R.string.no_set)
