@@ -10,8 +10,8 @@ android {
         applicationId = "com.katiearose.sobriety"
         minSdk = 21
         targetSdk = 33
-        versionCode = 18
-        versionName = "v7.0.0"
+        versionCode = 19
+        versionName = "v8.0.0"
         setProperty("archivesBaseName", "Sobriety $versionName")
     }
 
