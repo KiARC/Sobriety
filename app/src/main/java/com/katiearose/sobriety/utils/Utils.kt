@@ -3,9 +3,14 @@ package com.katiearose.sobriety.utils
 import android.app.Activity
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.preference.PreferenceManager
+import androidx.viewbinding.ViewBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.activities.Main
@@ -69,10 +74,23 @@ fun Activity.applyThemes() {
     } else setTheme(R.style.Theme_Sobriety)
 }
 
+fun Activity.checkValidIntentData() : Int {
+    val index = intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, -1)
+    require(index != -1) { "Invalid intent data received" }
+    return index
+}
+
 fun AppCompatEditText.isInputEmpty(): Boolean = text == null || text.toString().isBlank()
 
 fun View.toggleVisibility() {
     visibility = if (visibility == View.VISIBLE) View.GONE else View.VISIBLE
 }
+
+fun Context.toast(@StringRes textRes: Int) = Toast.makeText(this, textRes, Toast.LENGTH_SHORT).show()
+
+inline var TextView.textResource: Int
+    set(@StringRes value) = setText(value)
+    @Deprecated("This property is set-only, don't bother.", level = DeprecationLevel.HIDDEN)
+    get() = error("don't")
 
 fun CacheHandler.write() = writeCache(Main.addictions)

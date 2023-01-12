@@ -1,6 +1,7 @@
 package com.katiearose.sobriety.activities
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
@@ -22,13 +23,20 @@ import com.google.android.material.snackbar.Snackbar
 import com.katiearose.sobriety.AddictionCardAdapter
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityMainBinding
+import com.katiearose.sobriety.databinding.DialogAddNoteAfterRelapseBinding
 import com.katiearose.sobriety.databinding.DialogMiscBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.shared.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
+import com.katiearose.sobriety.utils.getAddNoteAfterRelapsePref
+import com.katiearose.sobriety.utils.getSharedPref
+import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
 import com.katiearose.sobriety.utils.write
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import java.io.FileNotFoundException
 import java.time.Instant
 import java.util.*
@@ -45,15 +53,15 @@ class Main : AppCompatActivity() {
     private lateinit var cacheHandler: CacheHandler
     private lateinit var binding: ActivityMainBinding
 
-    @Suppress("DEPRECATION") //google, why did you deprecate a function that's literally the only way on android 12 and lower
     @SuppressLint("NotifyDataSetChanged")
     private val addNewAddiction =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
-                val name = it.data?.extras?.getString("name")!!
-                val instant = it.data?.extras?.getLong("instant")!!
+                val data = requireNotNull(requireNotNull(it.data) { "Something is wrong in the Create activity, go check the create() function" }.extras) { "Something is wrong in the Create activity, go check the create() function" }
+                val name = data.getString("name")!!
+                val instant = data.getLong("instant")
                 val priority =
-                    Addiction.Priority.values()[it.data?.extras?.getInt("priority") ?: 0]
+                    Addiction.Priority.values()[data.getInt("priority")]
                 val addiction = Addiction.newInstance(name, instant, priority)
                 if (!addiction.isFuture())
                     addiction.history[instant] = 0
@@ -76,7 +84,7 @@ class Main : AppCompatActivity() {
         if (preferences.getString("theme", "system") == "system" &&
             Build.VERSION.SDK_INT <= Build.VERSION_CODES.P
         ) {
-            preferences.edit(commit = true) { putString("theme", "light") }
+            preferences.edit { putString("theme", "light") }
         }
         preferences.registerOnSharedPreferenceChangeListener(materialYouSettingListener)
         applyThemes()
@@ -97,7 +105,7 @@ class Main : AppCompatActivity() {
         updatePromptVisibility()
 
         //Create adapter, and layout manager for recyclerview and attach them
-        adapterAddictions = AddictionCardAdapter(this, {
+        adapterAddictions = AddictionCardAdapter(this, deleteButtonAction =  {
             val action: () -> Unit = {
                 adapterAddictions.notifyItemRemoved(addictions.indexOf(it))
                 addictions.remove(it)
@@ -109,9 +117,12 @@ class Main : AppCompatActivity() {
                 getString(R.string.delete_confirm, it.name),
                 action
             )
-        }, {
+        }, relapseButtonAction = {
             if (!it.isFuture()) {
                 val action: () -> Unit = {
+                    if (!it.isStopped && !it.isFuture()) {
+                        showAddNoteAfterRelapseDialogIfEnabled(it)
+                    }
                     it.relapse()
                     adapterAddictions.notifyItemChanged(addictions.indexOf(it))
                     cacheHandler.write()
@@ -134,7 +145,7 @@ class Main : AppCompatActivity() {
                     action
                 )
             }
-        }, {
+        }, stopButtonAction = {
             if (!it.isFuture()) {
                 if (it.isStopped)
                     Snackbar.make(
@@ -147,6 +158,7 @@ class Main : AppCompatActivity() {
                         it.stopAbstaining()
                         adapterAddictions.notifyItemChanged(addictions.indexOf(it))
                         cacheHandler.write()
+                        showAddNoteAfterRelapseDialogIfEnabled(it)
                     }
                     showConfirmDialog(
                         getString(R.string.stop),
@@ -159,7 +171,7 @@ class Main : AppCompatActivity() {
                 getString(R.string.not_tracked_yet, it.name),
                 BaseTransientBottomBar.LENGTH_SHORT
             ).show()
-        }, {
+        }, timelineButtonAction = {
             if (!it.isFuture()) {
                 startActivity(
                     Intent(this@Main, Timeline::class.java)
@@ -170,7 +182,7 @@ class Main : AppCompatActivity() {
                 getString(R.string.not_tracked_yet, it.name),
                 BaseTransientBottomBar.LENGTH_SHORT
             ).show()
-        }, {
+        }, priorityTextViewAction = {
             var choice = it.priority.ordinal
             MaterialAlertDialogBuilder(this@Main)
                 .setTitle(R.string.edit_priority)
@@ -191,10 +203,10 @@ class Main : AppCompatActivity() {
                 }
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
-        }, { a ->
-            var dialogViewBinding: DialogMiscBinding? = DialogMiscBinding.inflate(layoutInflater)
+        }, miscButtonAction = { a ->
+            val dialogViewBinding = DialogMiscBinding.inflate(layoutInflater)
             val dialog = BottomSheetDialog(this@Main)
-            dialogViewBinding!!.dailyNotes.setOnClickListener {
+            dialogViewBinding.dailyNotes.setOnClickListener {
                 startActivity(
                     Intent(this@Main, DailyNotes::class.java)
                         .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(a))
@@ -216,7 +228,6 @@ class Main : AppCompatActivity() {
                 dialog.dismiss()
             }
             dialog.setContentView(dialogViewBinding.root)
-            dialog.setOnDismissListener { dialogViewBinding = null }
             dialog.show()
         })
         binding.recyclerAddictions.layoutManager = LinearLayoutManager(this)
@@ -238,16 +249,45 @@ class Main : AppCompatActivity() {
         }, 1000L)
     }
 
+    private fun showAddNoteAfterRelapseDialogIfEnabled(addiction: Addiction) {
+        val pref = getSharedPref()
+        if (pref.getAddNoteAfterRelapsePref()) {
+            var dialog: Dialog? = null
+            val dialogViewBinding = DialogAddNoteAfterRelapseBinding.inflate(layoutInflater)
+            val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+            with(dialogViewBinding) {
+                noteInput.setText(addiction.dailyNotes[today]) //TextView.setText does accept a null CharSequence.
+                btnSave.setOnClickListener { _ ->
+                    if (noteInput.isInputEmpty()) {
+                        noteInputLayout.error = getString(R.string.error_empty_note)
+                    } else {
+                        addiction.dailyNotes[today] = noteInput.text.toString()
+                        cacheHandler.write()
+                        requireNotNull(dialog).dismiss()
+                    }
+                }
+            }
+            with(BottomSheetDialog(this)) {
+                dialog = this
+                setContentView(dialogViewBinding.root)
+                setOnDismissListener {
+                    if (dialogViewBinding.dontShowAgain.isChecked) {
+                        pref.edit { putBoolean("add_note_after_relapse", false) }
+                    }
+                }
+                show()
+            }
+        }
+    }
+
     private fun updatePromptVisibility() {
         binding.prompt.visibility = if (addictions.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun newCardDialog() {
         //Pass current addiction names to create activity, to prevent creation of elements with identical keys
-        val addictionNames = arrayListOf<String>()
-        addictions.forEach { addictionNames.add(it.name) }
         val intent = Intent(this, Create::class.java)
-            .putStringArrayListExtra(EXTRA_NAMES, addictionNames)
+            .putStringArrayListExtra(EXTRA_NAMES, addictions.mapTo(arrayListOf()) { it.name })
         addNewAddiction.launch(intent)
     }
 

@@ -2,7 +2,6 @@ package com.katiearose.sobriety
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
@@ -16,7 +15,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.DateFormat
-import java.util.*
+import java.util.Date
 import kotlin.math.absoluteValue
 
 class AddictionCardAdapter(
@@ -78,13 +77,6 @@ class AddictionCardAdapter(
                 )
             }
         )
-        holder.textViewAverage.visibility =
-            if (addiction.averageRelapseDuration == -1L) View.GONE else View.VISIBLE
-        holder.textViewAverage.text =
-            context.getString(
-                R.string.recent_avg,
-                context.convertSecondsToString(addiction.averageRelapseDuration)
-            )
         holder.refresh()
     }
 
@@ -100,7 +92,6 @@ class AddictionCardAdapter(
         private val addictionSupplier: (Int) -> Addiction) : RecyclerView.ViewHolder(binding.root) {
         val textViewName: TextView = binding.textViewAddictionName
         val textViewPriority: TextView = binding.textViewPriority
-        val textViewAverage: TextView = binding.textViewAverage
         private val dateFormat = DateFormat.getDateTimeInstance()
         private lateinit var addiction: Addiction
         private val mainScope = MainScope()

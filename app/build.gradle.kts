@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("kotlin-android")
 }
 
 android {
@@ -68,6 +67,7 @@ dependencies {
             strictly ("1.2.0") //2.0.0 requires gradle 7.4.0-alpha10
         }
     }
+    implementation("com.github.vipulasri:timelineview:1.1.5")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.4")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")

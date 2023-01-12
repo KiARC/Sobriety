@@ -19,8 +19,6 @@ data class Addiction(
     val milestones: LinkedHashSet<Pair<Int, DateTimeUnit>>,
     internal val relapses: CircularBuffer<Long> = CircularBuffer(3) //Default is a new one, but you can provide your own (from a cache)
 ) {
-    var averageRelapseDuration = if (relapses.get(0) == null) -1 else calculateAverageRelapseDuration()
-        private set
 
     enum class Priority {
         HIGH, MEDIUM, LOW
@@ -28,26 +26,42 @@ data class Addiction(
 
     fun isFuture(): Boolean = lastRelapse > Clock.System.now()
 
+    /**
+     * @param whichAttempts list of map indices
+     */
+    fun calculateAvgRelapseDuration(whichAttempts: List<Int>): Long {
+        var totalDuration = 0L
+        val list = history.toList()
+        for (attemptIndex in whichAttempts) {
+            totalDuration += (list[attemptIndex].second - list[attemptIndex].first)
+        }
+        return totalDuration / whichAttempts.size
+    }
+
+    /**
+     * @return - the goal point in milliseconds
+     * - the progress as an int in range 0..100
+     */
+    fun calculateMilestoneProgressionPercentage(milestone: Pair<Int, DateTimeUnit>): Pair<Long, Int> {
+        val goal = lastRelapse.toEpochMilliseconds() + milestone.first * milestone.second.toMillis()
+        return Pair(goal, (((Clock.System.now().toEpochMilliseconds() - lastRelapse.toEpochMilliseconds()).toFloat() /
+                (goal - lastRelapse.toEpochMilliseconds())) * 100).toInt())
+    }
+
     fun stopAbstaining() {
         isStopped = true
         timeStopped = Clock.System.now().toEpochMilliseconds()
-        relapses.update(Instant.fromEpochMilliseconds(timeStopped).epochSeconds - lastRelapse.epochSeconds)
-        averageRelapseDuration = calculateAverageRelapseDuration()
         history.putLast(Clock.System.now().toEpochMilliseconds())
     }
 
     fun relapse() {
         if (!isStopped && !isFuture()) {
-            relapses.update(lastRelapse.secondsFromNow())
             history.putLast(Clock.System.now().toEpochMilliseconds())
         }
         history[Clock.System.now().toEpochMilliseconds()] = 0
         isStopped = false
-        averageRelapseDuration = calculateAverageRelapseDuration()
         lastRelapse = Clock.System.now()
     }
-
-    private fun calculateAverageRelapseDuration(): Long = relapses.getAll().filterNotNull().sumOf { it } / 3L
 
     fun getDailyNotesList(sort: SortMode): List<Pair<LocalDate, String>> {
         return when (sort) {

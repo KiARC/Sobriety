@@ -9,10 +9,11 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.katiearose.sobriety.databinding.ListItemMilestoneBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.shared.SortMode
-import com.katiearose.sobriety.shared.toMillis
+import com.katiearose.sobriety.utils.getDateFormatPattern
 import com.katiearose.sobriety.utils.getHideCompletedMilestonesPref
 import com.katiearose.sobriety.utils.getSharedPref
 import com.katiearose.sobriety.utils.getSortMilestonesPref
+import com.katiearose.sobriety.utils.textResource
 import kotlinx.datetime.DateTimeUnit
 import java.time.Instant
 import java.time.ZoneId
@@ -40,7 +41,7 @@ class MilestoneAdapter(
         update()
     }
 
-    private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd MMM yyyy")
+    private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm ${preferences.getDateFormatPattern()}")
 
     fun update() {
         submitList(when (preferences.getSortMilestonesPref()) {
@@ -59,25 +60,22 @@ class MilestoneAdapter(
     override fun onBindViewHolder(holder: MilestoneViewHolder, position: Int) {
         val milestone = currentList[position]
         holder.milestone.text = StringBuilder(milestone.first.toString()).append(" ").append(
-            when {
-                milestone.second == DateTimeUnit.HOUR -> context.getString(R.string.unit_hour)
-                milestone.second == DateTimeUnit.DAY -> context.getString(R.string.unit_day)
-                milestone.second == DateTimeUnit.WEEK -> context.getString(R.string.unit_week)
-                milestone.second == DateTimeUnit.MONTH -> context.getString(R.string.unit_month)
-                milestone.second == DateTimeUnit.YEAR -> context.getString(R.string.unit_year)
+            when (milestone.second) {
+                DateTimeUnit.HOUR -> context.getString(R.string.unit_hour)
+                DateTimeUnit.DAY -> context.getString(R.string.unit_day)
+                DateTimeUnit.WEEK -> context.getString(R.string.unit_week)
+                DateTimeUnit.MONTH -> context.getString(R.string.unit_month)
+                DateTimeUnit.YEAR -> context.getString(R.string.unit_year)
                 else -> "Unsupported"
             }
-        ).toString()
-        val goal =
-            addiction.lastRelapse.toEpochMilliseconds() + milestone.first * milestone.second.toMillis()
-        holder.milestoneProgressBar.progress =
-            (((System.currentTimeMillis() - addiction.lastRelapse.toEpochMilliseconds()).toFloat() /
-                    (goal - addiction.lastRelapse.toEpochMilliseconds())) * 100).toInt()
+        )
+        val calculatedPair = addiction.calculateMilestoneProgressionPercentage(milestone)
+        holder.milestoneProgressBar.progress = calculatedPair.second
         if (holder.milestoneProgressBar.progress == 100) {
-            holder.milestoneTime.text = context.getString(R.string.completed)
+            holder.milestoneTime.textResource = R.string.completed
         } else {
             holder.milestoneTime.text =
-                dateTimeFormatter.format(Instant.ofEpochMilli(goal).atZone(ZoneId.systemDefault()))
+                dateTimeFormatter.format(Instant.ofEpochMilli(calculatedPair.first).atZone(ZoneId.systemDefault()))
         }
     }
 

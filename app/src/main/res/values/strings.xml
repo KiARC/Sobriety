@@ -93,5 +93,20 @@
     <string name="number">Number</string>
     <string name="completed">Completed</string>
     <string name="delete_milestone_confirm">Do you really want to delete this milestone?\nThis action cannot be undone.</string>
-
+    <string name="calc_avg_durations">Calculate average durations</string>
+    <string name="only_one_attempt">There\'s only one attempt</string>
+    <string name="avg_duration">Average of attempt</string>
+    <string name="nothing_is_chosen">Nothing is chosen</string>
+    <string name="only_one_attempt_is_chosen">Only one attempt is chosen</string>
+    <string name="attempt_started">Attempt %d started</string>
+    <string name="attempt_ended">Attempt %d ended\nDuration: %s</string>
+    <string name="present">Present</string>
+    <string name="use_alt_timeline_view">Use alternative timeline view</string>
+    <string name="general">General</string>
+    <string name="date_format">Date format</string>
+    <!--TODO think of a less awkward way to say this-->
+    <string name="add_note_after_relapse">Looks like you just relapsed.\nWould you like to write down what happened today?\nThis will be saved in the \"Daily notes\" section with today\'s date.</string>
+    <string name="dont_show_dialog_again">Don\'t show this dialog again</string>
+    <string name="add_note_after_relapse_pref">Add note after relapse</string>
+    <string name="add_note_after_relapse_pref_summary">When logging a relapse, offer to make (or edit, if it already exists) a note for that day</string>
 </resources>

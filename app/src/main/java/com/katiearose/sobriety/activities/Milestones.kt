@@ -11,6 +11,7 @@ import com.katiearose.sobriety.databinding.DialogAddMilestoneBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.shared.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
+import com.katiearose.sobriety.utils.checkValidIntentData
 import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
 import com.katiearose.sobriety.utils.write
@@ -30,7 +31,7 @@ class Milestones : AppCompatActivity() {
         setContentView(binding.root)
         cacheHandler = CacheHandler(this)
 
-        addiction = Main.addictions[intent.getIntExtra(Main.EXTRA_ADDICTION_POSITION, 0)]
+        addiction = Main.addictions[checkValidIntentData()]
         adapter = MilestoneAdapter(addiction, this) {
             val action: () -> Unit = {
                 addiction.milestones.remove(it)
@@ -44,34 +45,37 @@ class Milestones : AppCompatActivity() {
         binding.milestoneList.adapter = adapter
 
         binding.addMilestoneFab.setOnClickListener {
-            var dialogViewBinding: DialogAddMilestoneBinding? =
-                DialogAddMilestoneBinding.inflate(layoutInflater)
+            val dialogViewBinding = DialogAddMilestoneBinding.inflate(layoutInflater)
             val dialog = BottomSheetDialog(this)
-            dialog.setContentView(dialogViewBinding!!.root)
+            dialog.setContentView(dialogViewBinding.root)
             val units = resources.getStringArray(R.array.time_units)
             dialogViewBinding.btnSaveMilestone.setOnClickListener {
-                if (dialogViewBinding!!.milestoneNumberInput.isInputEmpty() ||
-                    dialogViewBinding!!.milestoneNumberInput.text.toString().toInt() == 0) {
-                    dialogViewBinding!!.milestoneNumberInputLayout.error =
-                        getString(R.string.error_empty_amount)
-                } else if (dialogViewBinding!!.unitInput.text.toString().isEmpty()) {
-                    dialogViewBinding!!.milestoneTimeUnitInputLayout.error =
-                        getString(R.string.error_empty_unit)
-                } else {
-                    val num = dialogViewBinding!!.milestoneNumberInput.text.toString().toInt()
-                    when (dialogViewBinding!!.unitInput.text.toString()) {
-                        units[0] -> addiction.milestones.add(Pair(num, DateTimeUnit.HOUR))
-                        units[1] -> addiction.milestones.add(Pair(num, DateTimeUnit.DAY))
-                        units[2] -> addiction.milestones.add(Pair(num, DateTimeUnit.WEEK))
-                        units[3] -> addiction.milestones.add(Pair(num, DateTimeUnit.MONTH))
-                        units[4] -> addiction.milestones.add(Pair(num, DateTimeUnit.YEAR))
+                val inputFields = listOf(dialogViewBinding.milestoneNumberInputLayout, dialogViewBinding.milestoneTimeUnitInputLayout)
+                when {
+                    dialogViewBinding.milestoneNumberInput.isInputEmpty() ||
+                            dialogViewBinding.milestoneNumberInput.text.toString().toInt() == 0 -> {
+                        dialogViewBinding.milestoneNumberInputLayout.error = getString(R.string.error_empty_amount)
+                        inputFields.forEach { if (it !== dialogViewBinding.milestoneNumberInputLayout) it.error = null }
                     }
-                    cacheHandler.write()
-                    adapter.update()
-                    dialog.dismiss()
+                    dialogViewBinding.unitInput.text.toString().isEmpty() -> {
+                        dialogViewBinding.milestoneTimeUnitInputLayout.error = getString(R.string.error_empty_unit)
+                        inputFields.forEach { if (it !== dialogViewBinding.milestoneTimeUnitInputLayout) it.error = null }
+                    }
+                    else -> {
+                        val num = dialogViewBinding.milestoneNumberInput.text.toString().toInt()
+                        when (dialogViewBinding.unitInput.text.toString()) {
+                            units[0] -> addiction.milestones.add(Pair(num, DateTimeUnit.HOUR))
+                            units[1] -> addiction.milestones.add(Pair(num, DateTimeUnit.DAY))
+                            units[2] -> addiction.milestones.add(Pair(num, DateTimeUnit.WEEK))
+                            units[3] -> addiction.milestones.add(Pair(num, DateTimeUnit.MONTH))
+                            units[4] -> addiction.milestones.add(Pair(num, DateTimeUnit.YEAR))
+                        }
+                        cacheHandler.write()
+                        adapter.update()
+                        dialog.dismiss()
+                    }
                 }
             }
-            dialog.setOnDismissListener { dialogViewBinding = null }
             dialog.show()
         }
     }
