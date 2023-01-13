@@ -7,26 +7,22 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.katiearose.sobriety.databinding.ListItemSavingBinding
+import com.katiearose.sobriety.shared.Addiction
 
 class SavingsAdapter(private val addiction: Addiction, private val context: Context,
-private val editButtonAction: (Pair<String, Pair<Double, String>>) -> Unit,
-private val deleteButtonAction: (Pair<String, Pair<Double, String>>) -> Unit):
+                     private val editButtonAction: (Pair<String, Pair<Double, String>>) -> Unit,
+                     private val deleteButtonAction: (Pair<String, Pair<Double, String>>) -> Unit):
     ListAdapter<Pair<String, Pair<Double, String>>, SavingsAdapter.SavingsViewHolder>(object :
         DiffUtil.ItemCallback<Pair<String, Pair<Double, String>>>() {
         override fun areItemsTheSame(
             oldItem: Pair<String, Pair<Double, String>>,
             newItem: Pair<String, Pair<Double, String>>
-        ): Boolean {
-            return oldItem.first == newItem.first
-        }
+        ): Boolean = oldItem.first == newItem.first
 
         override fun areContentsTheSame(
             oldItem: Pair<String, Pair<Double, String>>,
             newItem: Pair<String, Pair<Double, String>>
-        ): Boolean {
-            return oldItem.second == newItem.second
-        }
-
+        ): Boolean = oldItem.second == newItem.second
     }) {
     init { update() }
 

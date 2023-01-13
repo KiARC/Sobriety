@@ -50,4 +50,11 @@
         <item>no</item>
     </string-array>
 
+    <string-array name="date_format_patterns" translatable="false">
+        <item>MMMM dd uuuu</item>
+        <item>dd MMMM uuuu</item>
+        <item>MMM dd uuuu</item>
+        <item>dd MMM uuuu</item>
+    </string-array>
+
 </resources>

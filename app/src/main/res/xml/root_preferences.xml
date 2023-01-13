@@ -21,6 +21,36 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/general"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            app:key="date_format"
+            app:title="@string/date_format"
+            app:entryValues="@array/date_format_patterns"
+            app:defaultValue="MMMM dd uuuu"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            app:key="add_note_after_relapse"
+            app:title="@string/add_note_after_relapse_pref"
+            app:summary="@string/add_note_after_relapse_pref_summary"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/timeline"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            app:key="alt_timeline_view"
+            app:title="@string/use_alt_timeline_view"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/daily_notes"
         app:iconSpaceReserved="false">
 

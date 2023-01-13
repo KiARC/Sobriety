@@ -9,10 +9,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.katiearose.sobriety.databinding.ListItemNoteBinding
+import com.katiearose.sobriety.shared.Addiction
+import com.katiearose.sobriety.shared.SortMode
+import com.katiearose.sobriety.utils.getDateFormatPattern
 import com.katiearose.sobriety.utils.getSharedPref
 import com.katiearose.sobriety.utils.getSortNotesPref
 import com.katiearose.sobriety.utils.toggleVisibility
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toJavaLocalDate
 import java.time.format.DateTimeFormatter
 
 class NoteAdapter(
@@ -36,17 +40,13 @@ class NoteAdapter(
 
     init { update() }
 
-    private val dateFormat = DateTimeFormatter.ofPattern("MMMM dd yyyy")
+    private val dateFormat = DateTimeFormatter.ofPattern(preferences.getDateFormatPattern())
 
     fun update() {
         submitList(when (preferences.getSortNotesPref()) {
-            "asc" -> addiction.dailyNotes.toList().sortedWith { n1, n2 ->
-                n1.first.compareTo(n2.first)
-            }
-            "desc" -> addiction.dailyNotes.toList().sortedWith { n1, n2 ->
-                n2.first.compareTo(n1.first)
-            }
-            else -> addiction.dailyNotes.toList()
+            "asc" -> addiction.getDailyNotesList(SortMode.ASC)
+            "desc" -> addiction.getDailyNotesList(SortMode.DESC)
+            else -> addiction.getDailyNotesList(SortMode.NONE)
         })
     }
 
@@ -60,7 +60,7 @@ class NoteAdapter(
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val pair = currentList[position]
-        holder.date.text = dateFormat.format(pair.first)
+        holder.date.text = dateFormat.format(pair.first.toJavaLocalDate())
         holder.note.text = pair.second
     }
 

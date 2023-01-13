@@ -9,9 +9,9 @@ import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
-import com.katiearose.sobriety.Addiction
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityCreateBinding
+import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.utils.applyThemes
 import java.time.Instant
 import java.time.LocalTime
@@ -38,9 +38,9 @@ class Create : AppCompatActivity() {
         binding.btnCreate.setOnClickListener { create() }
 
         @Suppress("DEPRECATION")
-        savedInstanceState?.let {
-            startDateTime = it.getSerializable("current_date_time") as ZonedDateTime
-            priority = it.getSerializable("current_priority") as Addiction.Priority
+        savedInstanceState?.run {
+            startDateTime = getSerializable("current_date_time") as ZonedDateTime
+            priority = Addiction.Priority.values()[getInt("current_priority")]
         }
         checkFutureDateTime()
 
@@ -129,20 +129,19 @@ class Create : AppCompatActivity() {
             return
         }
 
-        val instant = startDateTime.toInstant()
         val intent = Intent()
-            .putExtra("instant", instant)
+            .putExtra("instant", startDateTime.toInstant().toEpochMilli())
             .putExtra("name", name)
-            .putExtra("priority", priority)
+            .putExtra("priority", priority.ordinal)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.apply {
+        outState.run {
             putSerializable("current_date_time", startDateTime)
-            putSerializable("current_priority", priority)
+            putInt("current_priority", priority.ordinal)
         }
     }
 }
