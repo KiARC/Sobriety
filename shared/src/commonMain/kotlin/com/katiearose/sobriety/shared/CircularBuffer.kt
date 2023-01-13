@@ -7,7 +7,7 @@ class CircularBuffer<T>(private val size: Int) {
     private val buffer: ArrayList<T?> = ArrayList(size)
 
     init {
-        for (i in 0 until size) {
+        for (i in buffer.size until size) {
             buffer.add(i, null)
         }
     }
