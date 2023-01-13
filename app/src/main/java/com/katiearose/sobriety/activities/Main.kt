@@ -34,7 +34,6 @@ import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
 import com.katiearose.sobriety.utils.write
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import java.io.FileNotFoundException
@@ -72,6 +71,16 @@ class Main : AppCompatActivity() {
                 adapterAddictions.notifyDataSetChanged()
             }
         }
+
+    private val goToSettings = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == RESULT_OK) {
+            if (it.data!!.extras!!.getBoolean("import")) {
+                addictions.sortWith { a1, a2 -> a1.priority.compareTo(a2.priority) }
+                cacheHandler.write()
+                adapterAddictions.notifyDataSetChanged()
+            }
+        }
+    }
 
     //needed for this activity to apply md3 theme after user backs away from settings
     private val materialYouSettingListener =
@@ -310,7 +319,7 @@ class Main : AppCompatActivity() {
         val id = item.itemId
         if (id == R.id.go_to_settings) {
             val intent = Intent(this, Settings::class.java)
-            startActivity(intent)
+            goToSettings.launch(intent)
             return true
         }
         return super.onOptionsItemSelected(item)
