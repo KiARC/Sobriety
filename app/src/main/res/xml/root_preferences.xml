@@ -85,4 +85,19 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/data"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            app:key="data_export"
+            app:title="@string/data_export"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            app:key="data_import"
+            app:title="@string/data_import"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

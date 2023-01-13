@@ -109,4 +109,7 @@
     <string name="dont_show_dialog_again">Don\'t show this dialog again</string>
     <string name="add_note_after_relapse_pref">Add note after relapse</string>
     <string name="add_note_after_relapse_pref_summary">When logging a relapse, offer to make (or edit, if it already exists) a note for that day</string>
+    <string name="data">Data</string>
+    <string name="data_export">Export</string>
+    <string name="data_import">Import</string>
 </resources>
