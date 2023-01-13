@@ -47,6 +47,9 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    lint {
+        disable += listOf("MissingTranslation")
+    }
     namespace = "com.katiearose.sobriety"
 }
 
