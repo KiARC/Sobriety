@@ -88,7 +88,7 @@ class Create : AppCompatActivity() {
             .build()
         datePicker.addOnPositiveButtonClickListener {
             startDateTime = ZonedDateTime.of(
-                Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate(),
+                Instant.ofEpochMilli(it).atZone(ZoneId.of("UTC")).toLocalDate(),
                 startDateTime.toLocalTime(),
                 ZoneId.systemDefault()
             )

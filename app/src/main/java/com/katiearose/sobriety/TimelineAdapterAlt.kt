@@ -36,6 +36,14 @@ class TimelineAdapterAlt(context: Context, addiction: Addiction) : ListAdapter<L
         submitList(result)
     }
 
+    // From com.github.vipulasri.timelineview.TimelineView
+    enum class LineType {
+        NORMAL,
+        START,
+        END,
+        ONLYONE
+    }
+
     private val dateFormat = DateTimeFormatter.ofPattern("HH:mm:ss ${preferences.getDateFormatPattern()}")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineAltViewHolder {
@@ -59,7 +67,16 @@ class TimelineAdapterAlt(context: Context, addiction: Addiction) : ListAdapter<L
         }
     }
 
-    override fun getItemViewType(position: Int): Int = TimelineView.getTimeLineViewType(position, itemCount)
+    override fun getItemViewType(position: Int): Int {
+        return when {
+            position == 0 -> LineType.START
+            position == (itemCount - 1) -> LineType.END
+            (position % 2 == 0) -> if (getItem(position) != getItem(position - 1))
+                LineType.START else LineType.NORMAL
+            else -> if (getItem(position) != getItem(position + 1))
+                LineType.END else LineType.NORMAL
+        }.ordinal
+    }
 
     class TimelineAltViewHolder(val binding: ListItemTimelineAltBinding, viewType: Int) : RecyclerView.ViewHolder(binding.root) {
         init {
