@@ -71,6 +71,9 @@ class DailyNotes : AppCompatActivity() {
                         pickedDate =
                             Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.currentSystemDefault()).date
                         dialogViewBinding.noteDate.text = dateFormat.format(pickedDate.toJavaLocalDate())
+                        if (addiction.dailyNotes.contains(pickedDate)) {
+                            dialogViewBinding.noteInput.setText(addiction.dailyNotes[pickedDate])
+                        }
                     }
                     show(supportFragmentManager, null)
                 }
