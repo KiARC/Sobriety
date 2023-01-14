@@ -68,9 +68,11 @@ class DailyNotes : AppCompatActivity() {
             dialogViewBinding.noteDate.setOnClickListener {
                 with(MaterialDatePicker.Builder.datePicker().build()) {
                     addOnPositiveButtonClickListener {
-                        pickedDate =
-                            Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.currentSystemDefault()).date
+                        pickedDate = Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.UTC).date
                         dialogViewBinding.noteDate.text = dateFormat.format(pickedDate.toJavaLocalDate())
+                        if (addiction.dailyNotes.contains(pickedDate)) {
+                            dialogViewBinding.noteInput.setText(addiction.dailyNotes[pickedDate])
+                        }
                     }
                     show(supportFragmentManager, null)
                 }
