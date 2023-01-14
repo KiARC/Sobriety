@@ -14,7 +14,7 @@ or get the APK from the [Releases section](https://github.com/KiARC/Sobriety/rel
 
 I mostly designed this out of spite for I Am Sober, which monetizes addiction recovery. This started as something I just wrote in the time I had between classes for a friend who was struggling with addiction and couldn't get an I Am Sober subscription to track all the things he was struggling with, and I really just decided to publish it because I didn't see a reason not to, but then it got picked up by the IzzyOnDroid repository and I decided it was genuinely going to be worth working on further if people were actually aware of it. Since then a lot of tweaks have been made and the amazing *JakeGonder* has helped out quite a bit, and I am honestly super proud of how far this has come. Recently (as of writing this),  Donnnno, the creator of [the impressive Arcticons icon pack](https://github.com/Donnnno/Arcticons) has added a Sobriety icon, and I am over the moon with pride for the recognition. I hope Sobriety is able to help more people, and I will continue to work on it when I'm able to because I want to see it grow.
 
-Since writing this, the incredible *unbiaseduser* has contributed quite a lot, and I'm really grateful for that.
+Since writing this, the incredible *cubandle* and *unbiaseduser* have contributed quite a lot, and I'm really grateful for that.
 
 ### About I Am Sober
 
