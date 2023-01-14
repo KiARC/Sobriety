@@ -85,7 +85,6 @@ class Create : AppCompatActivity() {
     private fun pickDate() {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText(R.string.pick_starting_date)
-            .setCalendarConstraints(CalendarConstraints.Builder().setEnd(System.currentTimeMillis()).build())
             .build()
         datePicker.addOnPositiveButtonClickListener {
             startDateTime = ZonedDateTime.of(
