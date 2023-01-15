@@ -13,6 +13,7 @@ import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.utils.convertRangeToString
 import com.katiearose.sobriety.utils.convertSecondsToString
 import com.katiearose.sobriety.utils.getDateFormatPattern
+import com.katiearose.sobriety.utils.getAverageAttemptsWindow
 import com.katiearose.sobriety.utils.getSharedPref
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -80,10 +81,12 @@ class AddictionCardAdapter(
                 )
             }
         )
-        val averageRelapseDuration = addiction.calculateRecentAverage(3)
+        val numAttempts = context.getSharedPref().getAverageAttemptsWindow()
+        val averageRelapseDuration = addiction.calculateRecentAverage(numAttempts)
         if (averageRelapseDuration == null) {
             holder.textViewAverage.visibility = View.GONE
         } else {
+            holder.textViewAverage.visibility = View.VISIBLE
             holder.textViewAverage.text =
                 context.getString(
                     R.string.recent_avg,

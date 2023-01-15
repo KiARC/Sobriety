@@ -5,12 +5,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.InputType
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreferenceCompat
+import androidx.preference.*
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.shared.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
@@ -61,6 +59,11 @@ class Settings : AppCompatActivity() {
             dateFormatPref.entries = dateFormatPref.entryValues.map {
                 DateTimeFormatter.ofPattern(it.toString()).format(sampleDate)
             }.toTypedArray()
+
+            val averageAttemptsWindow = requireNotNull(findPreference<EditTextPreference>("average_attempts_window"))
+            averageAttemptsWindow.setOnBindEditTextListener { editText ->
+                editText.inputType = InputType.TYPE_CLASS_NUMBER
+            }
 
             val getExport = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri: Uri? ->
                 if (uri != null) {

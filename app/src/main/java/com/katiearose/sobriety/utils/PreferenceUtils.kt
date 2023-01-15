@@ -11,6 +11,9 @@ fun SharedPreferences.getDateFormatPattern(): String = getString("date_format", 
 fun SharedPreferences.getAddNoteAfterRelapsePref(): Boolean =
     getBoolean("add_note_after_relapse", true)
 
+fun SharedPreferences.getAverageAttemptsWindow(): Int =
+    Integer.parseInt(getString("average_attempts_window", "3")!!)
+
 fun SharedPreferences.getAltTimelinePref(): Boolean = getBoolean("alt_timeline_view", false)
 
 fun SharedPreferences.getSortNotesPref(): String = getString("sort_notes", "asc")!!

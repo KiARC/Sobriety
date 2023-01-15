@@ -132,4 +132,5 @@
     <string name="data">Data</string>
     <string name="data_export">Export</string>
     <string name="data_import">Import</string>
+    <string name="average_attempts_window_pref">Number of Relapses (0 to disable)</string>
 </resources>
