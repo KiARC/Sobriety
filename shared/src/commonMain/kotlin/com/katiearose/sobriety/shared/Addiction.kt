@@ -44,6 +44,9 @@ data class Addiction(
      */
     fun calculateMilestoneProgressionPercentage(milestone: Pair<Int, DateTimeUnit>): Pair<Long, Int> {
         val goal = lastRelapse.toEpochMilliseconds() + milestone.first * milestone.second.toMillis()
+        if (isStopped) {
+            return Pair(goal, 0)
+        }
         return Pair(goal, (((Clock.System.now().toEpochMilliseconds() - lastRelapse.toEpochMilliseconds()).toFloat() /
                 (goal - lastRelapse.toEpochMilliseconds())) * 100).toInt())
     }
