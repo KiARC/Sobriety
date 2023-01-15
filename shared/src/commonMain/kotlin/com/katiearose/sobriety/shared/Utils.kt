@@ -20,6 +20,5 @@ fun DateTimeUnit.toMillis(): Long {
  * Puts the specified value to the last key in this map.
  */
 fun <K, V> LinkedHashMap<K, V>.putLast(value: V) {
-    val lastKey = keys.map { it }.last()
-    put(lastKey, value)
+    put(keys.last(), value)
 }
