@@ -43,10 +43,15 @@ data class Addiction(
      * @return average duration in milliseconds or null if no history
      */
     fun calculateRecentAverage(numAttempts: Int): Long? {
-        if (history.size <= 1 || numAttempts == 0) return null
-        val currentAttempt = history.size - 1
-        val minimum = (currentAttempt - numAttempts).coerceAtLeast(0)
-        return calculateAvgRelapseDuration((minimum until currentAttempt).toList())
+        // Stopped addictions have the final full attempt at the end
+        val maxExclusive = if (isStopped) history.size else history.size - 1
+        val minimum = (maxExclusive - numAttempts).coerceAtLeast(0)
+
+        val range = (minimum until maxExclusive).toList()
+        return if (range.isNotEmpty())
+            calculateAvgRelapseDuration(range)
+        else
+            null
     }
 
     /**
