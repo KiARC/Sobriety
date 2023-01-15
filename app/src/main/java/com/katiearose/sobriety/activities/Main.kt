@@ -63,8 +63,12 @@ class Main : AppCompatActivity() {
                 val priority =
                     Addiction.Priority.values()[data.getInt("priority")]
                 val addiction = Addiction.newInstance(name, instant, priority)
-                if (!addiction.isFuture())
+                if (addiction.isFuture()) {
+                    // Adds to history at that point in time
+                    addTimerForFutureAddiction(addiction)
+                } else {
                     addiction.history[instant] = 0
+                }
                 addictions.add(addiction)
                 addictions.sortWith { a1, a2 -> a1.priority.compareTo(a2.priority) }
                 cacheHandler.write()
@@ -242,21 +246,19 @@ class Main : AppCompatActivity() {
         })
         binding.recyclerAddictions.layoutManager = LinearLayoutManager(this)
         binding.recyclerAddictions.adapter = adapterAddictions
-        //main handler to refresh all cards in sync
-        val mainHandler = Handler(Looper.getMainLooper())
-        mainHandler.postDelayed(object : Runnable {
-            override fun run() {
-                //if the future time has elapsed, insert that time into history.
-                //Note that to handle cases where the time elapses while the app is open,
-                //i have to do this catch-all check. it's ugly, but it works.
-                for (addiction in addictions) {
-                    if (addiction.history.isEmpty() && addiction.lastRelapse.epochSeconds < Instant.now().epochSecond) {
-                        addiction.history[addiction.lastRelapse.toEpochMilliseconds()] = 0
-                    }
-                }
-                mainHandler.postDelayed(this, 1000L)
-            }
-        }, 1000L)
+
+        // Add a timer to start an attempt on future addictions
+        for (addiction in addictions) {
+            if (addiction.isFuture())
+                addTimerForFutureAddiction(addiction)
+        }
+    }
+
+    private fun addTimerForFutureAddiction(addiction: Addiction) {
+        val delay = addiction.lastRelapse.toEpochMilliseconds() - Instant.now().toEpochMilli()
+        Handler(Looper.getMainLooper()).postDelayed({
+            addiction.history[addiction.lastRelapse.toEpochMilliseconds()] = 0
+        }, delay)
     }
 
     private fun showAddNoteAfterRelapseDialogIfEnabled(addiction: Addiction) {
