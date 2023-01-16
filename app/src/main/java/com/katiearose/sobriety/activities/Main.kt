@@ -63,11 +63,9 @@ class Main : AppCompatActivity() {
                 val priority =
                     Addiction.Priority.values()[data.getInt("priority")]
                 val addiction = Addiction.newInstance(name, instant, priority)
-                if (addiction.isFuture()) {
-                    // Adds to history at that point in time
+                if (addiction.status == Addiction.Status.Future) {
+                    // Update status at that point in time
                     addTimerForFutureAddiction(addiction)
-                } else {
-                    addiction.history[instant] = 0
                 }
                 addictions.add(addiction)
                 addictions.sortWith { a1, a2 -> a1.priority.compareTo(a2.priority) }
@@ -132,70 +130,67 @@ class Main : AppCompatActivity() {
                 action
             )
         }, relapseButtonAction = {
-            if (!it.isFuture()) {
-                val action: () -> Unit = {
-                    if (!it.isStopped && !it.isFuture()) {
-                        showAddNoteAfterRelapseDialogIfEnabled(it)
-                    }
-                    it.relapse()
-                    adapterAddictions.notifyItemChanged(addictions.indexOf(it))
-                    cacheHandler.write()
-                }
-                showConfirmDialog(
-                    getString(R.string.relapse),
-                    getString(R.string.relapse_confirm, it.name),
-                    action
-                )
-            } else {
-                val action: () -> Unit = {
-                    it.lastRelapse = Clock.System.now()
-                    it.history[System.currentTimeMillis()] = 0
-                    adapterAddictions.notifyItemChanged(addictions.indexOf(it))
-                    cacheHandler.write()
-                }
-                showConfirmDialog(
-                    getString(R.string.track_now),
-                    getString(R.string.start_tracking_now, it.name),
-                    action
-                )
+            val (title, question, extra_action) = when (it.status) {
+                Addiction.Status.Ongoing ->
+                    Triple(
+                        getString(R.string.relapse),
+                        getString(R.string.relapse_confirm, it.name)
+                    ) { showAddNoteAfterRelapseDialogIfEnabled(it) }
+
+                Addiction.Status.Stopped, Addiction.Status.Future ->
+                    Triple(
+                        getString(R.string.track_now),
+                        getString(R.string.start_tracking_now, it.name)
+                    ) {}
+            }
+            showConfirmDialog(title, question) {
+                it.relapse()
+                adapterAddictions.notifyItemChanged(addictions.indexOf(it))
+                cacheHandler.write()
+                extra_action()
             }
         }, stopButtonAction = {
-            if (!it.isFuture()) {
-                if (it.isStopped)
-                    Snackbar.make(
-                        binding.root,
-                        getString(R.string.already_stopped, it.name),
-                        BaseTransientBottomBar.LENGTH_SHORT
-                    ).show()
-                else {
-                    val action: () -> Unit = {
+            when (it.status) {
+                Addiction.Status.Ongoing ->
+                    showConfirmDialog(
+                        getString(R.string.stop),
+                        getString(R.string.stop_confirm, it.name)
+                    ) {
                         it.stopAbstaining()
                         adapterAddictions.notifyItemChanged(addictions.indexOf(it))
                         cacheHandler.write()
                         showAddNoteAfterRelapseDialogIfEnabled(it)
                     }
-                    showConfirmDialog(
-                        getString(R.string.stop),
-                        getString(R.string.stop_confirm, it.name),
-                        action
-                    )
-                }
-            } else Snackbar.make(
-                binding.root,
-                getString(R.string.not_tracked_yet, it.name),
-                BaseTransientBottomBar.LENGTH_SHORT
-            ).show()
+
+                Addiction.Status.Stopped ->
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.already_stopped, it.name),
+                        BaseTransientBottomBar.LENGTH_SHORT
+                    ).show()
+
+                Addiction.Status.Future ->
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.not_tracked_yet, it.name),
+                        BaseTransientBottomBar.LENGTH_SHORT
+                    ).show()
+            }
         }, timelineButtonAction = {
-            if (!it.isFuture()) {
-                startActivity(
-                    Intent(this@Main, Timeline::class.java)
-                        .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(it))
-                )
-            } else Snackbar.make(
-                binding.root,
-                getString(R.string.not_tracked_yet, it.name),
-                BaseTransientBottomBar.LENGTH_SHORT
-            ).show()
+            when (it.status) {
+                Addiction.Status.Ongoing, Addiction.Status.Stopped ->
+                    startActivity(
+                        Intent(this@Main, Timeline::class.java)
+                            .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(it))
+                    )
+
+                Addiction.Status.Future ->
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.not_tracked_yet, it.name),
+                        BaseTransientBottomBar.LENGTH_SHORT
+                    ).show()
+            }
         }, priorityTextViewAction = {
             var choice = it.priority.ordinal
             MaterialAlertDialogBuilder(this@Main)
@@ -249,15 +244,15 @@ class Main : AppCompatActivity() {
 
         // Add a timer to start an attempt on future addictions
         for (addiction in addictions) {
-            if (addiction.isFuture())
+            if (addiction.status == Addiction.Status.Future)
                 addTimerForFutureAddiction(addiction)
         }
     }
 
     private fun addTimerForFutureAddiction(addiction: Addiction) {
-        val delay = addiction.lastRelapse.toEpochMilliseconds() - Instant.now().toEpochMilli()
+        val delay = addiction.history.keys.last() - Instant.now().toEpochMilli()
         Handler(Looper.getMainLooper()).postDelayed({
-            addiction.history[addiction.lastRelapse.toEpochMilliseconds()] = 0
+            addiction.status = Addiction.Status.Ongoing
         }, delay)
     }
 

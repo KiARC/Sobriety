@@ -8,23 +8,37 @@ import kotlinx.serialization.Serializable
 @SerialName("addiction")
 data class Addiction(
     val name: String,
-    var lastRelapse: Instant,
-    var isStopped: Boolean,
-    var timeStopped: Long, //in milliseconds
-    val history: LinkedHashMap<Long, Long>, //in milliseconds
+    var status: Status,
+    // Maps past, current, and future attempts start and end epoch milliseconds
+    val history: LinkedHashMap<Long, Long>,
     var priority: Priority,
     val dailyNotes: LinkedHashMap<LocalDate, String>,
     var timeSaving: LocalTime,
+    // What is being saved -> Pair(amount, unit)
     val savings: LinkedHashMap<String, Pair<Double, String>>,
     val milestones: LinkedHashSet<Pair<Int, DateTimeUnit>>,
-    internal val relapses: CircularBuffer<Long> = CircularBuffer(3) //Default is a new one, but you can provide your own (from a cache)
 ) {
 
     enum class Priority {
         HIGH, MEDIUM, LOW
     }
 
-    fun isFuture(): Boolean = lastRelapse > Clock.System.now()
+    enum class Status {
+        Ongoing, Stopped, Future
+    }
+
+    init {
+        // Recalculate status
+        status = when (status) {
+            Status.Ongoing, Status.Stopped -> status
+
+            // Cannot initialize to Future if the history is empty. When will the attempt begin?
+            Status.Future ->
+                if (history.isNotEmpty() &&
+                    history.keys.last() > Clock.System.now().toEpochMilliseconds())
+                Status.Future else Status.Ongoing
+        }
+    }
 
     /**
      * @param whichAttempts list of map indices
@@ -43,10 +57,13 @@ data class Addiction(
      * @return average duration in milliseconds or null if no history
      */
     fun calculateRecentAverage(numAttempts: Int): Long? {
-        // Stopped addictions have the final full attempt at the end
-        val maxExclusive = if (isStopped) history.size else history.size - 1
+        val maxExclusive = when (status) {
+            // Do not include unfinished attempt
+            Status.Ongoing, Status.Future -> history.size - 1
+            // Stopped addictions have the final full attempt at the end
+            Status.Stopped -> history.size
+        }
         val minimum = (maxExclusive - numAttempts).coerceAtLeast(0)
-
         val range = (minimum until maxExclusive).toList()
         return if (range.isNotEmpty())
             calculateAvgRelapseDuration(range)
@@ -59,27 +76,49 @@ data class Addiction(
      * - the progress as an int in range 0..100
      */
     fun calculateMilestoneProgressionPercentage(milestone: Pair<Int, DateTimeUnit>): Pair<Long, Int> {
-        val goal = lastRelapse.toEpochMilliseconds() + milestone.first * milestone.second.toMillis()
-        if (isStopped) {
-            return Pair(goal, 0)
+        val goal = history.keys.last() + milestone.first * milestone.second.toMillis()
+        return when (status) {
+            Status.Ongoing -> Pair(goal,
+                (((Clock.System.now().toEpochMilliseconds() - history.keys.last()).toFloat() /
+                    (goal - history.keys.last())) * 100).toInt())
+
+            Status.Stopped, Status.Future -> Pair(goal, 0)
         }
-        return Pair(goal, (((Clock.System.now().toEpochMilliseconds() - lastRelapse.toEpochMilliseconds()).toFloat() /
-                (goal - lastRelapse.toEpochMilliseconds())) * 100).toInt())
     }
 
     fun stopAbstaining() {
-        isStopped = true
-        timeStopped = Clock.System.now().toEpochMilliseconds()
-        history.putLast(Clock.System.now().toEpochMilliseconds())
+        when (status) {
+            // End the current attempt
+            Status.Ongoing -> history.putLast(Clock.System.now().toEpochMilliseconds())
+
+            // You can't stop twice
+            Status.Stopped -> {}
+
+            // If a Future addiction is stopped, remove the future attempt
+            // If that was the only attempt, add in a 0-length attempt to reflect history
+            Status.Future -> {
+                history.remove(history.keys.last())
+                if (history.isEmpty()) {
+                    val currentTime = Clock.System.now().toEpochMilliseconds()
+                    history[currentTime] = currentTime
+                }
+            }
+        }
+        status = Status.Stopped
     }
 
     fun relapse() {
-        if (!isStopped && !isFuture()) {
-            history.putLast(Clock.System.now().toEpochMilliseconds())
+        when (status) {
+            // End the current attempt
+            Status.Ongoing -> history.putLast(Clock.System.now().toEpochMilliseconds())
+
+            Status.Stopped -> {}
+
+            // Remove the future attempt (user is starting early)
+            Status.Future -> history.remove(history.keys.last())
         }
         history[Clock.System.now().toEpochMilliseconds()] = 0
-        isStopped = false
-        lastRelapse = Clock.System.now()
+        status = Status.Ongoing
     }
 
     fun getDailyNotesList(sort: SortMode): List<Pair<LocalDate, String>> {
@@ -102,24 +141,34 @@ data class Addiction(
         }
         if (hideComplete)
             list = list.filter {
-                Clock.System.now().toEpochMilliseconds() < lastRelapse.toEpochMilliseconds() + it.first * it.second.toMillis()
+                Clock.System.now().toEpochMilliseconds() < history.keys.last() + it.first * it.second.toMillis()
             }
         return list
     }
 
     companion object {
-        fun newInstance(name: String, millis: Long, priority: Priority) = Addiction(
-            name,
-            Instant.fromEpochMilliseconds(millis),
-            false,
-            0,
-            LinkedHashMap(),
-            priority,
-            LinkedHashMap(),
-            LocalTime(0, 0),
-            LinkedHashMap(),
-            LinkedHashSet()
-        )
+        fun newInstance(name: String, millis: Long, priority: Priority): Addiction {
+            val history = LinkedHashMap<Long, Long>()
+            history[millis] = 0
+            val status =
+                if (millis > Clock.System.now().toEpochMilliseconds()) Status.Future
+                else Status.Ongoing
+            return  Addiction(
+                name,
+                status,
+                history,
+                priority,
+                LinkedHashMap(),
+                LocalTime(0, 0),
+                LinkedHashMap(),
+                LinkedHashSet()
+            )
+        }
     }
-
 }
+
+
+
+
+
+
