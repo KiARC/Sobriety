@@ -250,6 +250,8 @@ class Main : AppCompatActivity() {
     }
 
     private fun addTimerForFutureAddiction(addiction: Addiction) {
+        // Also works for negative delays
+        // See https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/os/Handler.java#693
         val delay = addiction.history.keys.last() - Instant.now().toEpochMilli()
         Handler(Looper.getMainLooper()).postDelayed({
             addiction.status = Addiction.Status.Ongoing

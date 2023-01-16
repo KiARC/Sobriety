@@ -27,19 +27,6 @@ data class Addiction(
         Ongoing, Stopped, Future
     }
 
-    init {
-        // Recalculate status
-        status = when (status) {
-            Status.Ongoing, Status.Stopped -> status
-
-            // Cannot initialize to Future if the history is empty. When will the attempt begin?
-            Status.Future ->
-                if (history.isNotEmpty() &&
-                    history.keys.last() > Clock.System.now().toEpochMilliseconds())
-                Status.Future else Status.Ongoing
-        }
-    }
-
     /**
      * @param whichAttempts list of map indices
      */
