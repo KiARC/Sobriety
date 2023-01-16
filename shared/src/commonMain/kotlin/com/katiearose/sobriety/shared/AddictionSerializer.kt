@@ -35,19 +35,7 @@ object AddictionSerializer : KSerializer<Addiction> {
             var savings = LinkedHashMap<String, Pair<Double, String>>()
             var milestones = LinkedHashSet<Pair<Int, DateTimeUnit>>()
             var relapses = CircularBuffer<Long>(3)
-            if (decodeSequentially()) {
-                name = decodeStringElement(descriptor, 0)
-                lastRelapse = decodeSerializableElement(descriptor, 1, InstantComponentSerializer)
-                isStopped = decodeBooleanElement(descriptor, 2)
-                timeStopped = decodeLongElement(descriptor, 3)
-                history = LinkedHashMap(decodeSerializableElement(descriptor, 4, historySerializer))
-                priority = decodeIntElement(descriptor, 5)
-                dailyNotes = LinkedHashMap(decodeSerializableElement(descriptor, 6, dailyNotesSerializer))
-                timeSaving = decodeSerializableElement(descriptor, 7, LocalTimeIso8601Serializer)
-                savings = LinkedHashMap(decodeSerializableElement(descriptor, 8, savingsSerializer))
-                milestones = LinkedHashSet(decodeSerializableElement(descriptor, 9, milestonesSerializer))
-                relapses = decodeSerializableElement(descriptor, 10, bufferSerializer)
-            } else while (true) {
+            while (true) {
                 when (decodeElementIndex(descriptor)) {
                     0 -> name = decodeStringElement(descriptor, 0)
                     1 -> lastRelapse = decodeSerializableElement(descriptor, 1, InstantComponentSerializer)
