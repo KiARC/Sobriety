@@ -17,14 +17,35 @@
     <string name="create">Create</string>
     <string name="error_empty_name">Name is empty</string>
     <string name="error_duplicate_entry">Can\'t create duplicate entries</string>
-    <string name="years">%d years,</string>
-    <string name="months">%d months,</string>
-    <string name="weeks">%d weeks,</string>
-    <string name="days">%d days,</string>
-    <string name="hours">%d hours,</string>
-    <string name="minutes">%d minutes,</string>
+    <plurals name="years">
+        <item quantity="one">%d year,</item>
+        <item quantity="other">%d years,</item>
+    </plurals>
+    <plurals name="months">
+        <item quantity="one">%d month,</item>
+        <item quantity="other">%d months,</item>
+    </plurals>
+    <plurals name="weeks">
+        <item quantity="one">%d week,</item>
+        <item quantity="other">%d weeks,</item>
+    </plurals>
+    <plurals name="days">
+        <item quantity="one">%d day,</item>
+        <item quantity="other">%d days,</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d hour,</item>
+        <item quantity="other">%d hours,</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">%d minute,</item>
+        <item quantity="other">%d minutes,</item>
+    </plurals>
     <string name="and">and</string>
-    <string name="seconds">%d seconds</string>
+    <plurals name="seconds">
+        <item quantity="one">%d second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
     <string name="recent_avg">Recent Average: %s</string>
     <string name="delete">Delete</string>
     <string name="delete_confirm">Do you really want to delete entry \"%s\"?\nThis action cannot be undone.</string>
@@ -72,7 +93,6 @@
     <string name="savings">Savings</string>
     <string name="time_saved_per_day">Time saved per day</string>
     <string name="select_time_saved">Select amount of time saved</string>
-    <string name="hours_minutes" tools:ignore="StringFormatMatches">%d hours, %d minutes</string>
     <string name="no_set">Not set</string>
     <string name="other_savings">Other savings</string>
     <string name="add_new_saving">Add new saving</string>

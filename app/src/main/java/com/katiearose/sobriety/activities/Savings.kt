@@ -1,6 +1,5 @@
 package com.katiearose.sobriety.activities
 
-import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -15,7 +14,12 @@ import com.katiearose.sobriety.databinding.ActivitySavingsBinding
 import com.katiearose.sobriety.databinding.DialogAddSavingBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.shared.CacheHandler
-import com.katiearose.sobriety.utils.*
+import com.katiearose.sobriety.utils.applyThemes
+import com.katiearose.sobriety.utils.checkValidIntentData
+import com.katiearose.sobriety.utils.isInputEmpty
+import com.katiearose.sobriety.utils.showConfirmDialog
+import com.katiearose.sobriety.utils.toggleVisibility
+import com.katiearose.sobriety.utils.write
 import kotlinx.datetime.LocalTime
 
 class Savings : AppCompatActivity() {
@@ -141,14 +145,12 @@ class Savings : AppCompatActivity() {
         adapter.update()
     }
 
-    @SuppressLint("StringFormatMatches")
     private fun updateSavedTimeDisplay() {
         binding.timeSaved.text =
             if (addiction.timeSaving.hour == 0 && addiction.timeSaving.minute == 0) getString(R.string.no_set)
-            else getString(
-                R.string.hours_minutes,
-                addiction.timeSaving.hour,
-                addiction.timeSaving.minute
-            )
+            else StringBuilder(resources.getQuantityString(R.plurals.hours, addiction.timeSaving.hour, addiction.timeSaving.hour))
+                .append(" ")
+                .append(resources.getQuantityString(R.plurals.minutes, addiction.timeSaving.minute, addiction.timeSaving.minute))
+                .apply { deleteAt(length - 1) } //delete the comma at the end
     }
 }

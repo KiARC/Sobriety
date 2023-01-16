@@ -46,16 +46,16 @@ fun Context.convertSecondsToString(given: Long): String {
     time -= mo * MONTH
     val y = time / YEAR
     val stringBuilder = StringBuilder()
-    if (y != 0L) stringBuilder.append(getString(R.string.years, y)).append(" ")
-    if (mo != 0L) stringBuilder.append(getString(R.string.months, mo)).append(" ")
-    if (w != 0L) stringBuilder.append(getString(R.string.weeks, w)).append(" ")
-    if (d != 0L) stringBuilder.append(getString(R.string.days, d)).append(" ")
-    if (h != 0L) stringBuilder.append(getString(R.string.hours, h)).append(" ")
-    if (m != 0L) stringBuilder.append(getString(R.string.minutes, m)).append(" ")
+    if (y != 0L) stringBuilder.append(resources.getQuantityString(R.plurals.years, y.toInt(), y)).append(" ")
+    if (mo != 0L) stringBuilder.append(resources.getQuantityString(R.plurals.months, mo.toInt(), mo)).append(" ")
+    if (w != 0L) stringBuilder.append(resources.getQuantityString(R.plurals.weeks, w.toInt(), w)).append(" ")
+    if (d != 0L) stringBuilder.append(resources.getQuantityString(R.plurals.days, d.toInt(), d)).append(" ")
+    if (h != 0L) stringBuilder.append(resources.getQuantityString(R.plurals.hours, h.toInt(), h)).append(" ")
+    if (m != 0L) stringBuilder.append(resources.getQuantityString(R.plurals.minutes, m.toInt(), m)).append(" ")
     if (!(y == 0L && mo == 0L && w == 0L && d == 0L && h == 0L && m == 0L)) stringBuilder.append(
         getString(R.string.and)
     ).append(" ")
-    stringBuilder.append(getString(R.string.seconds, s))
+    stringBuilder.append(resources.getQuantityString(R.plurals.seconds, s.toInt(), s))
     return stringBuilder.toString()
 }
 
@@ -80,16 +80,16 @@ fun Context.convertRangeToString(start: Long, end: Long = Instant.now().toEpochM
     val s = duration.toSecondsPart()
 
     val stringBuilder = StringBuilder()
-    if (y != 0) stringBuilder.append(getString(R.string.years, y)).append(" ")
-    if (mo != 0) stringBuilder.append(getString(R.string.months, mo)).append(" ")
-    if (w != 0) stringBuilder.append(getString(R.string.weeks, w)).append(" ")
-    if (d != 0) stringBuilder.append(getString(R.string.days, d)).append(" ")
-    if (h != 0) stringBuilder.append(getString(R.string.hours, h)).append(" ")
-    if (m != 0) stringBuilder.append(getString(R.string.minutes, m)).append(" ")
+    if (y != 0) stringBuilder.append(resources.getQuantityString(R.plurals.years, y, y)).append(" ")
+    if (mo != 0) stringBuilder.append(resources.getQuantityString(R.plurals.months, mo, mo)).append(" ")
+    if (w != 0) stringBuilder.append(resources.getQuantityString(R.plurals.weeks, w, w)).append(" ")
+    if (d != 0) stringBuilder.append(resources.getQuantityString(R.plurals.days, d, d)).append(" ")
+    if (h != 0) stringBuilder.append(resources.getQuantityString(R.plurals.hours, h, h)).append(" ")
+    if (m != 0) stringBuilder.append(resources.getQuantityString(R.plurals.minutes, m, m)).append(" ")
     if (!(y == 0 && mo == 0 && w == 0 && d == 0 && h == 0 && m == 0)) stringBuilder.append(
         getString(R.string.and)
     ).append(" ")
-    stringBuilder.append(getString(R.string.seconds, s))
+    stringBuilder.append(resources.getQuantityString(R.plurals.seconds, s, s))
     return stringBuilder.toString()
 }
 

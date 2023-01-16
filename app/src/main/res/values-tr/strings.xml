@@ -17,14 +17,7 @@
     <string name="create">Oluştur</string>
     <string name="error_empty_name">İsim alanı boş</string>
     <string name="error_duplicate_entry">Yinelenen girişler oluşturulamıyor</string>
-    <string name="years">%d Yıl,</string>
-    <string name="months">%d Ay,</string>
-    <string name="weeks">%d Hafta,</string>
-    <string name="days">%d Gün,</string>
-    <string name="hours">%d Saat,</string>
-    <string name="minutes">%d Dakika,</string>
     <string name="and">Ve</string>
-    <string name="seconds">%d Saniye</string>
     <string name="recent_avg">Son ortalama: %s</string>
     <string name="delete">Sil</string>
     <string name="delete_confirm">Girişi gerçekten silmek istiyor musunuz? \"%s\"?\nBu işlem geri alınamaz.</string>
@@ -72,7 +65,6 @@
     <string name="savings">Tasarruf</string>
     <string name="time_saved_per_day">Günlük tasarruf süresi</string>
     <string name="select_time_saved">Kaydedilen süreyi seçin</string>
-    <string name="hours_minutes">%d saat, %d dakika</string>
     <string name="no_set">Ayarlanmadı</string>
     <string name="other_savings">Diğer tasarruflar</string>
     <string name="add_new_saving">Yeni tasarruf ekle</string>
