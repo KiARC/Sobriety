@@ -28,9 +28,9 @@ Feel free to contact me about any issues, suggestions or comments you have about
 
 # Repository Metadata (via Shields.io)
 ## Core
-![GitHub](https://img.shields.io/github/license/KiARC/Sobriety?style=for-the-badge)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/KiARC/Sobriety/Android%20CI?label=CI&style=for-the-badge)
-![Maintenance](https://img.shields.io/maintenance/yes/2022?style=for-the-badge)
+![GitHub](https://img.shields.io/github/license/KiARC/Sobriety?style=for-the-badge&color=success)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/KiARC/Sobriety/ci.yml?branch=master&style=for-the-badge)
+![Maintenance](https://img.shields.io/maintenance/yes/2023?style=for-the-badge)
 ## Size
 ![GitHub code size](https://img.shields.io/github/languages/code-size/KiARC/Sobriety?style=for-the-badge)
 ![GitHub repo size](https://img.shields.io/github/repo-size/KiARC/Sobriety?style=for-the-badge)
@@ -40,7 +40,7 @@ Feel free to contact me about any issues, suggestions or comments you have about
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/KiARC/Sobriety?label=Latest%20Release&sort=semver&style=for-the-badge)
 ![GitHub Release Date](https://img.shields.io/github/release-date/KiARC/Sobriety?label=Latest%20Release%20Date&style=for-the-badge&sort=semver)
-![IzzyOnDroid](https://img.shields.io/endpoint?url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.katiearose.sobriety&label=IzzyOnDroid&style=for-the-badge)
+![F-Droid](https://img.shields.io/f-droid/v/com.katiearose.sobriety?style=for-the-badge)
 ## Issue Counts
 ![GitHub open issues](https://img.shields.io/github/issues-raw/KiARC/Sobriety?style=for-the-badge)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/KiARC/Sobriety?style=for-the-badge)
