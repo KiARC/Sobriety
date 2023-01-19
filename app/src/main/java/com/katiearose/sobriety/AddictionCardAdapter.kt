@@ -9,16 +9,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.katiearose.sobriety.activities.Main
 import com.katiearose.sobriety.databinding.CardAddictionBinding
 import com.katiearose.sobriety.shared.Addiction
-import com.katiearose.sobriety.shared.secondsFromNow
 import com.katiearose.sobriety.utils.convertRangeToString
 import com.katiearose.sobriety.utils.convertSecondsToString
+import com.katiearose.sobriety.utils.getDateFormatPattern
+import com.katiearose.sobriety.utils.getSharedPref
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.text.DateFormat
 import java.time.Instant
-import java.util.Date
-import kotlin.math.absoluteValue
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class AddictionCardAdapter(
     private val context: Context,
@@ -94,13 +94,18 @@ class AddictionCardAdapter(
         private val addictionSupplier: (Int) -> Addiction) : RecyclerView.ViewHolder(binding.root) {
         val textViewName: TextView = binding.textViewAddictionName
         val textViewPriority: TextView = binding.textViewPriority
-        private val dateFormat = DateFormat.getDateTimeInstance()
         private lateinit var addiction: Addiction
         private val mainScope = MainScope()
 
         fun refresh() {
             addiction = addictionSupplier(adapterPosition)
             displayInfo()
+        }
+
+        private fun getFormattedDate(milli: Long): String {
+            val dateFormat = DateTimeFormatter.ofPattern(binding.root.context.getSharedPref().getDateFormatPattern())
+            val date = Instant.ofEpochMilli(milli).atZone(ZoneId.systemDefault())
+            return dateFormat.format(date)
         }
 
         private fun displayInfo() {
@@ -114,7 +119,7 @@ class AddictionCardAdapter(
                     if (!addiction.isStopped) binding.root.context.convertRangeToString(addiction.lastRelapse.toEpochMilliseconds())
                     else binding.root.context.getString(
                         R.string.stop_notice,
-                        dateFormat.format(Date(addiction.timeStopped)),
+                        getFormattedDate(addiction.timeStopped),
                         binding.root.context.convertSecondsToString((addiction.timeStopped - addiction.lastRelapse.toEpochMilliseconds()) / 1000)
                     )
             }
