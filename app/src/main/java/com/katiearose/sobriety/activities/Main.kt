@@ -81,9 +81,9 @@ class Main : AppCompatActivity() {
             if (it.data!!.extras!!.getBoolean("import")) {
                 addictions.sortWith { a1, a2 -> a1.priority.compareTo(a2.priority) }
                 cacheHandler.write()
-                adapterAddictions.notifyDataSetChanged()
             }
         }
+        adapterAddictions.notifyDataSetChanged()
     }
 
     //needed for this activity to apply md3 theme after user backs away from settings

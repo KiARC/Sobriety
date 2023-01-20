@@ -49,6 +49,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewPriority" />
 
+        <TextView
+            android:id="@+id/textViewAverage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Average: 3d 20h 10m 5s"
+            android:visibility="visible"
+            android:textColor="?attr/colorTextOnCard"
+            android:textSize="@dimen/text_size_small"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTime" />
+
         <ImageView
             android:id="@+id/imageDelete"
             android:layout_width="48dp"
@@ -61,7 +73,7 @@
             app:tint="?attr/colorIconOnCard"
             android:src="@drawable/ic_baseline_delete_24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textViewTime" />
+            app:layout_constraintTop_toBottomOf="@id/textViewAverage" />
 
         <ImageView
             android:id="@+id/imageMisc"
@@ -75,7 +87,7 @@
             app:tint="?attr/colorIconOnCard"
             android:src="@drawable/more_horiz_24px"
             app:layout_constraintStart_toEndOf="@id/imageDelete"
-            app:layout_constraintTop_toBottomOf="@id/textViewTime" />
+            app:layout_constraintTop_toBottomOf="@id/textViewAverage" />
 
         <ImageView
             android:id="@+id/imageReset"

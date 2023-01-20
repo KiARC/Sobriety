@@ -29,6 +29,7 @@
             app:title="@string/date_format"
             app:entryValues="@array/date_format_patterns"
             app:defaultValue="MMMM dd uuuu"
+            app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false" />
 
         <SwitchPreferenceCompat
@@ -36,6 +37,14 @@
             app:title="@string/add_note_after_relapse_pref"
             app:summary="@string/add_note_after_relapse_pref_summary"
             app:defaultValue="true"
+            app:iconSpaceReserved="false"/>
+
+        <EditTextPreference
+            app:key="average_attempts_window"
+            app:title="@string/average_attempts_window_pref"
+            app:defaultValue="3"
+            app:useSimpleSummaryProvider="true"
+
             app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>

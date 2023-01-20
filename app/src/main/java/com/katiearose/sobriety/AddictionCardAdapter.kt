@@ -2,6 +2,7 @@ package com.katiearose.sobriety
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
@@ -12,6 +13,7 @@ import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.utils.convertRangeToString
 import com.katiearose.sobriety.utils.convertSecondsToString
 import com.katiearose.sobriety.utils.getDateFormatPattern
+import com.katiearose.sobriety.utils.getAverageAttemptsWindow
 import com.katiearose.sobriety.utils.getSharedPref
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -79,6 +81,19 @@ class AddictionCardAdapter(
                 )
             }
         )
+        val numAttempts = context.getSharedPref().getAverageAttemptsWindow()
+        val averageRelapseDuration = addiction.calculateRecentAverage(numAttempts)
+        if (averageRelapseDuration == null) {
+            holder.textViewAverage.visibility = View.GONE
+        } else {
+            holder.textViewAverage.visibility = View.VISIBLE
+            holder.textViewAverage.text =
+                context.getString(
+                    R.string.recent_avg,
+                    context.convertSecondsToString(averageRelapseDuration / 1000L)
+                )
+        }
+
         holder.refresh()
     }
 
@@ -94,6 +109,7 @@ class AddictionCardAdapter(
         private val addictionSupplier: (Int) -> Addiction) : RecyclerView.ViewHolder(binding.root) {
         val textViewName: TextView = binding.textViewAddictionName
         val textViewPriority: TextView = binding.textViewPriority
+        val textViewAverage: TextView = binding.textViewAverage
         private lateinit var addiction: Addiction
         private val mainScope = MainScope()
 
@@ -109,19 +125,19 @@ class AddictionCardAdapter(
         }
 
         private fun displayInfo() {
-            if (addiction.isFuture()) {
-                binding.textViewTime.text = binding.root.context.getString(
+            binding.textViewTime.text = when {
+                addiction.isFuture() -> binding.root.context.getString(
                     R.string.time_until_tracked,
                     binding.root.context.convertRangeToString(Instant.now().toEpochMilli(), addiction.lastRelapse.toEpochMilliseconds())
                 )
-            } else {
-                binding.textViewTime.text =
-                    if (!addiction.isStopped) binding.root.context.convertRangeToString(addiction.lastRelapse.toEpochMilliseconds())
-                    else binding.root.context.getString(
-                        R.string.stop_notice,
-                        getFormattedDate(addiction.timeStopped),
-                        binding.root.context.convertSecondsToString((addiction.timeStopped - addiction.lastRelapse.toEpochMilliseconds()) / 1000)
-                    )
+
+                addiction.isStopped -> binding.root.context.getString(
+                    R.string.stop_notice,
+                    getFormattedDate(addiction.timeStopped),
+                    binding.root.context.convertSecondsToString((addiction.timeStopped - addiction.lastRelapse.toEpochMilliseconds()) / 1000)
+                )
+
+                else -> binding.root.context.convertRangeToString(addiction.lastRelapse.toEpochMilliseconds())
             }
         }
 
