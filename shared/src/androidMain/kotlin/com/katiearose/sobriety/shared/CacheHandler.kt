@@ -12,26 +12,27 @@ import java.util.*
 class CacheHandler(private val context: Context) {
 
     companion object {
+        private val JsonSerializer = Json { ignoreUnknownKeys = true }
         private val listSerializer = ListSerializer(AddictionSerializer)
     }
 
     fun readCache(input: InputStream): List<Addiction> {
         BufferedInputStream(input).use { stream ->
             Scanner(stream).useDelimiter("\\A").use {
-                return Json.decodeFromString(it.next())
+                return JsonSerializer.decodeFromString(it.next())
             }
         }
     }
 
     fun writeCache(addictions: List<Addiction>) {
         BufferedWriter(FileWriter(File(context.filesDir, "Sobriety.cache"))).use {
-            it.write(Json.encodeToString(listSerializer, addictions))
+            it.write(JsonSerializer.encodeToString(listSerializer, addictions))
         }
     }
 
     fun exportData(addictions: List<Addiction>, output: Uri) {
         BufferedWriter(OutputStreamWriter(context.contentResolver.openOutputStream(output))).use {
-            it.write(Json.encodeToString(listSerializer, addictions))
+            it.write(JsonSerializer.encodeToString(listSerializer, addictions))
         }
     }
 

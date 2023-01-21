@@ -125,19 +125,19 @@ class AddictionCardAdapter(
         }
 
         private fun displayInfo() {
-            binding.textViewTime.text = when {
-                addiction.isFuture() -> binding.root.context.getString(
-                    R.string.time_until_tracked,
-                    binding.root.context.convertRangeToString(Instant.now().toEpochMilli(), addiction.lastRelapse.toEpochMilliseconds())
-                )
+            binding.textViewTime.text = when (addiction.status) {
+                Addiction.Status.Ongoing -> binding.root.context.convertRangeToString(addiction.history.keys.last())
 
-                addiction.isStopped -> binding.root.context.getString(
+                Addiction.Status.Stopped -> binding.root.context.getString(
                     R.string.stop_notice,
-                    getFormattedDate(addiction.timeStopped),
-                    binding.root.context.convertSecondsToString((addiction.timeStopped - addiction.lastRelapse.toEpochMilliseconds()) / 1000)
+                    getFormattedDate(addiction.history.values.last()),
+                    binding.root.context.convertRangeToString(addiction.history.keys.last(), addiction.history.values.last())
                 )
 
-                else -> binding.root.context.convertRangeToString(addiction.lastRelapse.toEpochMilliseconds())
+                Addiction.Status.Future -> binding.root.context.getString(
+                    R.string.time_until_tracked,
+                    binding.root.context.convertRangeToString(Instant.now().toEpochMilli(), addiction.history.keys.last())
+                )
             }
         }
 
