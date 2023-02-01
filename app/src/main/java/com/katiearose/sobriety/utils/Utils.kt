@@ -66,10 +66,16 @@ fun Context.convertRangeToString(start: Long, end: Long = Instant.now().toEpochM
         TimeZone.getDefault().toZoneId())
     val endDate: LocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(end),
         TimeZone.getDefault().toZoneId())
-    // Period for years, months, weeks, days
-    val period: Period = Period.between(startDate.toLocalDate(), endDate.toLocalDate())
-    // Duration for hours, minutes, seconds
+    // Duration calculated time based days rather than "conceptual" days
+    // Used directly for hours, minutes, seconds
     val duration: Duration = Duration.between(startDate, endDate)
+    // Period for years, months, weeks, days
+    val period: Period = Period.between(
+        // The reason why startDate is not used is to prevent a conceptual calculation of days
+        // i.e. 2023-01-30T23:30 to 2023-01-31TT01:30 is 1 conceptual day but only 2 literal hours
+        endDate.minusDays(duration.toDaysPart()).toLocalDate(),
+        endDate.toLocalDate()
+    )
 
     val y = period.years
     val mo = period.months
