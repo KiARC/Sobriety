@@ -238,6 +238,11 @@ class Main : AppCompatActivity() {
             }
             dialog.setContentView(dialogViewBinding.root)
             dialog.show()
+        }, cardButtonAction = {
+            startActivity(
+                Intent(this@Main, Summary::class.java)
+                    .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(it))
+            )
         })
         binding.recyclerAddictions.layoutManager = LinearLayoutManager(this)
         binding.recyclerAddictions.adapter = adapterAddictions

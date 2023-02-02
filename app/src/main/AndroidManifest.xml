@@ -50,6 +50,14 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".activities.Summary"
+            android:exported="false"
+            android:label="@string/summary">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".activities.Create"
             android:exported="false"
             android:label="@string/add_new_addiction">
