@@ -239,10 +239,21 @@ class Main : AppCompatActivity() {
             dialog.setContentView(dialogViewBinding.root)
             dialog.show()
         }, cardButtonAction = {
-            startActivity(
-                Intent(this@Main, Summary::class.java)
-                    .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(it))
-            )
+            when(it.status) {
+                Addiction.Status.Ongoing, Addiction.Status.Stopped ->
+                    startActivity(
+                        Intent(this@Main, Summary::class.java)
+                            .putExtra(EXTRA_ADDICTION_POSITION, addictions.indexOf(it))
+                    )
+
+                Addiction.Status.Future ->
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.not_tracked_yet, it.name),
+                        BaseTransientBottomBar.LENGTH_SHORT
+                    ).show()
+            }
+
         })
         binding.recyclerAddictions.layoutManager = LinearLayoutManager(this)
         binding.recyclerAddictions.adapter = adapterAddictions
