@@ -1,0 +1,12 @@
+<resources>
+
+    <style name="Theme.Sobriety.Material3" parent="Theme.Material3.DynamicColors.DayNight">
+        <item name="cardColor">#612D5E</item>
+        <item name="colorTextOnCard">#FFC5FC</item>
+        <item name="colorIconOnCard">#B164AD</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme.Material3</item>
+        <item name="switchPreferenceCompatStyle">@style/Preference.MaterialSwitchPreference</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+</resources>

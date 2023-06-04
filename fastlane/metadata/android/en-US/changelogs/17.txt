@@ -1,0 +1,2 @@
+v6.2.1 Settings
+  - A settings menu for the app's appearance.

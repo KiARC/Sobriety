@@ -1,2 +1,12 @@
 <menu xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.katiearose.sobriety.Main" />
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.katiearose.sobriety.activities.Main">
+
+    <item
+        android:id="@+id/go_to_settings"
+        android:title="@string/settings"
+        android:icon="@drawable/ic_baseline_settings_24"
+        app:showAsAction="ifRoom"/>
+
+</menu>

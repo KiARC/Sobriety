@@ -1,0 +1,5 @@
+v6.0.0 So many updates
+  - Many new features done by the one and only unbiaseduser, thank you so much dude
+    - Pause and start relapse tracking
+    - Better UI
+    - Relapse history! Finally!

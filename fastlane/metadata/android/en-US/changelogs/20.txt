@@ -1,0 +1,4 @@
+v9.0.0 JSON (and much more)
+    - JSON Serialization! Going forwards no more crashes after updates hopefully
+    - Multiplatform is WIP (thank you Quang!)
+    - Broken things are now not broken (i.e. milestones) I think

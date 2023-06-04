@@ -1,0 +1,112 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/appearance"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            app:key="theme"
+            app:title="@string/theme"
+            app:entryValues="@array/theme_entry_values"
+            app:entries="@array/theme_entries"
+            app:defaultValue="system"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true"/>
+
+        <SwitchPreferenceCompat
+            app:key="material_you"
+            app:title="@string/material_you"
+            app:summary="@string/material_you_subtext"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/general"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            app:key="date_format"
+            app:title="@string/date_format"
+            app:entryValues="@array/date_format_patterns"
+            app:defaultValue="MMMM dd uuuu"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            app:key="add_note_after_relapse"
+            app:title="@string/add_note_after_relapse_pref"
+            app:summary="@string/add_note_after_relapse_pref_summary"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"/>
+
+        <EditTextPreference
+            app:key="average_attempts_window"
+            app:title="@string/average_attempts_window_pref"
+            app:defaultValue="3"
+            app:useSimpleSummaryProvider="true"
+
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/timeline"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            app:key="alt_timeline_view"
+            app:title="@string/use_alt_timeline_view"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/daily_notes"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            app:key="sort_notes"
+            app:title="@string/sort_order"
+            app:entries="@array/sort_entries"
+            app:entryValues="@array/sort_entry_values"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"
+            app:defaultValue="asc"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/milestones"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            app:key="sort_milestones"
+            app:title="@string/sort_order"
+            app:entries="@array/sort_entries"
+            app:entryValues="@array/sort_entry_values"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"
+            app:defaultValue="asc"/>
+
+        <SwitchPreferenceCompat
+            app:key="hide_completed_milestones"
+            app:title="@string/hide_completed_milestones"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/data"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            app:key="data_export"
+            app:title="@string/data_export"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            app:key="data_import"
+            app:title="@string/data_import"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

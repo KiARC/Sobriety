@@ -1,0 +1,15 @@
+v10.0.0 Updates Updates Updates!
+This is a big update!
+    - Cleaned up code
+    - Reimplement average relapse display
+    - Fix CircularBuffers
+    - Fix DatePicker tz
+    - Autofill daily notes if they exist
+    - Break timeline on stopped history
+    - Future tracking
+    - Optimizations
+    - Hide milestone progress when stopped
+    - Optimize updater loop
+    - Implement plural strings
+    - Format stopped date according to settings
+    - Fix GitHub README

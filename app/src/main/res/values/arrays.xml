@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="priorities" translatable="false">
+        <item>@string/high</item>
+        <item>@string/medium</item>
+        <item>@string/low</item>
+    </string-array>
+
+    <string-array name="theme_entries" translatable="false">
+        <item>@string/light_theme</item>
+        <item>@string/dark_theme</item>
+        <item>@string/system_theme</item>
+    </string-array>
+
+    <string-array name="theme_entry_values" translatable="false">
+        <item>light</item>
+        <item>dark</item>
+        <item>system</item>
+    </string-array>
+
+    <!-- Android 9 and lower doesn't have system dark theme, so disabling the option -->
+    <string-array name="theme_entries_p" translatable="false">
+        <item>@string/light_theme</item>
+        <item>@string/dark_theme</item>
+    </string-array>
+
+    <string-array name="theme_entry_values_p" translatable="false">
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
+
+    <string-array name="time_units" translatable="false">
+        <item>@string/unit_hour</item>
+        <item>@string/unit_day</item>
+        <item>@string/unit_week</item>
+        <item>@string/unit_month</item>
+        <item>@string/unit_year</item>
+    </string-array>
+
+    <string-array name="sort_entries" translatable="false">
+        <item>@string/asc</item>
+        <item>@string/desc</item>
+        <item>@string/no_sort</item>
+    </string-array>
+
+    <string-array name="sort_entry_values" translatable="false">
+        <item>asc</item>
+        <item>desc</item>
+        <item>no</item>
+    </string-array>
+
+    <string-array name="date_format_patterns" translatable="false">
+        <item>MMMM dd uuuu</item>
+        <item>dd MMMM uuuu</item>
+        <item>MMM dd uuuu</item>
+        <item>dd MMM uuuu</item>
+    </string-array>
+
+</resources>

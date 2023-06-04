@@ -1,94 +1,136 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Sobriety</string>
-    <string name="title_activity_main">Main</string>
-    <string name="large_text">
-        "Material is the metaphor.\n\n"
-
-        "A material metaphor is the unifying theory of a rationalized space and a system of motion."
-        "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
-        "technologically advanced and open to imagination and magic.\n"
-        "Surfaces and edges of the material provide visual cues that are grounded in reality. The "
-        "use of familiar tactile attributes helps users quickly understand affordances. Yet the "
-        "flexibility of the material creates new affordances that supercede those in the physical "
-        "world, without breaking the rules of physics.\n"
-        "The fundamentals of light, surface, and movement are key to conveying how objects move, "
-        "interact, and exist in space and in relation to each other. Realistic lighting shows "
-        "seams, divides space, and indicates moving parts.\n\n"
-
-        "Bold, graphic, intentional.\n\n"
-
-        "The foundational elements of print based design typography, grids, space, scale, color, "
-        "and use of imagery guide visual treatments. These elements do far more than please the "
-        "eye. They create hierarchy, meaning, and focus. Deliberate color choices, edge to edge "
-        "imagery, large scale typography, and intentional white space create a bold and graphic "
-        "interface that immerse the user in the experience.\n"
-        "An emphasis on user actions makes core functionality immediately apparent and provides "
-        "waypoints for the user.\n\n"
-
-        "Motion provides meaning.\n\n"
-
-        "Motion respects and reinforces the user as the prime mover. Primary user actions are "
-        "inflection points that initiate motion, transforming the whole design.\n"
-        "All action takes place in a single environment. Objects are presented to the user without "
-        "breaking the continuity of experience even as they transform and reorganize.\n"
-        "Motion is meaningful and appropriate, serving to focus attention and maintain continuity. "
-        "Feedback is subtle yet clear. Transitions are efﬁcient yet coherent.\n\n"
-
-        "3D world.\n\n"
-
-        "The material environment is a 3D space, which means all objects have x, y, and z "
-        "dimensions. The z-axis is perpendicularly aligned to the plane of the display, with the "
-        "positive z-axis extending towards the viewer. Every sheet of material occupies a single "
-        "position along the z-axis and has a standard 1dp thickness.\n"
-        "On the web, the z-axis is used for layering and not for perspective. The 3D world is "
-        "emulated by manipulating the y-axis.\n\n"
-
-        "Light and shadow.\n\n"
-
-        "Within the material environment, virtual lights illuminate the scene. Key lights create "
-        "directional shadows, while ambient light creates soft shadows from all angles.\n"
-        "Shadows in the material environment are cast by these two light sources. In Android "
-        "development, shadows occur when light sources are blocked by sheets of material at "
-        "various positions along the z-axis. On the web, shadows are depicted by manipulating the "
-        "y-axis only. The following example shows the card with a height of 6dp.\n\n"
-
-        "Resting elevation.\n\n"
-
-        "All material objects, regardless of size, have a resting elevation, or default elevation "
-        "that does not change. If an object changes elevation, it should return to its resting "
-        "elevation as soon as possible.\n\n"
-
-        "Component elevations.\n\n"
-
-        "The resting elevation for a component type is consistent across apps (e.g., FAB elevation "
-        "does not vary from 6dp in one app to 16dp in another app).\n"
-        "Components may have different resting elevations across platforms, depending on the depth "
-        "of the environment (e.g., TV has a greater depth than mobile or desktop).\n\n"
-
-        "Responsive elevation and dynamic elevation offsets.\n\n"
-
-        "Some component types have responsive elevation, meaning they change elevation in response "
-        "to user input (e.g., normal, focused, and pressed) or system events. These elevation "
-        "changes are consistently implemented using dynamic elevation offsets.\n"
-        "Dynamic elevation offsets are the goal elevation that a component moves towards, relative "
-        "to the component’s resting state. They ensure that elevation changes are consistent "
-        "across actions and component types. For example, all components that lift on press have "
-        "the same elevation change relative to their resting elevation.\n"
-        "Once the input event is completed or cancelled, the component will return to its resting "
-        "elevation.\n\n"
-
-        "Avoiding elevation interference.\n\n"
-
-        "Components with responsive elevations may encounter other components as they move between "
-        "their resting elevations and dynamic elevation offsets. Because material cannot pass "
-        "through other material, components avoid interfering with one another any number of ways, "
-        "whether on a per component basis or using the entire app layout.\n"
-        "On a component level, components can move or be removed before they cause interference. "
-        "For example, a floating action button (FAB) can disappear or move off screen before a "
-        "user picks up a card, or it can move if a snackbar appears.\n"
-        "On the layout level, design your app layout to minimize opportunities for interference. "
-        "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
-        "when a user tries to pick up one of cards.\n\n"
-    </string>
-    <string name="action_settings">Settings</string>
+    <string name="prompt">To add an addiction to the tracker, press the \"+\" button in the bottom right corner.</string>
+    <string name="add_new_addiction">Add new addiction</string>
+    <string name="addiction_name">Addiction name</string>
+    <string name="date">Date</string>
+    <string name="pick_starting_date">Pick starting date</string>
+    <string name="time">Time</string>
+    <string name="pick_starting_time">Pick starting time</string>
+    <string name="priority">Priority</string>
+    <string name="edit_priority">Edit priority</string>
+    <string name="edit">Edit</string>
+    <string name="edit_priority_success">Successfully edited addiction priority</string>
+    <string name="high">High</string>
+    <string name="medium">Medium</string>
+    <string name="low">Low</string>
+    <string name="create">Create</string>
+    <string name="error_empty_name">Name is empty</string>
+    <string name="error_duplicate_entry">Can\'t create duplicate entries</string>
+    <plurals name="years">
+        <item quantity="one">%d year,</item>
+        <item quantity="other">%d years,</item>
+    </plurals>
+    <plurals name="months">
+        <item quantity="one">%d month,</item>
+        <item quantity="other">%d months,</item>
+    </plurals>
+    <plurals name="weeks">
+        <item quantity="one">%d week,</item>
+        <item quantity="other">%d weeks,</item>
+    </plurals>
+    <plurals name="days">
+        <item quantity="one">%d day,</item>
+        <item quantity="other">%d days,</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d hour,</item>
+        <item quantity="other">%d hours,</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">%d minute,</item>
+        <item quantity="other">%d minutes,</item>
+    </plurals>
+    <string name="and">and</string>
+    <plurals name="seconds">
+        <item quantity="one">%d second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
+    <string name="recent_avg">Recent Average: %s</string>
+    <string name="delete">Delete</string>
+    <string name="delete_confirm">Do you really want to delete entry \"%s\"?\nThis action cannot be undone.</string>
+    <string name="relapse">Relapse</string>
+    <string name="relapse_confirm">Log relapse of \"%s\"?</string>
+    <string name="stop">Stop</string>
+    <string name="stop_confirm">Stop abstaining from \"%s\"?</string>
+    <string name="stop_notice">Stopped at: %s\nYour attempt lasted %s</string>
+    <string name="already_stopped">You have already stopped abstaining from \"%s\".\nPress the Relapse button to start over.</string>
+    <string name="timeline">Timeline</string>
+    <string name="showing_timeline">Showing timeline for addiction \"%s\"</string>
+    <string name="attempt">Attempt %d</string>
+    <string name="time_started">Time started: %s</string>
+    <string name="time_range">Time started: %s\nↆ\nTime ended: %s</string>
+    <string name="duration">Duration: %s</string>
+    <string name="ongoing">Ongoing… Keep it up!</string>
+    <string name="settings">Settings</string>
+    <string name="appearance">Appearance</string>
+    <string name="theme">Theme</string>
+    <string name="light_theme">Light theme</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="system_theme">System theme</string>
+    <string name="material_you">Material You</string>
+    <string name="material_you_subtext">Android 12 users, rejoice!</string>
+    <string name="sort_order">Sort order</string>
+    <string name="asc">Ascending</string>
+    <string name="desc">Descending</string>
+    <string name="no_sort">No sorting</string>
+    <string name="hide_completed_milestones">Hide completed milestones</string>
+    <string name="future_time_notice">You have selected a future date/time. The app will only start tracking this addiction after this time.</string>
+    <string name="time_until_tracked">Will be tracked after %s</string>
+    <string name="not_tracked_yet">\"%s\" has not been tracked yet. If you want to track it now, press the Relapse button.</string>
+    <string name="track_now">Track now</string>
+    <string name="start_tracking_now">Are you ready to start tracking \"%s\" now?</string>
+    <string name="misc">Miscellaneous</string>
+    <string name="daily_notes">Daily notes</string>
+    <string name="add_note">Add note</string>
+    <string name="note">Note</string>
+    <string name="note_hint">Enter notes…</string>
+    <string name="error_empty_note">Note cannot be empty</string>
+    <string name="save">Save</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
+    <string name="delete_note_confirm">Do you really want to delete the note for %s?\nThis action cannot be undone.</string>
+    <string name="savings">Savings</string>
+    <string name="time_saved_per_day">Time saved per day</string>
+    <string name="select_time_saved">Select amount of time saved</string>
+    <string name="no_set">Not set</string>
+    <string name="other_savings">Other savings</string>
+    <string name="add_new_saving">Add new saving</string>
+    <string name="add_new_saving_hint">What are you saving by abstaining?</string>
+    <string name="saving_name">Savings name</string>
+    <string name="amount_saved">Amount saved per day</string>
+    <string name="unit">Unit</string>
+    <string name="error_empty_amount">Amount cannot be empty</string>
+    <string name="error_empty_unit">Unit cannot be empty</string>
+    <string name="other_saved_per_day">Amount saved per day: %.2f %s</string>
+    <string name="delete_saving_confirm">Do you really want to delete your %s saving?\nThis action cannot be undone.</string>
+    <string name="milestones">Milestones</string>
+    <string name="unit_hour">Hours</string>
+    <string name="unit_day">Days</string>
+    <string name="unit_week">Weeks</string>
+    <string name="unit_month">Months</string>
+    <string name="unit_year">Years</string>
+    <string name="number">Number</string>
+    <string name="completed">Completed</string>
+    <string name="delete_milestone_confirm">Do you really want to delete this milestone?\nThis action cannot be undone.</string>
+    <string name="calc_avg_durations">Calculate average durations</string>
+    <string name="only_one_attempt">There\'s only one attempt</string>
+    <string name="avg_duration">Average of attempt</string>
+    <string name="nothing_is_chosen">Nothing is chosen</string>
+    <string name="only_one_attempt_is_chosen">Only one attempt is chosen</string>
+    <string name="attempt_started">Attempt %d started</string>
+    <string name="attempt_ended">Attempt %d ended\nDuration: %s</string>
+    <string name="present">Present</string>
+    <string name="use_alt_timeline_view">Use alternative timeline view</string>
+    <string name="general">General</string>
+    <string name="date_format">Date format</string>
+    <!--TODO think of a less awkward way to say this-->
+    <string name="add_note_after_relapse">Looks like you just relapsed.\nWould you like to write down what happened today?\nThis will be saved in the \"Daily notes\" section with today\'s date.</string>
+    <string name="dont_show_dialog_again">Don\'t show this dialog again</string>
+    <string name="add_note_after_relapse_pref">Add note after relapse</string>
+    <string name="add_note_after_relapse_pref_summary">When logging a relapse, offer to make (or edit, if it already exists) a note for that day</string>
+    <string name="data">Data</string>
+    <string name="data_export">Export</string>
+    <string name="data_import">Import</string>
+    <string name="average_attempts_window_pref">Number of Relapses (0 to disable)</string>
 </resources>
