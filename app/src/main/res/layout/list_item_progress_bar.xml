@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp">
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/time_unit_progress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="3dp"
+            android:max="1000"
+            app:trackThickness="50dp"
+            app:trackCornerRadius="5dp"
+            app:indicatorDirectionLinear="startToEnd"/>
+
+        <TextView
+            android:id="@+id/time_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/time_unit_progress"
+            android:layout_alignBottom="@id/time_unit_progress"
+            android:layout_alignStart="@id/time_unit_progress"
+            android:layout_marginStart="10dp"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/text_size_medium"
+            android:textStyle="bold"/>
+
+
+</RelativeLayout>

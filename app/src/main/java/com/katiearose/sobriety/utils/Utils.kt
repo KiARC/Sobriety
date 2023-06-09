@@ -3,18 +3,17 @@ package com.katiearose.sobriety.utils
 import android.app.Activity
 import android.content.Context
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.preference.PreferenceManager
-import androidx.viewbinding.ViewBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.activities.Main
 import com.katiearose.sobriety.shared.CacheHandler
+import kotlinx.datetime.DateTimeUnit
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
@@ -66,10 +65,16 @@ fun Context.convertRangeToString(start: Long, end: Long = Instant.now().toEpochM
         TimeZone.getDefault().toZoneId())
     val endDate: LocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(end),
         TimeZone.getDefault().toZoneId())
-    // Period for years, months, weeks, days
-    val period: Period = Period.between(startDate.toLocalDate(), endDate.toLocalDate())
-    // Duration for hours, minutes, seconds
+    // Duration calculated time based days rather than "conceptual" days
+    // Used directly for hours, minutes, seconds
     val duration: Duration = Duration.between(startDate, endDate)
+    // Period for years, months, weeks, days
+    val period: Period = Period.between(
+        // The reason why startDate is not used is to prevent a conceptual calculation of days
+        // i.e. 2023-01-30T23:30 to 2023-01-31TT01:30 is 1 conceptual day but only 2 literal hours
+        endDate.minusDays(duration.toDaysPart()).toLocalDate(),
+        endDate.toLocalDate()
+    )
 
     val y = period.years
     val mo = period.months
@@ -91,6 +96,48 @@ fun Context.convertRangeToString(start: Long, end: Long = Instant.now().toEpochM
     ).append(" ")
     stringBuilder.append(resources.getQuantityString(R.plurals.seconds, s, s))
     return stringBuilder.toString()
+}
+
+// Each triple contains the raw number (e.g. 12), the percentage in per mille (500), and the unit (hours)
+fun convertRangeToPercentList(start: Long, end: Long = Instant.now().toEpochMilli())
+        : List<Triple<Int, Int, DateTimeUnit>> {
+    val startDate: LocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(start),
+        TimeZone.getDefault().toZoneId())
+    val endDate: LocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(end),
+        TimeZone.getDefault().toZoneId())
+    // Duration calculated time based days rather than "conceptual" days
+    // Used directly for hours, minutes, seconds
+    val duration: Duration = Duration.between(startDate, endDate)
+    // Period for years, months, weeks, days
+    val period: Period = Period.between(
+        // The reason why startDate is not used is to prevent a conceptual calculation of days
+        // i.e. 2023-01-30T23:30 to 2023-01-31TT01:30 is 1 conceptual day but only 2 literal hours
+        endDate.minusDays(duration.toDaysPart()).toLocalDate(),
+        endDate.toLocalDate()
+    )
+
+    // Calculate the number of days until the month period ends
+    val nextMonth = startDate.plus(Period.of(period.years, period.months + 1, 0))
+    val durationLeft = Duration.between(endDate, nextMonth)
+    val daysLeft = (duration.plus(durationLeft).toDaysPart() - duration.toDaysPart()).toInt()
+
+    // Initially store denominator in second part of triple
+    return listOf(
+        // Years progress bar should never complete, but crosses 50% at 2 years
+        Triple(period.years, period.years+2, DateTimeUnit.YEAR),
+        Triple(period.months, 12, DateTimeUnit.MONTH),
+        // Weeks make the visualization non-whole so they are omitted
+        Triple(period.days, period.days + daysLeft, DateTimeUnit.DAY),
+        Triple(duration.toHoursPart(), 24, DateTimeUnit.HOUR),
+        Triple(duration.toMinutesPart(), 60, DateTimeUnit.MINUTE),
+        Triple(duration.toSecondsPart(), 60, DateTimeUnit.SECOND)
+    ).map {
+        Triple(
+            it.first,
+            (1000 * it.first.toDouble().div(it.second)).toInt(),
+            it.third
+        )
+    }
 }
 
 fun Context.showConfirmDialog(title: String, message: String, action: () -> Unit) {

@@ -29,7 +29,8 @@ class AddictionCardAdapter(
     private val stopButtonAction: (Addiction) -> Unit,
     private val timelineButtonAction: (Addiction) -> Unit,
     private val priorityTextViewAction: (Addiction) -> Unit,
-    private val miscButtonAction: (Addiction) -> Unit
+    private val miscButtonAction: (Addiction) -> Unit,
+    private val cardButtonAction: (Addiction) -> Unit
 ) :
     RecyclerView.Adapter<AddictionCardAdapter.AddictionCardViewHolder>() {
 
@@ -46,6 +47,7 @@ class AddictionCardAdapter(
             { timelineButtonAction(Main.addictions[it]) },
             { priorityTextViewAction(Main.addictions[it]) },
             { miscButtonAction(Main.addictions[it]) },
+            { cardButtonAction(Main.addictions[it]) },
             { Main.addictions[it] })
     }
 
@@ -106,6 +108,7 @@ class AddictionCardAdapter(
         timelineButtonAction: (Int) -> Unit,
         priorityTextViewAction: (Int) -> Unit,
         miscButtonAction: (Int) -> Unit,
+        cardButtonAction: (Int) -> Unit,
         private val addictionSupplier: (Int) -> Addiction) : RecyclerView.ViewHolder(binding.root) {
         val textViewName: TextView = binding.textViewAddictionName
         val textViewPriority: TextView = binding.textViewPriority
@@ -154,6 +157,7 @@ class AddictionCardAdapter(
             binding.imageTimeline.setOnClickListener { timelineButtonAction(adapterPosition) }
             textViewPriority.setOnClickListener { priorityTextViewAction(adapterPosition) }
             binding.imageMisc.setOnClickListener { miscButtonAction(adapterPosition) }
+            binding.cardViewAddiction.setOnClickListener { cardButtonAction(adapterPosition) }
         }
     }
 }
