@@ -16,6 +16,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til"
+        android:layout_marginHorizontal="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/addiction_name"
@@ -38,6 +39,7 @@
         android:background="?attr/selectableItemBackground"
         android:paddingVertical="10dp"
         android:layout_marginTop="60dp"
+        android:layout_marginHorizontal="10dp"
         app:layout_constraintTop_toBottomOf="@id/til"
         app:layout_constraintBottom_toTopOf="@id/clPickDate">
 
@@ -69,6 +71,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
         android:paddingVertical="10dp"
+        android:layout_marginHorizontal="10dp"
         app:layout_constraintTop_toBottomOf="@id/clPickTime"
         app:layout_constraintBottom_toTopOf="@id/clPickPriority">
 
@@ -98,6 +101,7 @@
         android:id="@+id/clPickPriority"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
         android:background="?attr/selectableItemBackground"
         android:paddingVertical="10dp"
         android:layout_marginBottom="60dp"
