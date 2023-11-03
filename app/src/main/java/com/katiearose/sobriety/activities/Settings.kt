@@ -9,6 +9,7 @@ import android.text.InputType
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.*
+import com.katiearose.sobriety.BuildConfig
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.shared.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
@@ -89,6 +90,15 @@ class Settings : AppCompatActivity() {
             }
             findPreference<Preference>("data_import")?.setOnPreferenceClickListener {
                 getImport.launch(arrayOf<String>("application/json"))
+                true
+            }
+
+            findPreference<Preference>("pref_app_version")?.summary = BuildConfig.VERSION_NAME
+
+            findPreference<Preference>("pref_app_issue_tracker")?.setOnPreferenceClickListener {
+                val i = Intent(Intent.ACTION_VIEW)
+                i.data = Uri.parse(requireContext().getString(R.string.app_issue_url))
+                startActivity(i)
                 true
             }
         }
