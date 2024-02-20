@@ -109,4 +109,29 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/about"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            app:key="pref_app_version"
+            app:persistent="false"
+            app:title="@string/version"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            app:key="pref_app_issue_tracker"
+            app:persistent="false"
+            app:title="@string/report_an_issue"
+            app:summary="@string/opens_issue_tracker"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            app:key="pref_app_license"
+            app:persistent="false"
+            app:title="@string/license"
+            app:summary="@string/app_license"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>
