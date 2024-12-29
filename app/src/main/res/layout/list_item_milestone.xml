@@ -45,7 +45,7 @@
             android:layout_height="48dp"
             android:layout_marginTop="6dp"
             android:padding="12dp"
-            android:foreground="@drawable/ripple"
+            android:background="@drawable/ripple"
             android:src="@drawable/ic_baseline_delete_24"
             android:contentDescription="@string/delete"
             android:tooltipText="@string/delete"

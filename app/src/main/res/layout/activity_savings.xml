@@ -23,7 +23,7 @@
         android:layout_height="48dp"
         android:padding="12dp"
         android:layout_alignParentEnd="true"
-        android:foreground="@drawable/ripple"
+        android:background="@drawable/ripple"
         android:src="@drawable/expand_less_24px"
         android:contentDescription="@string/collapse"
         android:tooltipText="@string/collapse" />
@@ -34,7 +34,7 @@
         android:layout_height="48dp"
         android:padding="12dp"
         android:layout_toStartOf="@id/btn_expand_collapse_time"
-        android:foreground="@drawable/ripple"
+        android:background="@drawable/ripple"
         android:src="@drawable/edit_note_24px"
         android:contentDescription="@string/collapse"
         android:tooltipText="@string/collapse" />
@@ -89,7 +89,7 @@
         android:padding="12dp"
         android:layout_below="@id/time_saved_card"
         android:layout_alignParentEnd="true"
-        android:foreground="@drawable/ripple"
+        android:background="@drawable/ripple"
         android:src="@drawable/expand_less_24px"
         android:contentDescription="@string/collapse"
         android:tooltipText="@string/collapse" />
@@ -101,7 +101,7 @@
         android:padding="12dp"
         android:layout_below="@id/time_saved_card"
         android:layout_toStartOf="@id/btn_expand_collapse_other"
-        android:foreground="@drawable/ripple"
+        android:background="@drawable/ripple"
         android:src="@drawable/add_24px"
         android:contentDescription="@string/add_new_saving"
         android:tooltipText="@string/add_new_saving" />
