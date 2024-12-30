@@ -25,7 +25,7 @@
         android:layout_alignParentEnd="true"
         android:contentDescription="@string/collapse"
         android:tooltipText="@string/collapse"
-        android:foreground="@drawable/ripple"/>
+        android:background="@drawable/ripple"/>
 
     <ImageView
         android:id="@+id/btn_edit"
@@ -36,7 +36,7 @@
         android:layout_toStartOf="@id/btn_expand_collapse"
         android:contentDescription="@string/edit"
         android:tooltipText="@string/edit"
-        android:foreground="@drawable/ripple"/>
+        android:background="@drawable/ripple"/>
 
     <ImageView
         android:id="@+id/btn_delete"
@@ -47,7 +47,7 @@
         android:layout_toStartOf="@id/btn_edit"
         android:contentDescription="@string/delete"
         android:tooltipText="@string/delete"
-        android:foreground="@drawable/ripple"/>
+        android:background="@drawable/ripple"/>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/note_card"
